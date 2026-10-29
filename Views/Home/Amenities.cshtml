@@ -1,0 +1,906 @@
+@{
+    ViewData["Title"] = "Amenities";
+}
+
+@section Styles {
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: #000; color: #e4ddd0; overflow-x: hidden; line-height: 1.6; }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: inherit; border: none; background: none; }
+
+    :root {
+      --gold: #c9a96e;
+      --gold-lt: #e8d5a3;
+      --gold-dk: #9a7a47;
+      --white: #f2ece2;
+      --dim: rgba(242,236,226,0.5);
+      --faint: rgba(242,236,226,0.06);
+      --border: rgba(201,169,110,0.16);
+      --border-bright: rgba(201,169,110,0.35);
+      --surface: #080808;
+      --surface2: #0d0d0d;
+      --t: 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ══ HEADER ══ */
+    .hdr { position:fixed;top:0;left:0;right:0;z-index:900;height:68px;padding:0 48px;display:flex;align-items:center;transition:background var(--t),border-color var(--t);border-bottom:1px solid transparent; }
+    .hdr.scrolled { background:rgba(0,0,0,0.96);border-bottom-color:var(--border);backdrop-filter:blur(20px); }
+    .hdr__inner { width:100%;max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between; }
+    .hdr__logo { display:flex;align-items:center;gap:12px; }
+    .hdr__logo img { width:38px;height:38px;object-fit:contain; }
+    .hdr__wordmark { font-family:'Cormorant',serif;font-size:22px;font-weight:600;color:var(--white);letter-spacing:2px; }
+    .hdr__nav { display:flex;align-items:center;flex-wrap:wrap; }
+    .hdr__link { color:var(--dim);font-size:12.5px;font-weight:400;padding:8px 11px;letter-spacing:0.3px;transition:color var(--t); }
+    .hdr__link:hover, .hdr__link.active { color:var(--white); }
+    .hdr__btn { background:var(--gold);color:#000;font-size:11px;font-weight:600;padding:9px 22px;letter-spacing:1.5px;text-transform:uppercase;transition:background var(--t),transform var(--t);margin-left:10px; }
+    .hdr__btn:hover { background:var(--gold-lt);transform:translateY(-1px); }
+    .hdr__drop { position:relative; }
+    .hdr__drop-menu { position:absolute;top:calc(100% + 8px);left:0;background:#090909;border:1px solid var(--border);min-width:200px;padding:6px;opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity 0.2s,transform 0.2s; }
+    .hdr__drop.open .hdr__drop-menu { opacity:1;pointer-events:all;transform:translateY(0); }
+    .hdr__drop-item { display:block;padding:10px 16px;font-size:13px;color:var(--dim);transition:background 0.2s,color 0.2s; }
+    .hdr__drop-item:hover { background:var(--faint);color:var(--white); }
+    .ham { display:none;flex-direction:column;gap:5px;padding:8px; }
+    .ham span { display:block;width:22px;height:1.5px;background:var(--white);transition:var(--t); }
+    .mob-ov { position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.3s; }
+    .mob-ov.open { opacity:1;pointer-events:all; }
+    .mob-nav { position:fixed;top:0;right:0;bottom:0;width:300px;background:#050505;border-left:1px solid var(--border);z-index:1100;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column; }
+    .mob-nav.open { transform:translateX(0); }
+    .mob-nav__hd { display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid var(--border); }
+    .mob-nav__close { font-size:24px;color:var(--dim); }
+    .mob-nav__links { flex:1;overflow-y:auto;padding:12px 0; }
+    .mob-nav__links a { display:block;padding:13px 24px;color:var(--dim);font-size:14px;border-bottom:1px solid rgba(255,255,255,0.04);transition:color 0.2s,padding-left 0.2s; }
+    .mob-nav__links a:hover { color:var(--white);padding-left:32px; }
+    .mob-nav__foot { padding:20px 24px;border-top:1px solid var(--border);display:flex;gap:20px; }
+    .mob-nav__foot a { color:var(--dim);font-size:11px;letter-spacing:1px;text-transform:uppercase;transition:color 0.2s; }
+    .mob-nav__foot a:hover { color:var(--gold); }
+
+    /* ══ HERO ══ */
+    .hero { position:relative;height:65vh;min-height:440px;display:flex;overflow:hidden; }
+    .hero__bg { position:absolute;inset:0; }
+    .hero__bg img { width:100%;height:100%;object-fit:cover;object-position:center;filter:brightness(0.55) saturate(0.7); }
+    .hero__ov {
+      position:absolute;inset:0;
+      background:linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.18) 100%);
+    }
+    .hero__accent { position:absolute;top:0;left:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent 0%,var(--gold) 30%,var(--gold) 70%,transparent 100%);z-index:3; }
+    .hero__content { position:relative;z-index:2;padding:110px 60px 20px 110px;max-width:1300px;width:100%;align-self:flex-end; }
+    .hero__kicker { display:flex;align-items:center;gap:14px;font-size:10px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:16px; }
+    .hero__kicker::before { content:'';display:block;width:36px;height:1px;background:var(--gold); }
+    .hero__title { font-family:'Cormorant',serif;font-size:clamp(52px,8vw,110px);font-weight:700;line-height:0.9;letter-spacing:-2px;
+      background:linear-gradient(145deg, #fff 0%, var(--gold-lt) 40%, var(--gold) 70%, var(--gold-dk) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .hero__sub { font-size:14px;font-weight:300;color:var(--dim);margin-top:20px;max-width:500px;line-height:1.75; }
+
+    /* ══ AMENITIES SECTION ══ */
+    .amen-sec { padding:0 0 160px; background:#000; }
+
+    /* ── Intro strip ── */
+    .amen-intro { max-width:1280px;margin:0 auto;padding:72px 80px 56px;display:flex;align-items:flex-end;justify-content:space-between;gap:40px;flex-wrap:wrap;border-bottom:1px solid var(--border); }
+    .tag { display:inline-flex;align-items:center;gap:10px;font-size:10px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:14px; }
+    .tag::before { content:'';display:block;width:28px;height:1px;background:var(--gold); }
+    .amen-intro__title { font-family:'Cormorant',serif;font-size:clamp(32px,4vw,52px);font-weight:700;color:var(--white);line-height:1;letter-spacing:-0.5px; }
+    .amen-intro__right { max-width:380px;font-size:14px;font-weight:300;color:var(--dim);line-height:1.85; }
+
+    /* ── Amenity items ── */
+    .amen-list { max-width:1280px;margin:0 auto;padding:0 80px; }
+
+    .amen-item {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      min-height:520px;
+      position:relative;
+      border-bottom:1px solid var(--border);
+    }
+    .amen-item:nth-child(even) { direction:rtl; }
+    .amen-item:nth-child(even) > * { direction:ltr; }
+    .amen-item:last-child { border-bottom:none; }
+
+    /* Visual side */
+    .amen-visual {
+      position:relative;
+      overflow:hidden;
+      background:#0a0a0a;
+      min-height:520px;
+    }
+    .amen-flat {
+      position:absolute;inset:0;
+      transition:opacity 0.6s ease;
+    }
+    .amen-flat img {
+      width:100%;height:100%;object-fit:cover;
+      filter:grayscale(15%) brightness(0.75);
+      transition:transform 0.8s ease,filter 0.6s;
+    }
+    .amen-item:hover .amen-flat img { transform:scale(1.05);filter:grayscale(0%) brightness(0.9); }
+    .amen-flat.hidden { opacity:0;pointer-events:none; }
+
+    /* 360 canvas preview inline */
+    .amen-pano {
+      position:absolute;inset:0;
+      opacity:0;pointer-events:none;
+      transition:opacity 0.6s ease;
+    }
+    .amen-pano.active { opacity:1;pointer-events:all; }
+    .amen-pano canvas { width:100%!important;height:100%!important;display:block; }
+
+    /* Visual overlay info */
+    .amen-visual__badge {
+      position:absolute;top:24px;left:24px;z-index:5;
+      background:rgba(0,0,0,0.7);border:1px solid var(--border);
+      padding:7px 16px;font-size:9px;letter-spacing:3px;text-transform:uppercase;
+      color:var(--gold);backdrop-filter:blur(8px);
+      display:flex;align-items:center;gap:8px;
+    }
+    .amen-visual__badge-dot { width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease infinite; }
+    @@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+
+    /* 360 toggle controls */
+    .amen-controls {
+      position:absolute;bottom:20px;right:20px;z-index:6;
+      display:flex;gap:8px;
+    }
+    .amen-ctrl {
+      width:40px;height:40px;border-radius:50%;
+      background:rgba(0,0,0,0.75);border:1px solid var(--border-bright);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--white);cursor:pointer;
+      transition:background 0.2s,border-color 0.2s,transform 0.2s;
+      backdrop-filter:blur(8px);
+    }
+    .amen-ctrl:hover { background:var(--gold);color:#000;border-color:var(--gold);transform:scale(1.1); }
+    .amen-ctrl svg { width:15px;height:15px; }
+    .amen-ctrl.active { background:var(--gold);color:#000;border-color:var(--gold); }
+
+    /* Loading spinner inside visual */
+    .amen-pano-loading {
+      position:absolute;inset:0;z-index:4;
+      display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;
+      background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);
+      opacity:0;pointer-events:none;transition:opacity 0.3s;
+    }
+    .amen-pano-loading.show { opacity:1; }
+    .spin { width:28px;height:28px;border:2px solid rgba(201,169,110,0.15);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite; }
+    @@keyframes spin { to{transform:rotate(360deg)} }
+    .spin-txt { font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim); }
+
+    /* Drag hint */
+    .amen-drag-hint {
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;
+      background:rgba(0,0,0,0.65);border:1px solid var(--border);
+      padding:10px 20px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);
+      backdrop-filter:blur(6px);border-radius:2px;pointer-events:none;
+      opacity:0;transition:opacity 0.3s;white-space:nowrap;
+    }
+    .amen-pano.active ~ .amen-drag-hint { opacity:1;animation:hintFade 3.5s 0.5s forwards; }
+    @@keyframes hintFade { 0%,80%{opacity:1} 100%{opacity:0} }
+
+    /* Number watermark */
+    .amen-item__num {
+      position:absolute;bottom:-30px;right:-10px;z-index:0;
+      font-family:'Cormorant',serif;font-size:180px;font-weight:700;
+      color:rgba(201,169,110,0.04);line-height:1;pointer-events:none;
+      letter-spacing:-6px;
+    }
+
+    /* Info side */
+    .amen-info {
+      padding:64px 72px;display:flex;flex-direction:column;justify-content:center;
+      position:relative;overflow:hidden;
+    }
+    .amen-info::before {
+      content:'';position:absolute;top:0;bottom:0;
+      width:1px;background:linear-gradient(to bottom,transparent 0%,var(--border) 20%,var(--border) 80%,transparent 100%);
+    }
+    .amen-item:nth-child(even) .amen-info::before { left:auto;right:0; }
+    .amen-item:nth-child(odd) .amen-info::before { left:0;right:auto; }
+
+    .amen-info__index { font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;font-weight:600; }
+    .amen-info__title {
+      font-family:'Cormorant',serif;font-size:clamp(40px,4vw,62px);font-weight:700;
+      color:var(--white);line-height:1;letter-spacing:-1px;margin-bottom:28px;
+    }
+    .amen-gold-line { width:44px;height:1px;background:var(--gold);margin-bottom:28px; }
+    .amen-info__desc { font-size:14px;font-weight:300;color:var(--dim);line-height:1.9;max-width:380px; }
+
+    /* CTA row */
+    .amen-cta { display:flex;align-items:center;gap:14px;margin-top:40px;flex-wrap:wrap; }
+    .amen-btn-360 {
+      display:inline-flex;align-items:center;gap:10px;
+      padding:13px 28px;background:var(--gold);color:#000;
+      font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+      transition:background var(--t),transform var(--t),box-shadow var(--t);
+      cursor:pointer;border:1px solid var(--gold);
+    }
+    .amen-btn-360:hover { background:var(--gold-lt);border-color:var(--gold-lt);transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,169,110,0.25); }
+    .amen-btn-360.active-360 { background:transparent;color:var(--gold);border-color:var(--gold); }
+    .amen-btn-360.active-360:hover { background:rgba(201,169,110,0.08); }
+    .amen-btn-360 svg { width:15px;height:15px;flex-shrink:0; }
+    .amen-btn-fs {
+      display:inline-flex;align-items:center;gap:8px;
+      padding:13px 22px;background:transparent;color:var(--white);
+      font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;
+      border:1px solid rgba(255,255,255,0.18);
+      transition:border-color var(--t),background var(--t);cursor:pointer;
+    }
+    .amen-btn-fs:hover { border-color:var(--white);background:rgba(255,255,255,0.04); }
+    .amen-btn-fs svg { width:14px;height:14px;flex-shrink:0; }
+
+    /* Feature chips */
+    .amen-chips { display:flex;gap:8px;flex-wrap:wrap;margin-top:28px; }
+    .amen-chip {
+      font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);
+      border:1px solid var(--border);padding:5px 14px;font-weight:500;
+    }
+
+    /* ══ FULLSCREEN MODAL ══ */
+    .pano-modal {
+      position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.98);
+      display:flex;flex-direction:column;
+      opacity:0;pointer-events:none;transition:opacity 0.4s ease;
+    }
+    .pano-modal.open { opacity:1;pointer-events:all; }
+    .pano-modal__hdr {
+      position:absolute;top:0;left:0;right:0;z-index:10;
+      padding:18px 28px;display:flex;align-items:center;justify-content:space-between;
+      background:linear-gradient(to bottom,rgba(0,0,0,0.9) 0%,transparent 100%);
+    }
+    .pano-modal__title { font-family:'Cormorant',serif;font-size:20px;font-weight:600;color:var(--white);display:flex;align-items:center;gap:14px; }
+    .pano-modal__title span { font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-family:'DM Sans',sans-serif;font-weight:500; }
+    .pano-close { width:44px;height:44px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--dim);background:rgba(0,0,0,0.5);transition:border-color 0.2s,color 0.2s;cursor:pointer;font-size:20px;line-height:1; }
+    .pano-close:hover { border-color:var(--gold);color:var(--white); }
+    .pano-canvas-wrap { flex:1;position:relative;overflow:hidden; }
+    #pano-fs-canvas { width:100%;height:100%;display:block; }
+    .pano-fs-loading { position:absolute;inset:0;z-index:5;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity 0.5s; }
+    .pano-fs-loading.done { opacity:0;pointer-events:none; }
+    .pano-fs-hint { position:absolute;top:70px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(0,0,0,0.6);border:1px solid var(--border);padding:9px 20px;font-size:11px;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;backdrop-filter:blur(4px);white-space:nowrap;pointer-events:none; }
+
+    /* ══ REVEAL ══ */
+    .reveal { opacity:0;transform:translateY(30px);transition:opacity 0.9s ease,transform 0.9s ease; }
+    .reveal.in { opacity:1;transform:translateY(0); }
+    .reveal-l { opacity:0;transform:translateX(-30px);transition:opacity 0.9s ease,transform 0.9s ease; }
+    .reveal-l.in { opacity:1;transform:translateX(0); }
+    .reveal-r { opacity:0;transform:translateX(30px);transition:opacity 0.9s ease,transform 0.9s ease; }
+    .reveal-r.in { opacity:1;transform:translateX(0); }
+
+        /* ══ FOOTER ══ */
+   .ftr { background:#000;border-top:1px solid var(--border);padding:80px 80px 40px; }
+   .ftr__inner { max-width:1200px;margin:0 auto; }
+   .ftr__top { display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:56px;padding-bottom:60px;border-bottom:1px solid var(--border);margin-bottom:32px; }
+   .ftr__brand { display:flex;flex-direction:column;gap:16px; }
+   .ftr__logo { display:flex;align-items:center;gap:12px; }
+   .ftr__logo img { width:34px; }
+   .ftr__logo strong { font-family:'Cormorant',serif;font-size:18px;color:var(--white);font-weight:600;letter-spacing:1px; }
+   .ftr__brand p { font-size:13px;color:rgba(255,255,255,0.28);line-height:1.7;font-weight:300; }
+   .ftr__partners { display:flex;gap:18px;flex-wrap:wrap;margin-top:8px; }
+   .ftr__partners a:hover { opacity:0.6; }
+   .ftr__col h4 { font-size:9px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:20px; }
+   .ftr__col a { display:block;font-size:13px;color:rgba(255,255,255,0.3);padding:6px 0;transition:color 0.2s,padding-left 0.2s; }
+   .ftr__col a:hover { color:var(--white);padding-left:8px; }
+   .ftr__bot { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:11px;color:rgba(255,255,255,0.18);letter-spacing:0.5px; }
+   .ftr__bot a { color:rgba(255,255,255,0.22);transition:color 0.2s; }
+   .ftr__bot a:hover { color:var(--white); }
+   .ftr__atm { color:var(--gold) !important;font-weight:500; }
+   .ftr__atm:hover { color:var(--gold-lt) !important; }
+   .sp-wrap { display:flex;align-items:center;justify-content:center;min-height:300px; }
+   .sp { width:30px;height:30px;border:1.5px solid rgba(201,169,110,0.1);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite; }
+
+
+    /* ══ RESPONSIVE ══ */
+    @@media(max-width:1100px){
+      .amen-item { grid-template-columns:1fr; min-height:auto; }
+      .amen-item:nth-child(even) { direction:ltr; }
+      .amen-visual { min-height:380px; aspect-ratio:16/9; }
+      .amen-info { padding:48px 40px; }
+      .amen-info::before { display:none; }
+      .amen-list { padding:0 40px; }
+      .amen-intro { padding:60px 40px 48px; }
+      .ftr__top { grid-template-columns:1fr 1fr; }
+    }
+    @@media(max-width:768px){
+      .hdr__nav { display:none; }
+      .ham { display:flex; }
+      .hero__content { padding:0 24px 48px; }
+      .amen-intro { padding:48px 24px 36px; }
+      .amen-list { padding:0 24px; }
+      .amen-info { padding:40px 24px; }
+      .amen-info__title { font-size:clamp(36px,9vw,52px); }
+      .ftr { padding:60px 24px 32px; }
+      .ftr__top { grid-template-columns:1fr;gap:36px; }
+      .ftr__bot { flex-direction:column;align-items:flex-start; }
+    }
+    @@media(max-width:480px){
+      .amen-cta { flex-direction:column;align-items:flex-start; }
+      .amen-btn-360,.amen-btn-fs { width:100%;justify-content:center; }
+    }
+</style>
+}
+
+<main>
+
+  <!-- ══ FULLSCREEN PANORAMA MODAL ══
+       FIX: This entire block was MISSING from the original — causing openFullscreen() to fail silently.
+  -->
+  <div class="pano-modal" id="pano-modal" role="dialog" aria-modal="true" aria-label="360° Panorama Viewer">
+    <div class="pano-canvas-wrap">
+      <canvas id="pano-fs-canvas"></canvas>
+      <!-- Loading overlay inside modal -->
+      <div class="pano-fs-loading" id="pano-fs-loading">
+        <div class="spin"></div>
+        <div class="spin-txt">Loading 360°</div>
+      </div>
+      <!-- Drag hint inside modal -->
+      <div class="pano-fs-hint" id="pano-fs-hint" style="animation:hintFade 4.5s 1s forwards;">🖱 Drag to explore &nbsp;·&nbsp; Scroll to zoom</div>
+    </div>
+    <!-- Modal header -->
+    <div class="pano-modal__hdr">
+      <div class="pano-modal__title">
+        <span>360° Preview</span>
+        <span id="pano-fs-name"></span>
+      </div>
+      <button class="pano-close" id="pano-close" title="Close (Esc)" aria-label="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__bg">
+      <img src="https://www.smritivanearthquakemuseum.biz/assets2/1..jpg" alt="Amenities at Smritivan" loading="eager">
+    </div>
+    <div class="hero__ov"></div>
+    <div class="hero__accent"></div>
+    <div class="hero__content">
+      <p class="hero__kicker">Smritivan Memorial & Museum</p>
+      <h1 class="hero__title">Amenities</h1>
+      <p class="hero__sub">Everything you need for a comfortable, enriching, and memorable visit to India's largest earthquake memorial.</p>
+    </div>
+  </section>
+
+  <!-- AMENITIES -->
+  <section class="amen-sec">
+    <div class="amen-intro reveal">
+      <div class="amen-intro__left">
+        <span class="tag">World-Class Facilities</span>
+        <h2 class="amen-intro__title">Every Detail,<br>Thoughtfully Designed</h2>
+      </div>
+      <p class="amen-intro__right">From fine dining to curated souvenirs, each amenity at Smritivan is crafted to complement your journey through memory, resilience, and Gujarat's rich cultural heritage. Click Preview 360° on any amenity to explore its environment.</p>
+    </div>
+
+    <div class="amen-list">
+
+      <!-- ── 1. SHOP ── -->
+      <div class="amen-item reveal">
+        <div class="amen-visual" id="vis-shop">
+          <div class="amen-flat" id="flat-shop">
+            <img src="~/assets/Aminites/Shop.jpg" alt="Shop at Smritivan"/>
+          </div>
+          <div class="amen-pano" id="pano-shop">
+            <canvas id="canvas-shop" style="width:100%;height:100%;display:block;"></canvas>
+          </div>
+          <div class="amen-pano-loading" id="loading-shop"><div class="spin"></div><div class="spin-txt">Loading 360°</div></div>
+          <div class="amen-drag-hint">🖱 Drag to explore</div>
+          <div class="amen-visual__badge"><div class="amen-visual__badge-dot"></div>360° Preview Available</div>
+          <div class="amen-controls">
+            <!-- FIX: Use data-attributes instead of inline onclick with Razor paths -->
+            <button class="amen-ctrl" id="btn360-shop" data-id="shop" data-src="/assets/Aminites/Shop.jpg" data-name="Shop" data-action="toggle" title="Toggle 360° Preview">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M12 2a14.5 14.5 0 0 1 0 20"/><path d="M2 12h20"/></svg>
+            </button>
+            <button class="amen-ctrl" data-id="shop" data-src="/assets/Aminites/Shop.jpg" data-name="Shop" data-action="fullscreen" title="Fullscreen 360°">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </button>
+          </div>
+          <div class="amen-item__num">01</div>
+        </div>
+        <div class="amen-info reveal-r">
+          <div class="amen-info__index">Amenity 01 / 05</div>
+          <h3 class="amen-info__title">Shop</h3>
+          <div class="amen-gold-line"></div>
+          <p class="amen-info__desc">Take home memories of your visit from our curated souvenir shop. A variety of unique, locally crafted items inspired by Kutch's rich artisanal heritage — from hand-embroidered textiles to museum-exclusive keepsakes — await you.</p>
+          <div class="amen-chips">
+            <span class="amen-chip">Souvenirs</span>
+            <span class="amen-chip">Local Crafts</span>
+            <span class="amen-chip">Museum Exclusives</span>
+          </div>
+          <div class="amen-cta">
+            <button class="amen-btn-360" id="cta360-shop" data-id="shop" data-src="/assets/Aminites/Shop.jpg" data-name="Shop" data-action="toggle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M2 12h20"/></svg>
+              Preview 360°
+            </button>
+            <button class="amen-btn-fs" data-id="shop" data-src="/assets/Aminites/Shop.jpg" data-name="Shop" data-action="fullscreen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              Full Screen
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 2. CAFETERIA ── -->
+      <div class="amen-item reveal">
+        <div class="amen-visual" id="vis-cafeteria">
+          <div class="amen-flat" id="flat-cafeteria">
+            <img src="~/assets/Aminites/Cafeteria.jpg" alt="Cafeteria"/>
+          </div>
+          <div class="amen-pano" id="pano-cafeteria">
+            <canvas id="canvas-cafeteria" style="width:100%;height:100%;display:block;"></canvas>
+          </div>
+          <div class="amen-pano-loading" id="loading-cafeteria"><div class="spin"></div><div class="spin-txt">Loading 360°</div></div>
+          <div class="amen-drag-hint">🖱 Drag to explore</div>
+          <div class="amen-visual__badge"><div class="amen-visual__badge-dot"></div>360° Preview Available</div>
+          <div class="amen-controls">
+            <button class="amen-ctrl" id="btn360-cafeteria" data-id="cafeteria" data-src="/assets/Aminites/Cafeteria.jpg" data-name="Cafeteria" data-action="toggle" title="Toggle 360°">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M12 2a14.5 14.5 0 0 1 0 20"/><path d="M2 12h20"/></svg>
+            </button>
+            <button class="amen-ctrl" data-id="cafeteria" data-src="/assets/Aminites/Cafeteria.jpg" data-name="Cafeteria" data-action="fullscreen" title="Fullscreen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </button>
+          </div>
+          <div class="amen-item__num">02</div>
+        </div>
+        <div class="amen-info reveal-l">
+          <div class="amen-info__index">Amenity 02 / 05</div>
+          <h3 class="amen-info__title">Cafeteria</h3>
+          <div class="amen-gold-line"></div>
+          <p class="amen-info__desc">An excellent cafeteria catering to guests with a wide selection of beverages and light refreshments. The perfect pause point between galleries — recharge with a cup of masala chai or Gujarat's beloved snacks.</p>
+          <div class="amen-chips">
+            <span class="amen-chip">Beverages</span>
+            <span class="amen-chip">Light Snacks</span>
+            <span class="amen-chip">Gujarati Flavours</span>
+          </div>
+          <div class="amen-cta">
+            <button class="amen-btn-360" id="cta360-cafeteria" data-id="cafeteria" data-src="/assets/Aminites/Cafeteria.jpg" data-name="Cafeteria" data-action="toggle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M2 12h20"/></svg>
+              Preview 360°
+            </button>
+            <button class="amen-btn-fs" data-id="cafeteria" data-src="/assets/Aminites/Cafeteria.jpg" data-name="Cafeteria" data-action="fullscreen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              Full Screen
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 3. PLAY AREA ── -->
+      <div class="amen-item reveal">
+        <div class="amen-visual" id="vis-playarea">
+          <div class="amen-flat" id="flat-playarea">
+            <img src="~/assets/Aminites/Kidzone.jpg" alt="Play Area"/>
+          </div>
+          <div class="amen-pano" id="pano-playarea">
+            <canvas id="canvas-playarea" style="width:100%;height:100%;display:block;"></canvas>
+          </div>
+          <div class="amen-pano-loading" id="loading-playarea"><div class="spin"></div><div class="spin-txt">Loading 360°</div></div>
+          <div class="amen-drag-hint">🖱 Drag to explore</div>
+          <div class="amen-visual__badge"><div class="amen-visual__badge-dot"></div>360° Preview Available</div>
+          <div class="amen-controls">
+            <button class="amen-ctrl" id="btn360-playarea" data-id="playarea" data-src="/assets/Aminites/Kidzone.jpg" data-name="Play Area" data-action="toggle" title="Toggle 360°">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M12 2a14.5 14.5 0 0 1 0 20"/><path d="M2 12h20"/></svg>
+            </button>
+            <button class="amen-ctrl" data-id="playarea" data-src="/assets/Aminites/Kidzone.jpg" data-name="Play Area" data-action="fullscreen" title="Fullscreen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </button>
+          </div>
+          <div class="amen-item__num">03</div>
+        </div>
+        <div class="amen-info reveal-r">
+          <div class="amen-info__index">Amenity 03 / 05</div>
+          <h3 class="amen-info__title">Play Area</h3>
+          <div class="amen-gold-line"></div>
+          <p class="amen-info__desc">Wondering what to do with toddlers and small children? A dedicated play area is available for young visitors. Let the little ones explore, play, and create memories while parents take in the museum at their own pace.</p>
+          <div class="amen-chips">
+            <span class="amen-chip">Family-Friendly</span>
+            <span class="amen-chip">Toddler Zone</span>
+            <span class="amen-chip">Safe & Supervised</span>
+          </div>
+          <div class="amen-cta">
+            <button class="amen-btn-360" id="cta360-playarea" data-id="playarea" data-src="/assets/Aminites/Kidzone.jpg" data-name="Play Area" data-action="toggle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M2 12h20"/></svg>
+              Preview 360°
+            </button>
+            <button class="amen-btn-fs" data-id="playarea" data-src="/assets/Aminites/Kidzone.jpg" data-name="Play Area" data-action="fullscreen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              Full Screen
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 4. LIBRARY ── -->
+      <div class="amen-item reveal">
+        <div class="amen-visual" id="vis-library">
+          <div class="amen-flat" id="flat-library">
+            <img src="~/assets/Aminites/Library.jpg" alt="Library"/>
+          </div>
+          <div class="amen-pano" id="pano-library">
+            <canvas id="canvas-library" style="width:100%;height:100%;display:block;"></canvas>
+          </div>
+          <div class="amen-pano-loading" id="loading-library"><div class="spin"></div><div class="spin-txt">Loading 360°</div></div>
+          <div class="amen-drag-hint">🖱 Drag to explore</div>
+          <div class="amen-visual__badge"><div class="amen-visual__badge-dot"></div>360° Preview Available</div>
+          <div class="amen-controls">
+            <button class="amen-ctrl" id="btn360-library" data-id="library" data-src="/assets/Aminites/Library.jpg" data-name="Library" data-action="toggle" title="Toggle 360°">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M12 2a14.5 14.5 0 0 1 0 20"/><path d="M2 12h20"/></svg>
+            </button>
+            <button class="amen-ctrl" data-id="library" data-src="/assets/Aminites/Library.jpg" data-name="Library" data-action="fullscreen" title="Fullscreen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </button>
+          </div>
+          <div class="amen-item__num">04</div>
+        </div>
+        <div class="amen-info reveal-l">
+          <div class="amen-info__index">Amenity 04 / 05</div>
+          <h3 class="amen-info__title">Library</h3>
+          <div class="amen-gold-line"></div>
+          <p class="amen-info__desc">Explore information on the Smritivan Museum through related books, research papers, and archival materials. A quiet sanctuary of knowledge — from seismology and disaster management to the cultural heritage of Kutch and Gujarat.</p>
+          <div class="amen-chips">
+            <span class="amen-chip">Research Papers</span>
+            <span class="amen-chip">Archives</span>
+            <span class="amen-chip">Cultural Heritage</span>
+          </div>
+          <div class="amen-cta">
+            <button class="amen-btn-360" id="cta360-library" data-id="library" data-src="/assets/Aminites/Library.jpg" data-name="Library" data-action="toggle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M2 12h20"/></svg>
+              Preview 360°
+            </button>
+            <button class="amen-btn-fs" data-id="library" data-src="/assets/Aminites/Library.jpg" data-name="Library" data-action="fullscreen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              Full Screen
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 5. RESTAURANT ── -->
+      <div class="amen-item reveal">
+        <div class="amen-visual" id="vis-restaurant">
+          <div class="amen-flat" id="flat-restaurant">
+            <img src="~/assets/Aminites/Resturant Rooftop.jpg" alt="Restaurant — The Kutch Kitchen"/>
+          </div>
+          <div class="amen-pano" id="pano-restaurant">
+            <canvas id="canvas-restaurant" style="width:100%;height:100%;display:block;"></canvas>
+          </div>
+          <div class="amen-pano-loading" id="loading-restaurant"><div class="spin"></div><div class="spin-txt">Loading 360°</div></div>
+          <div class="amen-drag-hint">🖱 Drag to explore</div>
+          <div class="amen-visual__badge"><div class="amen-visual__badge-dot"></div>360° Preview Available</div>
+          <div class="amen-controls">
+            <button class="amen-ctrl" id="btn360-restaurant" data-id="restaurant" data-src="/assets/Aminites/Resturant Rooftop.jpg" data-name="The Kutch Kitchen" data-action="toggle" title="Toggle 360°">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M12 2a14.5 14.5 0 0 1 0 20"/><path d="M2 12h20"/></svg>
+            </button>
+            <button class="amen-ctrl" data-id="restaurant" data-src="/assets/Aminites/Resturant Rooftop.jpg" data-name="The Kutch Kitchen" data-action="fullscreen" title="Fullscreen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </button>
+          </div>
+          <div class="amen-item__num">05</div>
+        </div>
+        <div class="amen-info reveal-r">
+          <div class="amen-info__index">Amenity 05 / 05</div>
+          <h3 class="amen-info__title">The Kutch<br>Kitchen</h3>
+          <div class="amen-gold-line"></div>
+          <p class="amen-info__desc">"Culinary Delights at Smritivan" — A multi-cuisine restaurant celebrating the bold, earthy flavours of Kutch alongside continental options. Dine with panoramic views of Bhujiyo Dungar and the memorial park stretching across 170 acres.</p>
+          <div class="amen-chips">
+            <span class="amen-chip">Multi-Cuisine</span>
+            <span class="amen-chip">Panoramic Views</span>
+            <span class="amen-chip">Kutchi Specialities</span>
+          </div>
+          <div class="amen-cta">
+            <button class="amen-btn-360" id="cta360-restaurant" data-id="restaurant" data-src="/assets/Aminites/Resturant Rooftop.jpg" data-name="The Kutch Kitchen" data-action="toggle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M2 12h20"/></svg>
+              Preview 360°
+            </button>
+            <button class="amen-btn-fs" data-id="restaurant" data-src="/assets/Aminites/Resturant Rooftop.jpg" data-name="The Kutch Kitchen" data-action="fullscreen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              Full Screen
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /amen-list -->
+  </section>
+
+</main>
+
+@section Scripts {
+<!-- Three.js r128 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ══════════════════════════════════════════════════════
+     SCROLL REVEAL
+  ══════════════════════════════════════════════════════ */
+  var revEls = document.querySelectorAll('.reveal, .reveal-l, .reveal-r');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.06 });
+  revEls.forEach(function (el) { io.observe(el); });
+
+  /* ══════════════════════════════════════════════════════
+     HEADER SCROLL  (safe: only runs if element exists)
+  ══════════════════════════════════════════════════════ */
+  var hdr = document.getElementById('hdr');
+  if (hdr) {
+    window.addEventListener('scroll', function () {
+      hdr.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
+  }
+
+  /* ══════════════════════════════════════════════════════
+     MOBILE NAV  (safe: only runs if elements exist)
+  ══════════════════════════════════════════════════════ */
+  var ham = document.getElementById('ham-btn');
+  var mobNav = document.getElementById('mob-nav');
+  var mobOv = document.getElementById('mob-ov');
+  var mobClose = document.getElementById('mob-close');
+  if (ham && mobNav && mobOv) {
+    function nOpen() { mobNav.classList.add('open'); mobOv.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function nClose() { mobNav.classList.remove('open'); mobOv.classList.remove('open'); document.body.style.overflow = ''; }
+    ham.addEventListener('click', nOpen);
+    mobOv.addEventListener('click', nClose);
+    if (mobClose) mobClose.addEventListener('click', nClose);
+    mobNav.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', nClose); });
+  }
+
+  /* ══════════════════════════════════════════════════════
+     DROPDOWN  (safe)
+  ══════════════════════════════════════════════════════ */
+  document.addEventListener('click', function (e) {
+    var dd = document.getElementById('nd-about');
+    if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+  });
+
+  /* ══════════════════════════════════════════════════════
+     360° VIEWER ENGINE
+     FIX: Rewrote button wiring to use data-attributes on
+          delegated click events — no more inline onclick()
+          calls with broken Razor tilde paths in JS context.
+  ══════════════════════════════════════════════════════ */
+
+  var amenState = {};   // { [id]: { viewer } | null }
+  var active360 = null; // currently open inline amenity id
+
+  /* ── Build a Three.js equirectangular panorama viewer ── */
+  function buildViewer(canvasEl, src, onReady) {
+    var container = canvasEl.parentElement;
+    var w = container.clientWidth || 700;
+    var h = container.clientHeight || 520;
+
+    var scene    = new THREE.Scene();
+    var camera   = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
+    camera.position.set(0, 0, 0.001);
+
+    var renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(w, h, false);
+
+    /* Sphere geometry — flipped inside-out for equirectangular display */
+    var geo = new THREE.SphereGeometry(500, 60, 40);
+    geo.scale(-1, 1, 1);
+    var sphere = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x111111 }));
+    scene.add(sphere);
+
+    var lon = 0, lat = 0, fov = 75;
+    var isDrag = false, px = 0, py = 0;
+    var tx = 0, ty = 0;
+    var ready = false;
+
+    /* Load equirectangular texture */
+    var loader = new THREE.TextureLoader();
+    loader.crossOrigin = 'anonymous';
+    loader.load(
+      src,
+      function (tex) {
+        tex.minFilter = THREE.LinearFilter;
+        sphere.material = new THREE.MeshBasicMaterial({ map: tex });
+        ready = true;
+        if (onReady) onReady();
+      },
+      undefined,
+      function (err) {
+        console.warn('[360 viewer] Texture load failed for:', src, err);
+        ready = true; // unblock render loop even on error
+        if (onReady) onReady();
+      }
+    );
+
+    /* ── Input handlers ── */
+    canvasEl.addEventListener('mousedown', function (e) { isDrag = true; px = e.clientX; py = e.clientY; });
+    window.addEventListener('mouseup',    function ()  { isDrag = false; });
+    window.addEventListener('mousemove',  function (e) {
+      if (!isDrag) return;
+      lon -= (e.clientX - px) * 0.18;
+      lat += (e.clientY - py) * 0.10;
+      lat  = Math.max(-80, Math.min(80, lat));
+      px   = e.clientX; py = e.clientY;
+    });
+
+    canvasEl.addEventListener('touchstart', function (e) {
+      if (e.touches.length === 1) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }
+    }, { passive: true });
+    canvasEl.addEventListener('touchmove', function (e) {
+      if (e.touches.length === 1) {
+        lon -= (e.touches[0].clientX - tx) * 0.22;
+        lat += (e.touches[0].clientY - ty) * 0.14;
+        lat  = Math.max(-80, Math.min(80, lat));
+        tx   = e.touches[0].clientX; ty = e.touches[0].clientY;
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    canvasEl.addEventListener('wheel', function (e) {
+      fov = Math.max(30, Math.min(100, fov + e.deltaY * 0.05));
+      camera.fov = fov;
+      camera.updateProjectionMatrix();
+    }, { passive: true });
+
+    /* ── Render loop with gentle auto-pan ── */
+    var raf;
+    function loop() {
+      raf = requestAnimationFrame(loop);
+      if (!ready) return;
+      if (!isDrag) lon += 0.04;
+      var phi   = THREE.MathUtils.degToRad(90 - lat);
+      var theta = THREE.MathUtils.degToRad(lon);
+      camera.lookAt(
+        Math.sin(phi) * Math.cos(theta),
+        Math.cos(phi),
+        Math.sin(phi) * Math.sin(theta)
+      );
+      renderer.render(scene, camera);
+    }
+    loop();
+
+    /* ── Keep canvas sized to its container ── */
+    var resizeObs = new ResizeObserver(function () {
+      var nw = container.clientWidth;
+      var nh = container.clientHeight;
+      if (!nw || !nh) return;
+      camera.aspect = nw / nh;
+      camera.updateProjectionMatrix();
+      renderer.setSize(nw, nh, false);
+    });
+    resizeObs.observe(container);
+
+    return {
+      destroy: function () {
+        cancelAnimationFrame(raf);
+        renderer.dispose();
+        resizeObs.disconnect();
+      }
+    };
+  }
+
+  /* ── Inline 360 toggle ── */
+  function toggle360(id, src) {
+    if (active360 === id) { stop360(id); return; }
+    if (active360) stop360(active360);
+    active360 = id;
+    start360(id, src);
+  }
+
+  function start360(id, src) {
+    var panoEl   = document.getElementById('pano-' + id);
+    var flatEl   = document.getElementById('flat-' + id);
+    var loadEl   = document.getElementById('loading-' + id);
+    var btnEl    = document.getElementById('btn360-' + id);
+    var ctaEl    = document.getElementById('cta360-' + id);
+
+    if (!panoEl) return;
+
+    loadEl && loadEl.classList.add('show');
+    panoEl.classList.add('active');
+    flatEl && flatEl.classList.add('hidden');
+    btnEl  && btnEl.classList.add('active');
+    if (ctaEl) {
+      ctaEl.classList.add('active-360');
+      ctaEl.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;flex-shrink:0">' +
+        '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M2 12h20"/></svg> Exit 360°';
+    }
+
+    var canvasEl = document.getElementById('canvas-' + id);
+    var viewer = buildViewer(canvasEl, src, function () {
+      loadEl && loadEl.classList.remove('show');
+    });
+    amenState[id] = { viewer: viewer };
+  }
+
+  function stop360(id) {
+    var st = amenState[id];
+    if (st && st.viewer) st.viewer.destroy();
+    amenState[id] = null;
+    active360 = null;
+
+    var panoEl = document.getElementById('pano-' + id);
+    var flatEl = document.getElementById('flat-' + id);
+    var loadEl = document.getElementById('loading-' + id);
+    var btnEl  = document.getElementById('btn360-' + id);
+    var ctaEl  = document.getElementById('cta360-' + id);
+
+    panoEl && panoEl.classList.remove('active');
+    flatEl && flatEl.classList.remove('hidden');
+    loadEl && loadEl.classList.remove('show');
+    btnEl  && btnEl.classList.remove('active');
+    if (ctaEl) {
+      ctaEl.classList.remove('active-360');
+      ctaEl.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;flex-shrink:0">' +
+        '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20"/><path d="M2 12h20"/></svg> Preview 360°';
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     FULLSCREEN MODAL
+     FIX: Modal HTML now exists in the page (was missing).
+          JS here just drives open/close/build.
+  ══════════════════════════════════════════════════════ */
+  var panoModal     = document.getElementById('pano-modal');
+  var panoClose     = document.getElementById('pano-close');
+  var panoFsLoading = document.getElementById('pano-fs-loading');
+  var panoFsCanvas  = document.getElementById('pano-fs-canvas');
+  var panoFsName    = document.getElementById('pano-fs-name');
+  var fsViewer      = null;
+
+  function openFullscreen(src, name) {
+    if (!panoModal) return;
+    document.body.style.overflow = 'hidden';
+    panoModal.classList.add('open');
+    if (panoFsName)    panoFsName.textContent = name;
+    if (panoFsLoading) panoFsLoading.classList.remove('done');
+
+    if (fsViewer) { fsViewer.destroy(); fsViewer = null; }
+
+    /* Small delay lets the modal finish its CSS fade-in before
+       the renderer measures the canvas dimensions */
+    setTimeout(function () {
+      if (!panoFsCanvas) return;
+      fsViewer = buildViewer(panoFsCanvas, src, function () {
+        panoFsLoading && panoFsLoading.classList.add('done');
+      });
+    }, 80);
+  }
+
+  if (panoClose) {
+    panoClose.addEventListener('click', function () {
+      panoModal.classList.remove('open');
+      document.body.style.overflow = '';
+      if (fsViewer) { fsViewer.destroy(); fsViewer = null; }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && panoModal && panoModal.classList.contains('open')) {
+      panoClose && panoClose.click();
+    }
+  });
+
+  /* ══════════════════════════════════════════════════════
+     DELEGATED BUTTON EVENTS
+     FIX: Replaced all inline onclick="toggle360(...)" /
+          onclick="openFullscreen(...)" calls (which had
+          broken "~assets/..." Razor paths in JS context)
+          with a single delegated listener that reads the
+          correct, Razor-resolved src from data-src.
+  ══════════════════════════════════════════════════════ */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-action]');
+    if (!btn) return;
+
+    var action = btn.dataset.action;
+    var id     = btn.dataset.id;
+    var src    = btn.dataset.src;
+    var name   = btn.dataset.name || id;
+
+    if (action === 'toggle')     toggle360(id, src);
+    if (action === 'fullscreen') openFullscreen(src, name);
+  });
+
+})();
+</script>
+}

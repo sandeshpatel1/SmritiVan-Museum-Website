@@ -1,0 +1,232 @@
+@{
+    ViewData["Title"] = "Check Dam";
+}
+
+<main>
+<!-- SHARED: mobile-nav -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+  <aside class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav__header">
+      <img src="https://www.smritivanearthquakemuseum.biz/assets2/logo.png" alt="Smritivan" width="40">
+      <button class="mobile-nav__close" id="mobile-nav-close" aria-label="Close menu">&times;</button>
+    </div>
+    <nav class="mobile-nav__links">
+      <a href="/Home/Index">Home</a>
+      <a href="/Home/Museum">Earthquake Museum</a>
+      <a href="/Home/Memorial">Memorial</a>
+      <a href="/Home/BriefHistory">Brief History</a>
+      <a href="/Home/Gallery">Gallery</a>
+      <a href="/Home/Events">Events</a>
+      <a href="/Home/Tickets">Tickets</a>
+      <a href="/Home/MuseumTour">Audio Guide</a>
+      <a href="/Home/Amenities">Amenities</a>
+      <a href="/Home/MapPage">Museum Map</a>
+      <a href="/Home/Faq">FAQ</a>
+      <a href="/Home/Contact">Contact</a>
+    </nav>
+    <div class="mobile-nav__footer">
+      <div class="mobile-nav__social">
+        <a href="https://www.instagram.com/smritivanearthquakemuseum/?hl=en" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.facebook.com/SmritivanEarthquakeMuseum/" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://twitter.com/smritivan/" target="_blank" rel="noopener">Twitter</a>
+      </div>
+    </div>
+  </aside>
+
+  <main id="page-content">
+
+    <section class="hero ">
+      <div class="hero__bg">
+        <img src="https://www.smritivanearthquakemuseum.biz/assets2/3%20(1).jpeg" alt="Smriti Kund" loading="eager">
+      </div>
+      <div class="hero__overlay hero__overlay--heavy"></div>
+      <div class="hero__content hero__content--animate">
+        <div class="smritivan-tag">Memorial</div>
+        <h1 style="font-size:clamp(var(--fs-3xl),4vw,var(--fs-5xl));font-weight:var(--fw-bold);color:var(--color-white);margin-bottom:var(--sp-sm);text-shadow:0 2px 16px rgba(0,0,0,0.25);">Smriti Kund</h1>
+        <p style="font-size:var(--fs-md);color:rgba(255,255,255,0.88);line-height:1.7;max-width:640px;">The Smritivan Earthquake Memorial has 50 check-dam reservoirs that house the name plates of almost 13,000 victims of the 2001 earthquake.</p>
+      </div>
+    </section>
+
+    <div class="checkdam-search">
+      <select class="select-field" id="checkdam-city">
+        <option value="Bhuj">Bhuj</option>
+      </select>
+      <input class="input-field" id="checkdam-name" type="text" placeholder="Search victim name...">
+      <button class="btn btn--primary btn--full" id="checkdam-search-btn">Search</button>
+    </div>
+
+    <div class="checkdam-count" id="checkdam-count"></div>
+
+    <div class="checkdam-results" id="checkdam-results">
+      <div class="loader"><div class="loader__spinner"></div></div>
+    </div>
+
+  </main>
+
+  <!-- SHARED: footer -->
+</main>
+
+@section Scripts {
+<script src="js/common.js"></script>
+  <script>
+    (function() {
+      var btn = document.getElementById('hamburger-btn');
+      var nav = document.getElementById('mobile-nav');
+      var overlay = document.getElementById('mobile-nav-overlay');
+      var closeBtn = document.getElementById('mobile-nav-close');
+      function toggle() { nav.classList.toggle('open'); overlay.classList.toggle('open'); document.body.classList.toggle('nav-open'); }
+      function close() { nav.classList.remove('open'); overlay.classList.remove('open'); document.body.classList.remove('nav-open'); }
+      btn.addEventListener('click', toggle);
+      overlay.addEventListener('click', close);
+      closeBtn.addEventListener('click', close);
+      nav.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', close); });
+      var dropBtn = document.querySelector('.site-nav__link--dropdown');
+      if (dropBtn) {
+        dropBtn.addEventListener('click', function(e) { e.preventDefault(); dropBtn.parentElement.classList.toggle('open'); });
+        document.addEventListener('click', function(e) { if (!dropBtn.parentElement.contains(e.target)) dropBtn.parentElement.classList.remove('open'); });
+      }
+    })();
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var esc = function(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+
+      var citySelect = document.getElementById('checkdam-city');
+      var nameInput = document.getElementById('checkdam-name');
+      var searchBtn = document.getElementById('checkdam-search-btn');
+      var resultsEl = document.getElementById('checkdam-results');
+      var countEl = document.getElementById('checkdam-count');
+
+      function renderResults(data) {
+        if (!data || !data.length) {
+          return '<div class="empty-state"><p>No results found</p></div>';
+        }
+        return data.map(function(item) {
+          var name = esc(item.Name_English || '');
+          var city = esc(item.city || '');
+          var chkdam = esc(item.chkdam || '');
+          var lat = item.latitude || '';
+          var lng = item.longitude || '';
+          return '<div class="victim-card">' +
+            '<div>' +
+              '<div class="victim-card__name">' + name + '</div>' +
+              '<div class="victim-card__city">' + city + ' - ' + chkdam + '</div>' +
+            '</div>' +
+            '<div class="victim-card__direction" data-lat="' + esc(String(lat)) + '" data-lng="' + esc(String(lng)) + '">' +
+              'Get Direction' +
+            '</div>' +
+          '</div>';
+        }).join('');
+      }
+
+      // Fetch cities for dropdown
+      Smritivan.api.getCheckDamCities().then(function(cities) {
+        if (!cities || !cities.length) return;
+        // Clear existing options and rebuild with "All" plus API cities
+        while (citySelect.firstChild) citySelect.removeChild(citySelect.firstChild);
+        var allOpt = document.createElement('option');
+        allOpt.value = 'All';
+        allOpt.textContent = 'All';
+        citySelect.appendChild(allOpt);
+        cities.forEach(function(c) {
+          var opt = document.createElement('option');
+          opt.value = c.city;
+          opt.textContent = c.city;
+          citySelect.appendChild(opt);
+        });
+      }).catch(function() {
+        // Keep fallback "Bhuj" option
+      });
+
+      // Fetch initial dashboard data
+      Smritivan.api.getCheckDamDashboard().then(function(data) {
+        if (data && data.length) {
+          countEl.textContent = data.length + ' results found';
+          resultsEl.textContent = '';
+          var frag = document.createRange().createContextualFragment(renderResults(data));
+          resultsEl.appendChild(frag);
+        } else {
+          countEl.textContent = '';
+          resultsEl.textContent = '';
+          var emptyEl = document.createElement('div');
+          emptyEl.className = 'empty-state';
+          var p = document.createElement('p');
+          p.textContent = 'No results found';
+          emptyEl.appendChild(p);
+          resultsEl.appendChild(emptyEl);
+        }
+      }).catch(function() {
+        resultsEl.textContent = '';
+        var emptyEl = document.createElement('div');
+        emptyEl.className = 'empty-state';
+        var p = document.createElement('p');
+        p.textContent = 'Unable to load data';
+        emptyEl.appendChild(p);
+        resultsEl.appendChild(emptyEl);
+      });
+
+      // Search handler
+      function doSearch() {
+        var name = nameInput.value.trim();
+        var city = citySelect.value;
+
+        resultsEl.textContent = '';
+        var loader = document.createElement('div');
+        loader.className = 'loader';
+        var spinner = document.createElement('div');
+        spinner.className = 'loader__spinner';
+        loader.appendChild(spinner);
+        resultsEl.appendChild(loader);
+        countEl.textContent = '';
+
+        var request = city === 'All'
+          ? Smritivan.api.getCheckDamAllFilter(name, city)
+          : Smritivan.api.getCheckDamFilter(name, city);
+
+        request.then(function(data) {
+          resultsEl.textContent = '';
+          if (data && data.length) {
+            countEl.textContent = data.length + ' results found';
+            var frag = document.createRange().createContextualFragment(renderResults(data));
+            resultsEl.appendChild(frag);
+          } else {
+            countEl.textContent = '0 results found';
+            var emptyEl = document.createElement('div');
+            emptyEl.className = 'empty-state';
+            var p = document.createElement('p');
+            p.textContent = 'No results found';
+            emptyEl.appendChild(p);
+            resultsEl.appendChild(emptyEl);
+          }
+        }).catch(function() {
+          resultsEl.textContent = '';
+          countEl.textContent = '';
+          var emptyEl = document.createElement('div');
+          emptyEl.className = 'empty-state';
+          var p = document.createElement('p');
+          p.textContent = 'Unable to load data';
+          emptyEl.appendChild(p);
+          resultsEl.appendChild(emptyEl);
+        });
+      }
+
+      searchBtn.addEventListener('click', doSearch);
+      nameInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') doSearch();
+      });
+
+      // Direction clicks via event delegation
+      resultsEl.addEventListener('click', function(e) {
+        var dirEl = e.target.closest('.victim-card__direction');
+        if (!dirEl) return;
+        var lat = dirEl.dataset.lat;
+        var lng = dirEl.dataset.lng;
+        if (lat && lng) {
+          window.open('https://www.google.com/maps?q=' + lat + ',' + lng, '_blank');
+        }
+      });
+
+      Smritivan.initPage();
+    });
+  </script>
+}

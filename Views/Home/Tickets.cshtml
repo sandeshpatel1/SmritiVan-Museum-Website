@@ -1,0 +1,215 @@
+@{
+    ViewData["Title"] = "Tickets";
+}
+
+<main>
+<!-- SHARED: mobile-nav -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+  <aside class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav__header">
+      <img src="https://www.smritivanearthquakemuseum.biz/assets2/logo.png" alt="Smritivan" width="40">
+      <button class="mobile-nav__close" id="mobile-nav-close" aria-label="Close menu">&times;</button>
+    </div>
+    <nav class="mobile-nav__links">
+      <a href="/Home/Index">Home</a>
+      <a href="/Home/Museum">Earthquake Museum</a>
+      <a href="/Home/Memorial">Memorial</a>
+      <a href="/Home/BriefHistory">Brief History</a>
+      <a href="/Home/Gallery">Gallery</a>
+      <a href="/Home/Events">Events</a>
+      <a href="/Home/Tickets">Tickets</a>
+      <a href="/Home/MuseumTour">Audio Guide</a>
+      <a href="/Home/Amenities">Amenities</a>
+      <a href="/Home/MapPage">Museum Map</a>
+      <a href="/Home/Faq">FAQ</a>
+      <a href="/Home/Contact">Contact</a>
+    </nav>
+    <div class="mobile-nav__footer">
+      <div class="mobile-nav__social">
+        <a href="https://www.instagram.com/smritivanearthquakemuseum/?hl=en" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.facebook.com/SmritivanEarthquakeMuseum/" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://twitter.com/smritivan/" target="_blank" rel="noopener">Twitter</a>
+      </div>
+    </div>
+  </aside>
+
+  <main id="page-content">
+
+    <section class="hero ">
+      <div class="hero__bg">
+        <img src="https://www.smritivanearthquakemuseum.biz/assets2/BHA_8199%20.jpeg" alt="Book Tickets" loading="eager">
+      </div>
+      <div class="hero__overlay hero__overlay--heavy"></div>
+      <div class="hero__content hero__content--animate">
+        <div class="smritivan-tag">Tickets</div>
+        <h1 style="font-size:clamp(var(--fs-3xl),4vw,var(--fs-5xl));font-weight:var(--fw-bold);color:var(--color-white);margin-bottom:var(--sp-sm);text-shadow:0 2px 16px rgba(0,0,0,0.25);">Book Tickets</h1>
+        <p style="font-size:var(--fs-md);color:rgba(255,255,255,0.88);line-height:1.7;max-width:640px;">Plan your visit to Smritivan Earthquake Memorial and Museum</p>
+      </div>
+    </section>
+
+    <div class="ticket-info">
+
+      <!-- Memorial Timings -->
+      <div class="ticket-section">
+        <div class="smritivan-tag">Memorial Timings</div>
+        <div id="memorial-timings">
+          <div class="price-row">
+            <span class="price-row__label">05:00 AM - 09:00 AM</span>
+            <span class="price-row__value">Free Entry</span>
+          </div>
+          <div class="price-row">
+            <span class="price-row__label">09:00 AM - 11:00 PM</span>
+            <span class="price-row__value">&#8377;20 per person</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Museum Ticket Prices -->
+      <div class="ticket-section">
+        <div class="smritivan-tag">Museum Ticket Prices</div>
+        <div class="price-row">
+          <span class="price-row__label">School Students (0-5 Years)</span>
+          <span class="price-row__value">Free</span>
+        </div>
+        <div class="price-row">
+          <span class="price-row__label">Children (&lt;12 Years)</span>
+          <span class="price-row__value">&#8377;100</span>
+        </div>
+        <div class="price-row">
+          <span class="price-row__label">Adults (12+ Years)</span>
+          <span class="price-row__value">&#8377;300</span>
+        </div>
+        <div class="price-row">
+          <span class="price-row__label">College Students (&lt;25 with ID)</span>
+          <span class="price-row__value">&#8377;150</span>
+        </div>
+        <div class="price-row">
+          <span class="price-row__label">Foreigners</span>
+          <span class="price-row__value">&#8377;1,000</span>
+        </div>
+      </div>
+
+      <!-- Museum Timings -->
+      <div class="ticket-section">
+        <div class="smritivan-tag">Museum Timings</div>
+        <div class="price-row">
+          <span class="price-row__label">Tuesday to Sunday</span>
+          <span class="price-row__value">11:00 AM - 7:00 PM</span>
+        </div>
+        <div class="price-row">
+          <span class="price-row__label">Monday</span>
+          <span class="price-row__value">Closed</span>
+        </div>
+      </div>
+
+      <!-- How to Reach -->
+      <div class="ticket-section">
+        <div class="smritivan-tag">How to Reach</div>
+        <p style="font-size:var(--fs-base);color:var(--color-text-dim);line-height:1.6;margin-bottom:var(--sp-base);">
+          Smritivan Earthquake Memorial &amp; Museum, Bhujiyo Dungar, Bhuj, Gujarat 370001
+        </p>
+        <a class="victim-card__direction" id="ticket-direction" style="display:inline-flex;cursor:pointer;">
+          Get Direction
+        </a>
+      </div>
+
+      <!-- Book Now -->
+      <div class="ticket-section">
+        <div class="smritivan-tag">Book Now</div>
+        <p style="font-size:var(--fs-base);color:var(--color-text-dim);line-height:1.6;margin-bottom:var(--sp-sm);">
+          Phone reservation:
+          <a href="tel:+916357199991" style="color:var(--color-primary);font-weight:var(--fw-medium);">Call +91-63571-99991</a>
+        </p>
+        <p style="font-size:var(--fs-sm);color:var(--color-gray);line-height:1.6;">
+          You can also book tickets at the reception counter
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Sticky CTA -->
+    <div class="ticket-cta">
+      <a href="tel:+916357199991" class="btn btn--primary btn--full">Call to Book Tickets</a>
+    </div>
+
+  </main>
+
+  <!-- SHARED: footer -->
+</main>
+
+@section Scripts {
+<script src="js/common.js"></script>
+  <script>
+    (function() {
+      var btn = document.getElementById('hamburger-btn');
+      var nav = document.getElementById('mobile-nav');
+      var overlay = document.getElementById('mobile-nav-overlay');
+      var closeBtn = document.getElementById('mobile-nav-close');
+      function toggle() { nav.classList.toggle('open'); overlay.classList.toggle('open'); document.body.classList.toggle('nav-open'); }
+      function close() { nav.classList.remove('open'); overlay.classList.remove('open'); document.body.classList.remove('nav-open'); }
+      btn.addEventListener('click', toggle);
+      overlay.addEventListener('click', close);
+      closeBtn.addEventListener('click', close);
+      nav.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', close); });
+      var dropBtn = document.querySelector('.site-nav__link--dropdown');
+      if (dropBtn) {
+        dropBtn.addEventListener('click', function(e) { e.preventDefault(); dropBtn.parentElement.classList.toggle('open'); });
+        document.addEventListener('click', function(e) { if (!dropBtn.parentElement.contains(e.target)) dropBtn.parentElement.classList.remove('open'); });
+      }
+    })();
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Fetch live memorial timings from API and update if available
+      Smritivan.api.getMuseumDetails().then(function(data) {
+        if (!data || !data.length) return;
+        var details = data[0];
+        if (!details.memorialtime) return;
+
+        var timingsEl = document.getElementById('memorial-timings');
+        if (!timingsEl) return;
+
+        // Clear existing fallback content
+        while (timingsEl.firstChild) timingsEl.removeChild(timingsEl.firstChild);
+
+        // Build first timing row
+        var row1 = document.createElement('div');
+        row1.className = 'price-row';
+        var label1 = document.createElement('span');
+        label1.className = 'price-row__label';
+        label1.textContent = details.memorialtime;
+        var value1 = document.createElement('span');
+        value1.className = 'price-row__value';
+        value1.textContent = details.price;
+        row1.appendChild(label1);
+        row1.appendChild(value1);
+        timingsEl.appendChild(row1);
+
+        // Build second timing row
+        var row2 = document.createElement('div');
+        row2.className = 'price-row';
+        var label2 = document.createElement('span');
+        label2.className = 'price-row__label';
+        label2.textContent = details.memorialtime1;
+        var value2 = document.createElement('span');
+        value2.className = 'price-row__value';
+        value2.textContent = details.price1;
+        row2.appendChild(label2);
+        row2.appendChild(value2);
+        timingsEl.appendChild(row2);
+      }).catch(function() {
+        // Keep fallback content on API failure
+      });
+
+      // Direction link
+      var dirLink = document.getElementById('ticket-direction');
+      if (dirLink) {
+        dirLink.addEventListener('click', function() {
+          window.open('https://www.google.com/maps?q=23.2504,69.6699', '_blank');
+        });
+      }
+
+      Smritivan.initPage();
+    });
+  </script>
+}

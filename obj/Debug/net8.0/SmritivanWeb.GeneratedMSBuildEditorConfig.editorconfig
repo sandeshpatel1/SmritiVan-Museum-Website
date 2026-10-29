@@ -1,0 +1,119 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = SmritivanWeb
+build_property.RootNamespace = SmritivanWeb
+build_property.ProjectDir = G:\Sandesh\SmritivanWebsiteDotNet\SmritivanWeb\SmritivanWeb\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = G:\Sandesh\SmritivanWebsiteDotNet\SmritivanWeb\SmritivanWeb
+build_property._RazorSourceGeneratorDebug = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Amenities.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBbWVuaXRpZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/AudioDetail1.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBdWRpb0RldGFpbDEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/AudioDetail2.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBdWRpb0RldGFpbDIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/AudioDetail3.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBdWRpb0RldGFpbDMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/AudioDetail4.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBdWRpb0RldGFpbDQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/AudioPlayer.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBdWRpb1BsYXllci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/BriefHistory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxCcmllZkhpc3RvcnkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/CheckDam.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxDaGVja0RhbS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Contact.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxDb250YWN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxFcnJvci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Events.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxFdmVudHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Faq.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxGYXEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Gallery.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxHYWxsZXJ5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/MapPage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxNYXBQYWdlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Memorial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxNZW1vcmlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Museum.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxNdXNldW0uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/MuseumTour.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxNdXNldW1Ub3VyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Terms.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxUZXJtcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Tickets.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxUaWNrZXRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Home/Tour360.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxUb3VyMzYwLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Sandesh/SmritivanWebsiteDotNet/SmritivanWeb/SmritivanWeb/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

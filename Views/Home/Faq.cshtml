@@ -1,0 +1,564 @@
+@{
+    ViewData["Title"] = "FAQ";
+}
+
+@section Styles {
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:#060504;color:#e4ddd0;overflow-x:hidden;line-height:1.6}
+    img{display:block;max-width:100%}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    :root{
+      --gold:#c9a96e;--gold-lt:#e8d5a3;--gold-dk:#9a7a47;
+      --white:#f2ece2;--dim:rgba(242,236,226,0.45);--faint:rgba(242,236,226,0.04);
+      --border:rgba(201,169,110,0.12);--t:0.35s cubic-bezier(0.4,0,0.2,1);
+      --bg:#060504;--bg2:#0a0807;
+    }
+
+       /* ══ HEADER ══ */
+    .hdr { position:fixed;top:0;left:0;right:0;z-index:900;height:68px;padding:0 48px;display:flex;align-items:center;transition:background var(--t),border-color var(--t);border-bottom:1px solid transparent; }
+    .hdr.scrolled { background:rgba(0,0,0,0.95);border-bottom-color:var(--border);backdrop-filter:blur(20px); }
+    .hdr__inner { width:100%;max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between; }
+    .hdr__logo { display:flex;align-items:center;gap:12px; }
+    .hdr__logo img { width:38px;height:38px;object-fit:contain; }
+    .hdr__wordmark { font-family:'Cormorant',serif;font-size:22px;font-weight:600;color:var(--white);letter-spacing:2px; }
+    .hdr__nav { display:flex;align-items:center; }
+    .hdr__link { color:var(--dim);font-size:12.5px;font-weight:400;padding:8px 13px;letter-spacing:0.3px;transition:color var(--t); }
+    .hdr__link:hover { color:var(--white); }
+    .hdr__link.active { color:var(--white); border-bottom: 1px solid var(--gold); }
+    .hdr__btn { background:var(--gold);color:#000;font-size:11px;font-weight:600;padding:9px 22px;letter-spacing:1.5px;text-transform:uppercase;transition:background var(--t),transform var(--t);margin-left:12px; }
+    .hdr__btn:hover { background:var(--gold-lt);transform:translateY(-1px); }
+    .hdr__drop { position:relative; }
+    .hdr__drop-menu { position:absolute;top:calc(100% + 8px);left:0;background:#090909;border:1px solid var(--border);min-width:200px;padding:6px;opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity 0.2s,transform 0.2s; }
+    .hdr__drop.open .hdr__drop-menu { opacity:1;pointer-events:all;transform:translateY(0); }
+    .hdr__drop-item { display:block;padding:10px 16px;font-size:13px;color:var(--dim);transition:background 0.2s,color 0.2s; }
+    .hdr__drop-item:hover { background:var(--faint);color:var(--white); }
+    .ham { display:none;flex-direction:column;gap:5px;padding:8px; }
+    .ham span { display:block;width:22px;height:1.5px;background:var(--white);transition:var(--t); }
+    .mob-ov { position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.3s; }
+    .mob-ov.open { opacity:1;pointer-events:all; }
+    .mob-nav { position:fixed;top:0;right:0;bottom:0;width:300px;background:#050505;border-left:1px solid var(--border);z-index:1100;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column; }
+    .mob-nav.open { transform:translateX(0); }
+    .mob-nav__hd { display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid var(--border); }
+    .mob-nav__close { font-size:24px;color:var(--dim); }
+    .mob-nav__links { flex:1;overflow-y:auto;padding:12px 0; }
+    .mob-nav__links a { display:block;padding:13px 24px;color:var(--dim);font-size:14px;border-bottom:1px solid rgba(255,255,255,0.04);transition:color 0.2s,padding-left 0.2s; }
+    .mob-nav__links a:hover { color:var(--white);padding-left:32px; }
+    .mob-nav__links a.active { color:var(--white); }
+    .mob-nav__foot { padding:20px 24px;border-top:1px solid var(--border);display:flex;gap:20px; }
+    .mob-nav__foot a { color:var(--dim);font-size:11px;letter-spacing:1px;text-transform:uppercase;transition:color 0.2s; }
+    .mob-nav__foot a:hover { color:var(--gold); }
+
+    /* HERO */
+    .hero{position:relative;height:60vh;min-height:400px;display:flex;overflow:hidden}
+    .hero__bg{position:absolute;inset:0}
+    .hero__bg img{width:100%;height:100%;object-fit:cover;object-position:center}
+    .hero__ov{position:absolute;inset:0;background:linear-gradient(170deg,rgba(6,5,4,0.4) 0%,rgba(6,5,4,0.72) 50%,rgba(6,5,4,0.97) 100%)}
+    .hero__line{position:absolute;left:56px;top:0;bottom:0;width:1px;
+      background:linear-gradient(to bottom,transparent 0%,var(--gold) 25%,rgba(201,169,110,0.3) 75%,transparent 100%);z-index:2}
+    .hero__content{position:relative;z-index:3;padding:110px 60px 20px 110px;max-width:800px}
+    .hero__kicker{font-size:9px;font-weight:500;letter-spacing:6px;text-transform:uppercase;
+      color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:16px;
+      opacity:0;animation:fadeUp 0.9s 0.2s forwards}
+    .hero__kicker::before{content:'';width:32px;height:1px;background:var(--gold)}
+    .hero__title{font-family:'Cormorant',serif;font-size:clamp(48px,6vw,88px);
+      font-weight:700;line-height:0.9;letter-spacing:-2px;color:var(--white);
+      margin-bottom:20px;opacity:0;animation:fadeUp 1s 0.4s forwards}
+    .hero__desc{font-size:14px;font-weight:300;color:var(--dim);line-height:1.9;
+      max-width:520px;opacity:0;animation:fadeUp 0.9s 0.65s forwards;
+      padding-left:22px;border-left:1px solid rgba(201,169,110,0.25)}
+    @@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+    /* REVEAL */
+    .reveal{opacity:0;transform:translateY(32px);transition:opacity 0.8s ease,transform 0.8s ease}
+    .reveal.in{opacity:1;transform:none}
+
+    /* TAG */
+    .tag{font-size:9px;font-weight:500;letter-spacing:5px;text-transform:uppercase;
+      color:var(--gold);display:flex;align-items:center;gap:12px;margin-bottom:16px}
+    .tag::before{content:'';width:24px;height:1px;background:var(--gold)}
+    .sec-title{font-family:'Cormorant',serif;font-size:clamp(30px,4vw,52px);
+      font-weight:700;color:var(--white);line-height:0.95;letter-spacing:-0.5px}
+    .rule{width:40px;height:1px;background:var(--gold);margin:20px 0 28px}
+
+    /* PAGE BODY */
+    .page-body{background:var(--bg);padding:80px 80px 100px}
+    .page-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:80px;align-items:start}
+
+    /* LEFT SIDEBAR */
+    .faq-sidebar{position:sticky;top:88px}
+    .faq-cats{display:flex;flex-direction:column;gap:2px;margin-top:32px}
+    .faq-cat-btn{display:flex;align-items:center;gap:12px;padding:11px 16px;
+      font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);
+      border:1px solid transparent;transition:all 0.2s;text-align:left;cursor:pointer}
+    .faq-cat-btn::before{content:'';width:4px;height:4px;border-radius:50%;
+      background:rgba(201,169,110,0.25);flex-shrink:0;transition:background 0.2s}
+    .faq-cat-btn:hover{color:var(--white);border-color:var(--border)}
+    .faq-cat-btn.active{color:var(--gold);border-color:var(--border);background:rgba(201,169,110,0.06)}
+    .faq-cat-btn.active::before{background:var(--gold)}
+
+    .faq-cta{margin-top:36px;padding:24px;background:var(--bg2);border:1px solid var(--border)}
+    .faq-cta__label{font-size:8.5px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+    .faq-cta__text{font-size:12.5px;color:var(--dim);font-weight:300;line-height:1.75;margin-bottom:16px}
+    .faq-cta__btn{display:block;padding:10px 18px;border:1px solid var(--gold);
+      color:var(--gold);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;
+      transition:var(--t);text-align:center}
+    .faq-cta__btn:hover{background:var(--gold);color:#000}
+
+    /* RIGHT: accordion */
+    .faq-main{}
+    .faq-section{margin-bottom:52px}
+    .faq-section:last-child{margin-bottom:0}
+    .faq-section__heading{font-family:'Cormorant',serif;font-size:24px;font-weight:700;
+      color:var(--white);margin-bottom:16px;padding-bottom:14px;
+      border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
+    .faq-section__heading::before{content:'';width:20px;height:1px;background:var(--gold);flex-shrink:0}
+    .faq-count{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(201,169,110,0.4);
+      margin-left:auto;font-family:'DM Sans',sans-serif;font-weight:300}
+
+    .faq-item{border-bottom:1px solid var(--border);overflow:hidden}
+    .faq-item:first-child{border-top:1px solid var(--border)}
+
+    .faq-item__btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;
+      padding:20px 0;background:transparent;border:none;cursor:pointer;text-align:left;
+      font-family:'DM Sans',sans-serif;transition:background 0.15s}
+    .faq-item__btn:hover .faq-item__q{color:var(--white)}
+    .faq-item__q{font-size:14px;font-weight:400;color:rgba(242,236,226,0.7);line-height:1.5;
+      transition:color 0.2s;flex:1}
+    .faq-item.open .faq-item__q{color:var(--white)}
+    .faq-item__icon{width:28px;height:28px;border:1px solid var(--border);flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;transition:border-color 0.2s,transform 0.3s}
+    .faq-item.open .faq-item__icon{border-color:rgba(201,169,110,0.3)}
+    .faq-item__icon svg{width:11px;height:11px;stroke:var(--gold);fill:none;
+      stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform 0.3s ease}
+    .faq-item.open .faq-item__icon svg{transform:rotate(45deg)}
+
+    .faq-item__body{max-height:0;overflow:hidden;transition:max-height 0.38s ease}
+    .faq-item.open .faq-item__body{max-height:600px}
+    .faq-item__body-inner{padding:0 0 22px;font-size:13.5px;font-weight:300;color:var(--dim);
+      line-height:1.9;border-top:1px solid rgba(201,169,110,0.07);padding-top:14px}
+    .faq-item__body-inner strong{color:var(--white);font-weight:400}
+    .faq-item__body-inner a{color:var(--gold);border-bottom:1px solid rgba(201,169,110,0.25);transition:border-color 0.2s}
+    .faq-item__body-inner a:hover{border-color:var(--gold)}
+
+    /* SECTION hidden state */
+    .faq-section.hidden{display:none}
+
+    /* TICKET CARD (price highlight) */
+    .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+    .price-card{background:rgba(201,169,110,0.05);border:1px solid var(--border);padding:16px}
+    .price-card__audience{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(201,169,110,0.6);margin-bottom:6px}
+    .price-card__amount{font-family:'Cormorant',serif;font-size:28px;font-weight:700;color:var(--white);line-height:1}
+    .price-card__amount span{font-size:14px;font-weight:300;color:var(--dim)}
+    .price-card.highlight{border-color:rgba(201,169,110,0.3);background:rgba(201,169,110,0.08)}
+    .price-card.free .price-card__amount{color:var(--gold)}
+
+    /* FOOTER */
+    .ftr{background:#000;border-top:1px solid var(--border);padding:72px 80px 36px}
+    .ftr__grid{max-width:1200px;margin:0 auto}
+    .ftr__top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:52px;
+      padding-bottom:52px;border-bottom:1px solid var(--border);margin-bottom:28px}
+    .ftr__brand-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+    .ftr__brand-logo img{width:30px}
+    .ftr__brand-logo strong{font-family:'Cormorant',serif;font-size:17px;color:var(--white);font-weight:600;letter-spacing:1px}
+    .ftr__brand p{font-size:12.5px;color:rgba(255,255,255,0.25);line-height:1.75;font-weight:300}
+    .ftr__partners{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+    .ftr__partners a {filter: none; }
+    .ftr__partners a:hover{opacity:0.5}
+    .ftr__col h4{font-size:8.5px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+    .ftr__col a{display:block;font-size:12.5px;color:rgba(255,255,255,0.25);padding:5px 0;transition:color 0.15s,padding-left 0.2s}
+    .ftr__col a:hover{color:var(--white);padding-left:6px}
+    .ftr__bot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      gap:10px;font-size:11px;color:rgba(255,255,255,0.16)}
+    .ftr__bot a{color:rgba(255,255,255,0.2);transition:color 0.15s}
+    .ftr__bot a:hover{color:var(--white)}
+
+   
+    .ftr__atm { color:var(--gold)!important;font-weight:500; }
+    .ftr__atm:hover { color:var(--gold-lt)!important; }
+
+    @@media(max-width:960px){
+      .page-inner{grid-template-columns:1fr}
+      .faq-sidebar{position:static;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;margin-bottom:36px}
+      .faq-cats{flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:0}
+      .faq-cat-btn{font-size:10px;padding:8px 14px}
+      .faq-cta{display:none}
+    }
+    @@media(max-width:768px){
+      .hdr__nav{display:none}.ham{display:flex}
+      .hero__content{padding:0 24px 44px}.hero__line{left:24px}
+      .page-body{padding:52px 24px 72px}
+      .price-grid{grid-template-columns:1fr 1fr}
+      .ftr{padding:52px 24px 28px}.ftr__top{grid-template-columns:1fr;gap:28px}
+      .ftr__bot{flex-direction:column;align-items:flex-start}
+    }
+</style>
+}
+
+<main>
+<!-- HERO -->
+  <section class="hero">
+    <div class="hero__bg">
+      <img src="./assets/bg-1.jpg" alt="FAQ" loading="eager"
+           onerror="this.src='https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80'"/>
+    </div>
+    <div class="hero__ov"></div>
+    <div class="hero__line"></div>
+    <div class="hero__content">
+      <p class="hero__kicker">Help & Information</p>
+      <h1 class="hero__title">Frequently<br><em style="font-style:italic;font-weight:300;font-size:0.55em;letter-spacing:3px;color:rgba(201,169,110,0.8)">Asked Questions</em></h1>
+      <p class="hero__desc">Timings, tickets, location, parking and everything you need to plan your visit.</p>
+    </div>
+  </section>
+
+  <!-- BODY -->
+  <div class="page-body">
+    <div class="page-inner reveal">
+
+      <!-- SIDEBAR -->
+      <div class="faq-sidebar">
+        <div>
+          <span class="tag" style="margin-bottom:8px">Topics</span>
+        </div>
+        <div class="faq-cats" id="faq-cats">
+          <button class="faq-cat-btn active" data-cat="all">All Questions</button>
+          <button class="faq-cat-btn" data-cat="visit">Planning a Visit</button>
+          <button class="faq-cat-btn" data-cat="tickets">Tickets &amp; Pricing</button>
+          <button class="faq-cat-btn" data-cat="facilities">Facilities</button>
+          <button class="faq-cat-btn" data-cat="getting-here">Getting Here</button>
+        </div>
+
+        <div class="faq-cta">
+          <div class="faq-cta__label">Still have questions?</div>
+          <div class="faq-cta__text">Our team is happy to help with any queries about your visit.</div>
+          <a href="/Home/Contact" class="faq-cta__btn">Contact Us</a>
+        </div>
+      </div>
+
+      <!-- FAQ SECTIONS -->
+      <div class="faq-main" id="faq-main">
+
+        <!-- VISIT -->
+        <div class="faq-section" data-section="visit">
+          <div class="faq-section__heading">
+            Planning a Visit
+            <span class="faq-count">5 questions</span>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">When can we visit the museum?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">The museum is open <strong>Tuesday to Sunday, 9:00 AM – 7:00 PM</strong>. The museum is closed every Monday. The Memorial is open Tuesday to Sunday, 5:00 AM – 11:00 PM.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">When is the Museum closed?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">The museum is closed every <strong>Monday</strong>. Additional closure days for special events or holidays are announced on our official social media channels.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">How long does a complete visit take?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">A thorough visit to the museum takes approximately <strong>2 to 3 hours</strong>. Allow an additional 1–2 hours to fully explore the Memorial area at your own pace.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">Where can I stay nearby?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">A wide range of hotels and guesthouses are available in Bhuj city, catering to all budgets — from heritage properties to budget accommodation.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">Are refreshments and food available?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">Yes — a multi-cuisine restaurant and cafes are available within the premises.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TICKETS -->
+        <div class="faq-section" data-section="tickets">
+          <div class="faq-section__heading">
+            Tickets &amp; Pricing
+            <span class="faq-count">6 questions</span>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">What is the cost of a ticket?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">
+                <strong>Memorial:</strong> Free entry 5–9 AM · ₹20 thereafter.<br><br>
+                <strong>Museum:</strong>
+                <div class="price-grid" style="margin-top:14px">
+                  <div class="price-card free">
+                    <div class="price-card__audience">Under 5 Years</div>
+                    <div class="price-card__amount">Free</div>
+                  </div>
+                  <div class="price-card">
+                    <div class="price-card__audience">Children (Under 12)</div>
+                    <div class="price-card__amount">₹<span>100</span></div>
+                  </div>
+                  <div class="price-card highlight">
+                    <div class="price-card__audience">Adults</div>
+                    <div class="price-card__amount">₹<span>300</span></div>
+                  </div>
+                  <div class="price-card">
+                    <div class="price-card__audience">Students (Under 25)</div>
+                    <div class="price-card__amount">₹<span>150</span></div>
+                  </div>
+                  <div class="price-card">
+                    <div class="price-card__audience">Foreign Nationals</div>
+                    <div class="price-card__amount">₹<span>1,000</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">Where can I book tickets?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">
+                Tickets are available through three channels:<br><br>
+                · Reception counter at the museum entrance<br>
+                · Phone reservation at <strong>+91-635-719-9991</strong><br>
+                · Online at <a href="https://www.smritivanearthquakemuseum.com" target="_blank">smritivanearthquakemuseum.com</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">What form of payment is accepted?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">We accept <strong>Cash, Credit Cards, Debit Cards</strong> and <strong>UPI payments</strong>.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">What is the validity of tickets?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">Tickets are valid for <strong>one day only</strong> from the date of purchase.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">What happens if I forget my e-ticket?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">Check your WhatsApp messages — your e-ticket is sent there. If unavailable, you may purchase a new ticket at the entrance counter.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">How are refunds and cancellations handled?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">Refunds and cancellations are handled on a case-by-case basis. Please <a href="/Home/Contact">contact us directly</a> for assistance.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FACILITIES -->
+        <div class="faq-section" data-section="facilities">
+          <div class="faq-section__heading">
+            Facilities &amp; Accessibility
+            <span class="faq-count">4 questions</span>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">Are facilities available for differently-abled visitors and senior citizens?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">Yes. The museum is equipped with <strong>ramps, elevators, golf-cart services</strong>, and <strong>wheelchairs</strong> for visitors with special needs and senior citizens.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">What are the vehicle parking charges?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">
+                · <strong>Bicycle:</strong> Free<br>
+                · <strong>Two-Wheeler:</strong> ₹20<br>
+                · <strong>Three / Four-Wheeler:</strong> ₹40<br>
+                · <strong>Bus:</strong> ₹100
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">What does my ticket include?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">
+                <strong>Memorial ticket:</strong> Access to the memorial, Sun-Point, Miyawaki Forest, and check-dam reservoirs.<br><br>
+                <strong>Museum ticket:</strong> Access to all seven immersive blocks and current exhibitions inside the museum.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">Can I bring a pet?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">No, pets are not permitted inside the premises.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GETTING HERE -->
+        <div class="faq-section" data-section="getting-here">
+          <div class="faq-section__heading">
+            Getting Here
+            <span class="faq-count">3 questions</span>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">Where is Smritivan Earthquake Memorial and Museum located?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">Smritivan is situated atop <strong>Bhujiyo Dungar</strong>, the iconic hilltop at the entrance to Bhuj, Gujarat. The memorial and museum occupy a vast area of <strong>470 acres</strong>, offering panoramic views of the surrounding landscape.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">How do I reach Smritivan?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">
+                <strong>By Road:</strong> Easily accessible via the main roads into Bhuj using your own vehicle or public transport.<br><br>
+                <strong>By Air:</strong> Bhuj Airport is approximately 10 km away.<br><br>
+                <strong>By Rail:</strong> Bhuj Railway Station is approximately 15 km from Smritivan.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__btn" aria-expanded="false">
+              <span class="faq-item__q">Which is the nearest airport and railway station?</span>
+              <div class="faq-item__icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            </button>
+            <div class="faq-item__body">
+              <div class="faq-item__body-inner">The nearest airport is <strong>Bhuj Airport</strong> (~10 km). The nearest railway station is <strong>Bhuj Railway Station</strong> (~15 km from Smritivan).</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /faq-main -->
+    </div>
+  </div>
+</main>
+
+@section Scripts {
+<script>
+(function(){
+  /* header */
+  var hdr=document.getElementById('hdr');
+  window.addEventListener('scroll',function(){hdr.classList.toggle('scrolled',scrollY>40);},{passive:true});
+
+  /* hamburger */
+  var ham=document.getElementById('ham-btn'),mob=document.getElementById('mob-nav'),
+      ov=document.getElementById('mob-ov'),cl=document.getElementById('mob-close');
+  function openNav(){mob.classList.add('open');ov.classList.add('open');document.body.style.overflow='hidden';}
+  function closeNav(){mob.classList.remove('open');ov.classList.remove('open');document.body.style.overflow='';}
+  ham.addEventListener('click',openNav);ov.addEventListener('click',closeNav);cl.addEventListener('click',closeNav);
+  mob.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeNav);});
+  document.addEventListener('click',function(e){
+    var dd=document.getElementById('nd-about');
+    if(dd&&!dd.contains(e.target))dd.classList.remove('open');
+  });
+
+  /* reveal */
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:0.04});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+  /* FAQ accordion */
+  document.querySelectorAll('.faq-item').forEach(function(item){
+    var btn=item.querySelector('.faq-item__btn');
+    btn.addEventListener('click',function(){
+      var isOpen=item.classList.contains('open');
+      /* close siblings in same section */
+      var section=item.closest('.faq-section');
+      section.querySelectorAll('.faq-item.open').forEach(function(i){
+        i.classList.remove('open');
+        i.querySelector('.faq-item__btn').setAttribute('aria-expanded','false');
+      });
+      if(!isOpen){
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+      }
+    });
+  });
+
+  /* category filter */
+  document.querySelectorAll('.faq-cat-btn').forEach(function(catBtn){
+    catBtn.addEventListener('click',function(){
+      var cat=this.getAttribute('data-cat');
+      document.querySelectorAll('.faq-cat-btn').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active');
+      var sections=document.querySelectorAll('.faq-section');
+      sections.forEach(function(sec){
+        if(cat==='all'||sec.getAttribute('data-section')===cat){
+          sec.classList.remove('hidden');
+        } else {
+          sec.classList.add('hidden');
+        }
+      });
+    });
+  });
+})();
+</script>
+}

@@ -1,0 +1,1077 @@
+@{
+    ViewData["Title"] = "Museum Tour";
+}
+
+@section Styles {
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:#070503;color:#e8e0d0;overflow-x:hidden;line-height:1.6}
+    img{display:block;max-width:100%}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+    :root{
+      --gold:#c9a96e;--gold-lt:#e8d5a3;--gold-dk:#9a7a47;
+      --white:#f0e8d8;--dim:rgba(240,232,216,0.45);--dim2:rgba(240,232,216,0.22);
+      --faint:rgba(240,232,216,0.04);--border:rgba(201,169,110,0.14);
+      --bg:#070503;--bg2:#0d0a07;--t:0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+
+       /* ══ HEADER ══ */
+    .hdr { position:fixed;top:0;left:0;right:0;z-index:900;height:68px;padding:0 48px;display:flex;align-items:center;transition:background var(--t),border-color var(--t);border-bottom:1px solid transparent; }
+    .hdr.scrolled { background:rgba(0,0,0,0.95);border-bottom-color:var(--border);backdrop-filter:blur(20px); }
+    .hdr__inner { width:100%;max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between; }
+    .hdr__logo { display:flex;align-items:center;gap:12px; }
+    .hdr__logo img { width:38px;height:38px;object-fit:contain; }
+    .hdr__wordmark { font-family:'Cormorant',serif;font-size:22px;font-weight:600;color:var(--white);letter-spacing:2px; }
+    .hdr__nav { display:flex;align-items:center; }
+    .hdr__link { color:var(--dim);font-size:12.5px;font-weight:400;padding:8px 13px;letter-spacing:0.3px;transition:color var(--t); }
+    .hdr__link:hover { color:var(--white); }
+    .hdr__link.active { color:var(--white); border-bottom: 1px solid var(--gold); }
+    .hdr__btn { background:var(--gold);color:#000;font-size:11px;font-weight:600;padding:9px 22px;letter-spacing:1.5px;text-transform:uppercase;transition:background var(--t),transform var(--t);margin-left:12px; }
+    .hdr__btn:hover { background:var(--gold-lt);transform:translateY(-1px); }
+    .hdr__drop { position:relative; }
+    .hdr__drop-menu { position:absolute;top:calc(100% + 8px);left:0;background:#090909;border:1px solid var(--border);min-width:200px;padding:6px;opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity 0.2s,transform 0.2s; }
+    .hdr__drop.open .hdr__drop-menu { opacity:1;pointer-events:all;transform:translateY(0); }
+    .hdr__drop-item { display:block;padding:10px 16px;font-size:13px;color:var(--dim);transition:background 0.2s,color 0.2s; }
+    .hdr__drop-item:hover { background:var(--faint);color:var(--white); }
+    .ham { display:none;flex-direction:column;gap:5px;padding:8px; }
+    .ham span { display:block;width:22px;height:1.5px;background:var(--white);transition:var(--t); }
+    .mob-ov { position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.3s; }
+    .mob-ov.open { opacity:1;pointer-events:all; }
+    .mob-nav { position:fixed;top:0;right:0;bottom:0;width:300px;background:#050505;border-left:1px solid var(--border);z-index:1100;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column; }
+    .mob-nav.open { transform:translateX(0); }
+    .mob-nav__hd { display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid var(--border); }
+    .mob-nav__close { font-size:24px;color:var(--dim); }
+    .mob-nav__links { flex:1;overflow-y:auto;padding:12px 0; }
+    .mob-nav__links a { display:block;padding:13px 24px;color:var(--dim);font-size:14px;border-bottom:1px solid rgba(255,255,255,0.04);transition:color 0.2s,padding-left 0.2s; }
+    .mob-nav__links a:hover { color:var(--white);padding-left:32px; }
+    .mob-nav__links a.active { color:var(--white); }
+    .mob-nav__foot { padding:20px 24px;border-top:1px solid var(--border);display:flex;gap:20px; }
+    .mob-nav__foot a { color:var(--dim);font-size:11px;letter-spacing:1px;text-transform:uppercase;transition:color 0.2s; }
+    .mob-nav__foot a:hover { color:var(--gold); }
+
+    /* ══ HERO ══ */
+    .hero{position:relative;height:62vh;min-height:480px;display:flex;overflow:hidden}
+    .hero__bg{position:absolute;inset:0}
+    .hero__bg img{width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:brightness(0.5) saturate(0.8)}
+    .hero__ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,5,3,1) 0%,rgba(7,5,3,0.55) 45%,rgba(7,5,3,0.1) 100%)}
+    .hero__accent{position:absolute;top:0;left:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent 0%,var(--gold) 30%,var(--gold) 70%,transparent 100%);z-index:3}
+    .hero__content{position:relative;z-index:2;padding:110px 60px 20px 110px;max-width:860px}
+    .hero__kicker{display:flex;align-items:center;gap:14px;font-size:10px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;opacity:0;animation:aUp 1s 0.2s forwards}
+    .hero__kicker::before{content:'';display:block;width:36px;height:1px;background:var(--gold)}
+    .hero__title{font-family:'Cormorant',serif;font-size:clamp(48px,7vw,96px);font-weight:700;color:var(--white);line-height:0.9;letter-spacing:-2px;margin-bottom:20px;opacity:0;animation:aUp 1s 0.4s forwards}
+    .hero__sub{font-size:14px;font-weight:300;color:var(--dim);line-height:1.85;max-width:500px;opacity:0;animation:aUp 1s 0.6s forwards;padding-left:20px;border-left:1px solid rgba(201,169,110,0.25)}
+    @@keyframes aUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ══ CTRL STRIP ══ */
+    .ctrl-strip{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 80px;display:flex;align-items:stretch;position:sticky;top:64px;z-index:50;flex-wrap:wrap}
+    .ctrl-strip__lang{display:flex;align-items:center;border-right:1px solid var(--border);padding-right:20px;gap:4px;flex-shrink:0}
+    .ctrl-strip__lang-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim2);margin-right:10px;white-space:nowrap}
+    .lang-btn{padding:16px 18px;font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color 0.2s,border-color 0.2s;white-space:nowrap}
+    .lang-btn:hover{color:var(--white)}
+    .lang-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+    .ctrl-strip__search{flex:1;display:flex;align-items:center;padding:0 24px;gap:12px;min-width:200px}
+    .ctrl-strip__search svg{color:var(--dim2);flex-shrink:0;width:15px;height:15px}
+    .ctrl-strip__search input{flex:1;background:none;border:none;outline:none;color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;padding:16px 0}
+    .ctrl-strip__search input::placeholder{color:var(--dim2)}
+
+    /* ══ PAGE WRAP ══ */
+    .page-wrap{display:grid;grid-template-columns:320px 1fr;min-height:calc(100vh - 64px - 54px);padding-bottom:80px}
+
+    /* ══ SIDEBAR ══ */
+    .sidebar{background:var(--bg2);border-right:1px solid var(--border);position:sticky;top:calc(64px + 54px);height:calc(100vh - 64px - 54px);overflow:hidden;display:flex;flex-direction:column}
+    .sidebar__sections{flex:1;overflow-y:auto;padding:8px 0}
+    .sidebar__sections::-webkit-scrollbar{width:4px}
+    .sidebar__sections::-webkit-scrollbar-thumb{background:rgba(201,169,110,0.18);border-radius:2px}
+
+    .section-group{}
+    .section-group__hd{padding:16px 24px 10px;border-bottom:1px solid rgba(201,169,110,0.06);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;transition:background 0.2s}
+    .section-group__hd:hover{background:var(--faint)}
+    .section-group.open .section-group__hd{background:rgba(201,169,110,0.05)}
+    .section-group__label{font-size:8px;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:3px}
+    .section-group__title{font-family:'Cormorant',serif;font-size:16px;font-weight:700;color:var(--white);line-height:1}
+    .section-group__count{font-size:10px;color:var(--dim2);flex-shrink:0}
+    .section-group__chevron{width:16px;height:16px;color:var(--dim2);transition:transform 0.3s;flex-shrink:0}
+    .section-group.open .section-group__chevron{transform:rotate(180deg)}
+    .section-group__tracks{display:none}
+    .section-group.open .section-group__tracks{display:block}
+
+    .track-item{display:flex;align-items:center;gap:12px;padding:12px 24px;cursor:pointer;border-left:3px solid transparent;transition:background 0.2s,border-color 0.2s}
+    .track-item:hover{background:var(--faint)}
+    .track-item.active{background:rgba(201,169,110,0.06);border-left-color:var(--gold)}
+    .track-num{font-size:10px;color:var(--dim2);min-width:22px;text-align:right;font-variant-numeric:tabular-nums}
+    .track-item.active .track-num{color:var(--gold)}
+    .track-info{flex:1;min-width:0}
+    .track-name{font-size:13px;font-weight:500;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+    .track-item.active .track-name,.track-item:hover .track-name{color:var(--white)}
+    .track-sub{font-size:11px;color:var(--dim2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+    .track-bars{display:none;align-items:flex-end;gap:2px;height:14px;flex-shrink:0}
+    .track-item.playing .track-bars{display:flex}
+    .track-bars span{display:block;width:3px;background:var(--gold);border-radius:1px;animation:barBounce 0.7s ease-in-out infinite alternate}
+    .track-bars span:nth-child(1){height:5px;animation-delay:0s}
+    .track-bars span:nth-child(2){height:12px;animation-delay:0.12s}
+    .track-bars span:nth-child(3){height:8px;animation-delay:0.24s}
+    @@keyframes barBounce{from{transform:scaleY(0.35)}to{transform:scaleY(1)}}
+
+    /* ══ PLAYER PANEL ══ */
+    .player-panel{display:flex;flex-direction:column;background:var(--bg)}
+    .player-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 40px;gap:20px;min-height:400px}
+    .player-empty__ring{width:88px;height:88px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold)}
+    .player-empty__title{font-family:'Cormorant',serif;font-size:28px;font-weight:600;color:var(--white)}
+    .player-empty__sub{font-size:13px;color:var(--dim2);max-width:280px;line-height:1.75}
+    .player-loaded{display:none;flex-direction:column;flex:1}
+    .player-loaded.show{display:flex}
+
+    .player-img-wrap{position:relative;height:340px;overflow:hidden;flex-shrink:0}
+    .player-img-wrap img{width:100%;height:100%;object-fit:cover;filter:brightness(0.5) saturate(0.7)}
+    .player-img-ov{position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 0%,rgba(7,5,3,0.5) 50%,rgba(7,5,3,0.1) 100%)}
+    .player-section-badge{position:absolute;top:24px;left:28px;background:rgba(7,5,3,0.75);border:1px solid rgba(201,169,110,0.25);padding:5px 14px;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);backdrop-filter:blur(8px)}
+    .player-lang-badge{position:absolute;top:24px;right:28px;background:rgba(7,5,3,0.75);border:1px solid var(--border);padding:5px 12px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);backdrop-filter:blur(8px)}
+    .player-img-content{position:absolute;bottom:0;left:0;right:0;padding:28px}
+    .player-track-num{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:600}
+    .player-track-title{font-family:'Cormorant',serif;font-size:clamp(24px,3vw,40px);font-weight:700;color:var(--white);line-height:1.05}
+
+    .audio-status{margin:0 32px 0;padding:10px 16px;font-size:12px;border-radius:2px;display:none}
+    .audio-status.error{display:block;background:rgba(180,60,40,0.12);border:1px solid rgba(180,60,40,0.25);color:rgba(240,180,160,0.8)}
+    .audio-status.loading{display:block;background:rgba(201,169,110,0.08);border:1px solid rgba(201,169,110,0.2);color:var(--gold)}
+    .audio-status.no-audio{display:block;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--dim2)}
+
+    .player-ctrl{padding:28px 32px 20px;border-bottom:1px solid rgba(201,169,110,0.07)}
+    .progress-wrap{margin-bottom:8px;position:relative}
+    .progress-track{width:100%;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;position:relative;cursor:pointer}
+    .progress-fill{position:absolute;left:0;top:0;height:100%;background:var(--gold);border-radius:2px;pointer-events:none;transition:width 0.1s linear}
+    .progress-thumb{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;background:var(--gold);transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 8px rgba(201,169,110,0.5);opacity:0;transition:opacity 0.2s}
+    .progress-track:hover .progress-thumb{opacity:1}
+    .progress-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;margin:0}
+    .times{display:flex;justify-content:space-between;font-size:11px;color:var(--dim2);font-variant-numeric:tabular-nums;margin-bottom:22px}
+    .ctrl-btns{display:flex;align-items:center;justify-content:center;gap:16px}
+    .ctrl-btn{width:42px;height:42px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--dim);transition:var(--t)}
+    .ctrl-btn:hover{border-color:var(--gold);color:var(--white);background:rgba(201,169,110,0.08)}
+    .ctrl-btn.on{border-color:var(--gold);color:var(--gold);background:rgba(201,169,110,0.08)}
+    .ctrl-btn svg{width:16px;height:16px}
+    .ctrl-btn--play{width:60px;height:60px;background:var(--gold);color:#000;border-color:var(--gold)}
+    .ctrl-btn--play:hover{background:var(--gold-lt);border-color:var(--gold-lt);transform:scale(1.05);box-shadow:0 10px 30px rgba(201,169,110,0.3)}
+    .ctrl-btn--play svg{width:20px;height:20px}
+    .ctrl-btn--play:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+    .vol-row{display:flex;align-items:center;gap:12px;margin-top:18px}
+    .vol-icon{color:var(--dim2);flex-shrink:0;width:16px;height:16px}
+    .vol-slider{flex:1;-webkit-appearance:none;height:2px;background:rgba(255,255,255,0.07);outline:none;cursor:pointer}
+    .vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:50%;background:var(--gold);cursor:pointer}
+
+    .ctabs{display:flex;border-bottom:1px solid var(--border);padding:0 32px}
+    .ctab{padding:16px 22px;font-size:10px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color 0.2s,border-color 0.2s}
+    .ctab.active{color:var(--gold);border-bottom-color:var(--gold)}
+    .cbody{padding:32px;flex:1;overflow-y:auto}
+    .cbody::-webkit-scrollbar{width:4px}
+    .cbody::-webkit-scrollbar-thumb{background:rgba(201,169,110,0.15);border-radius:2px}
+    .cpane{display:none}
+    .cpane.active{display:block}
+    .ctext{font-size:14px;line-height:1.9;color:rgba(240,232,216,0.65);font-weight:300}
+    .ctext p{margin-bottom:14px}
+    .ctext-none{font-size:13px;color:var(--dim2);font-style:italic}
+
+    /* ══ NOW PLAYING BAR ══ */
+    .npbar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(7,5,3,0.97);border-top:1px solid var(--border);backdrop-filter:blur(20px);padding:12px 40px;display:none;align-items:center;gap:20px}
+    .npbar.show{display:flex}
+    .npbar__thumb{width:44px;height:44px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)}
+    .npbar__info{flex:1;min-width:0}
+    .npbar__name{font-size:13px;font-weight:500;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .npbar__sec{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-top:2px}
+    .npbar__prog{flex:2;display:flex;flex-direction:column;gap:4px}
+    .npbar__track{width:100%;height:2px;background:rgba(255,255,255,0.08);border-radius:1px;position:relative;cursor:pointer}
+    .npbar__fill{position:absolute;left:0;top:0;height:100%;background:var(--gold);border-radius:1px;transition:width 0.1s linear}
+    .npbar__input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;margin:0}
+    .npbar__times{display:flex;justify-content:space-between;font-size:9px;color:var(--dim2);font-variant-numeric:tabular-nums}
+    .npbar__btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--dim);transition:var(--t);flex-shrink:0}
+    .npbar__btn:hover{border-color:var(--gold);color:var(--white)}
+    .npbar__btn.play{background:var(--gold);color:#000;border-color:var(--gold)}
+    .npbar__btn.play:hover{background:var(--gold-lt)}
+    .npbar__btn svg{width:16px;height:16px}
+    .npbar__close{color:var(--dim2);transition:color 0.2s}
+    .npbar__close:hover{color:var(--white)}
+
+    /* ══ FOOTER — matches index.html exactly ══ */
+    .ftr{background:#000;border-top:1px solid var(--border);padding:72px 80px 36px}
+    .ftr__grid{max-width:1200px;margin:0 auto}
+    .ftr__top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:52px;
+      padding-bottom:52px;border-bottom:1px solid var(--border);margin-bottom:28px}
+    .ftr__brand-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+    .ftr__brand-logo img{width:30px}
+    .ftr__brand-logo strong{font-family:'Cormorant',serif;font-size:17px;color:var(--white);font-weight:600;letter-spacing:1px}
+    .ftr__brand p{font-size:12.5px;color:rgba(255,255,255,0.25);line-height:1.75;font-weight:300}
+    .ftr__partners{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+    .ftr__partners a{filter:none;opacity:0.9;transition:opacity 0.2s}
+    .ftr__partners a:hover{opacity:0.6}
+    .ftr__col h4{font-size:8.5px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+    .ftr__col a{display:block;font-size:12.5px;color:rgba(255,255,255,0.25);padding:5px 0;transition:color 0.15s,padding-left 0.2s}
+    .ftr__col a:hover{color:var(--white);padding-left:6px}
+    .ftr__bot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      gap:10px;font-size:11px;color:rgba(255,255,255,0.16)}
+    .ftr__bot a{color:rgba(255,255,255,0.2);transition:color 0.15s}
+    .ftr__bot a:hover{color:var(--white)}
+    .ftr__atm{color:var(--gold)!important;font-weight:500}
+    .ftr__atm:hover{color:var(--gold-lt)!important}
+
+    @@media(max-width:1024px){
+      .page-wrap{grid-template-columns:1fr}
+      .sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border)}
+      .sidebar__sections{max-height:360px}
+    }
+    @@media(max-width:768px){
+      .hdr__nav{display:none}.ham{display:flex}
+      .hdr,.ctrl-strip,.ftr{padding-left:24px;padding-right:24px}
+      .hero__content{padding:0 24px 48px}
+      .player-ctrl{padding:24px}
+      .cbody{padding:24px}
+      .npbar{padding:12px 20px;gap:12px}
+      .npbar__prog{display:none}
+      .ftr{padding:48px 24px 28px}
+      .ftr__top{grid-template-columns:1fr;gap:28px}
+      .ftr__bot{flex-direction:column;align-items:flex-start}
+    }
+    @@media(max-width:480px){
+      .ctrl-strip{flex-direction:column;align-items:stretch}
+      .ctrl-strip__lang{border-right:none;border-bottom:1px solid var(--border);padding:0}
+      .lang-btn{padding:12px 16px}
+    }
+</style>
+}
+
+<main>
+<div class="mob-ov" id="mob-ov"></div>
+<aside class="mob-nav" id="mob-nav">
+  <div class="mob-nav__hd"><img src="https://www.smritivanearthquakemuseum.biz/assets2/logo.png" alt="" width="30"/><button class="mob-nav__close" id="mob-close">&times;</button></div>
+  <nav class="mob-nav__links">
+    <a href="/Home/Index">Home</a><a href="/Home/Museum">Earthquake Museum</a>
+    <a href="/Home/Gallery">Gallery</a><a href="/Home/Events">Events</a>
+    <a href="/Home/MuseumTour" class="active">Audio Guide</a>
+    <a href="/Home/Amenities">Amenities</a><a href="/Home/Faq">FAQ</a><a href="/Home/Contact">Contact</a>
+    <a href="https://smritivanearthquakemuseum.biz/MobileNumber.aspx" target="_blank">Book Tickets</a>
+  </nav>
+  <div class="mob-nav__foot">
+    <a href="https://www.instagram.com/smritivanearthquakemuseum/" target="_blank">Instagram</a>
+    <a href="https://www.facebook.com/SmritivanEarthquakeMuseum/" target="_blank">Facebook</a>
+  </div>
+</aside>
+
+<section class="hero">
+  <div class="hero__bg">
+    <img src="https://www.smritivanearthquakemuseum.biz/assets2/7%20(1).jpeg" alt="Smritivan Museum" loading="eager"/>
+  </div>
+  <div class="hero__ov"></div>
+  <div class="hero__accent"></div>
+  <div class="hero__content">
+    <p class="hero__kicker">Smritivan Earthquake Museum</p>
+    <h1 class="hero__title">Audio<br>Guide</h1>
+    <p class="hero__sub">Journey through four immersive galleries — Rebirth, Rediscover, Restore, and Rebuild — guided by narration in your language.</p>
+  </div>
+</section>
+
+<div class="ctrl-strip" id="ctrl-strip">
+  <div class="ctrl-strip__lang">
+    <span class="ctrl-strip__lang-lbl">Language</span>
+    <button class="lang-btn active" data-lang="English" onclick="selectLang('English',this)">English</button>
+    <button class="lang-btn" data-lang="Hindi" onclick="selectLang('Hindi',this)">हिन्दी</button>
+    <button class="lang-btn" data-lang="Gujarati" onclick="selectLang('Gujarati',this)">ગુજરાતી</button>
+  </div>
+  <div class="ctrl-strip__search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="search-input" placeholder="Search tracks…" oninput="doSearch(this.value)"/>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__sections" id="track-sections"></div>
+  </aside>
+
+  <main class="player-panel" id="player-panel">
+    <div class="player-empty" id="player-empty">
+      <div class="player-empty__ring">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+        </svg>
+      </div>
+      <div class="player-empty__title">Select a Track</div>
+      <div class="player-empty__sub">Choose a track from one of the four gallery sections to begin your audio journey.</div>
+    </div>
+
+    <div class="player-loaded" id="player-loaded">
+      <div class="player-img-wrap">
+        <img id="pl-img" src="https://www.smritivanearthquakemuseum.biz/assets2/7%20(1).jpeg" alt=""/>
+        <div class="player-img-ov"></div>
+        <div class="player-section-badge" id="pl-section-badge">Rebirth</div>
+        <div class="player-lang-badge" id="pl-lang-badge">English</div>
+        <div class="player-img-content">
+          <div class="player-track-num" id="pl-num">Track 01</div>
+          <div class="player-track-title" id="pl-title">Track Name</div>
+        </div>
+      </div>
+
+      <div class="audio-status" id="audio-status"></div>
+
+      <div class="player-ctrl">
+        <div class="progress-wrap">
+          <div class="progress-track" id="progress-track">
+            <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+            <div class="progress-thumb" id="progress-thumb"></div>
+            <input type="range" class="progress-input" id="progress-input" min="0" max="100" value="0" step="0.1"/>
+          </div>
+        </div>
+        <div class="times"><span id="pl-cur">0:00</span><span id="pl-dur">0:00</span></div>
+        <div class="ctrl-btns">
+          <button class="ctrl-btn" id="btn-shuffle" title="Shuffle" onclick="toggleShuffle()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+          </button>
+          <button class="ctrl-btn" onclick="prevTrack()" title="Previous">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 20L9 12l10-8v16z"/><rect x="4" y="4" width="2" height="16"/></svg>
+          </button>
+          <button class="ctrl-btn ctrl-btn--play" id="btn-play" onclick="togglePlay()">
+            <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
+          </button>
+          <button class="ctrl-btn" onclick="nextTrack()" title="Next">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 4l10 8-10 8V4z"/><rect x="18" y="4" width="2" height="16"/></svg>
+          </button>
+          <button class="ctrl-btn" id="btn-repeat" title="Repeat" onclick="toggleRepeat()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          </button>
+        </div>
+        <div class="vol-row">
+          <svg class="vol-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          <input type="range" class="vol-slider" id="vol-slider" min="0" max="100" value="80" oninput="setVol(this.value)"/>
+        </div>
+      </div>
+
+      <div class="ctabs">
+        <button class="ctab active" onclick="switchTab('intro',this)">Introduction</button>
+        <button class="ctab" onclick="switchTab('script',this)">Full Script</button>
+      </div>
+      <div class="cbody">
+        <div class="cpane active" id="tab-intro"><p class="ctext-none">Select a track to read the introduction.</p></div>
+        <div class="cpane" id="tab-script"><p class="ctext-none">Select a track to read the full script.</p></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="npbar" id="npbar">
+  <img class="npbar__thumb" id="npb-thumb" src="https://www.smritivanearthquakemuseum.biz/assets2/logo.png" alt=""/>
+  <div class="npbar__info">
+    <div class="npbar__name" id="npb-name">—</div>
+    <div class="npbar__sec" id="npb-sec">Rebirth · English</div>
+  </div>
+  <div class="npbar__prog">
+    <div class="npbar__track">
+      <div class="npbar__fill" id="npb-fill" style="width:0%"></div>
+      <input type="range" class="npbar__input" id="npb-input" min="0" max="100" value="0" step="0.1" oninput="seekBar(this)"/>
+    </div>
+    <div class="npbar__times"><span id="npb-cur">0:00</span><span id="npb-dur">0:00</span></div>
+  </div>
+  <button class="npbar__btn" onclick="prevTrack()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 20L9 12l10-8v16z"/><rect x="4" y="4" width="2" height="16"/></svg></button>
+  <button class="npbar__btn play" id="npb-playbtn" onclick="togglePlay()"><svg id="npb-play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg></button>
+  <button class="npbar__btn" onclick="nextTrack()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 4l10 8-10 8V4z"/><rect x="18" y="4" width="2" height="16"/></svg></button>
+  <button class="npbar__btn npbar__close" onclick="closePlayer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+</div>
+</main>
+
+@section Scripts {
+<audio id="audio" preload="none"></audio>
+
+<script>
+(function(){
+'use strict';
+
+/* ═══════════════════════════════════════════
+   AUDIO BASE URL
+═══════════════════════════════════════════ */
+var AUDIO_BASE = 'https://www.smritivanearthquakemuseum.biz/';
+
+/* ═══════════════════════════════════════════
+   BUILD DIRECT AUDIO URL (no proxy needed)
+   URL pattern:
+   BASE + path_segments_encoded + "/" + description + ".mp3"
+   Spaces → %20, & stays as & (server accepts literal &)
+═══════════════════════════════════════════ */
+function buildAudioUrl(path, description) {
+  if (!path || !description) return null;
+  var encodedPath = path.trim().split('/').map(function(seg) {
+    return seg.trim().replace(/ /g, '%20');
+  }).join('/');
+  var encodedFile = description.trim().replace(/ /g, '%20') + '.mp3';
+  return AUDIO_BASE + encodedPath + '/' + encodedFile;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION META
+═══════════════════════════════════════════ */
+var SECTIONS = [
+  { id:'rebirth',    audioNo:1, label:'Block One',   title:'Rebirth',
+    image:'https://www.smritivanearthquakemuseum.biz/assets2/audio1image.png' },
+  { id:'rediscover', audioNo:2, label:'Block Two',   title:'Rediscover',
+    image:'https://www.smritivanearthquakemuseum.biz/assets2/audio2image.png' },
+  { id:'restore',    audioNo:3, label:'Block Three', title:'Restore',
+    image:'https://www.smritivanearthquakemuseum.biz/assets2/insta1.jpeg' },
+  { id:'rebuild',    audioNo:4, label:'Block Four',  title:'Rebuild',
+    image:'https://www.smritivanearthquakemuseum.biz/assets2/DJI_0960-Enhanced-2%20.jpg' }
+];
+
+function sectionById(audioNo) {
+  var n = parseInt(audioNo);
+  if (n===1) return 'rebirth';
+  if (n===2) return 'rediscover';
+  if (n===3) return 'restore';
+  if (n===4) return 'rebuild';
+  return 'rebirth';
+}
+function sectionMeta(id) {
+  for (var i=0;i<SECTIONS.length;i++) { if (SECTIONS[i].id===id) return SECTIONS[i]; }
+  return SECTIONS[0];
+}
+
+/* ═══════════════════════════════════════════
+   ALL TRACKS DATABASE (embedded — no proxy)
+   Fields: pk, lang, Description, Path, Introduction, Content, Audio_no, Display_name, pknum
+═══════════════════════════════════════════ */
+var RAW_TRACKS = [
+  /* ── ENGLISH TRACKS ── */
+  {pk:1,lang:'English',Description:'E001 Introduction- Rebirth',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This is the Rebirth Block. In this block, we will explore the history of Earth\'s evolution, how the world around us has come to be. You will witness the emergence of landforms over millions of years and the genesis of the world we inhabit. You will also get a glimpse of the prosperous and powerful ancient human civilizations in the Kutch Region and the tales of its advancement and resilience.',Content:'Block Introduction- Rebirth\nWelcome to the Rebirth block.\nHere we witness the history of Earth\'s evolution, the emergence of landforms over millions of years and the genesis of the very land we inhabit. Visitors get a glimpse of prosperous ancient human civilizations in the Kutch region, the tale of its advancement and resilience.',Audio_no:1,Display_name:'1. Introduction- Rebirth'},
+  {pk:2,lang:'English',Description:'E002 Nomenclature Changing Panorama',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this Changing Panorama gallery, you will observe the way our planet Earth gradually evolved from an uninhabitable planet to the only life-supporting planet in the cosmos.',Content:'Nomenclature: Changing Panorama\nSince when has the Earth been changing?\nOur planet Earth has gradually evolved from being an uninhabitable ball of fire to the only known life-supporting planet in the cosmos.',Audio_no:1,Display_name:'2. Nomenclature - Changing Panaroma'},
+  {pk:3,lang:'English',Description:'E003 Shell Artwork explanation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'The artwork that you see here has been created using applique, a traditional craft form from the Kutch region.',Content:'The artwork here is created using applique, a traditional craft form from the Kutch region. It depicts our eternally changing world.',Audio_no:1,Display_name:'3. Shell Artwork explanation'},
+  {pk:4,lang:'English',Description:'E004 Nomenclature- Real-time Observatory',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this real time observatory, you will observe the natural phenomena of climate and tectonics in real time.',Content:'Real-time Observatory\nWind, Temperature and Vibrations are relentless forces of nature that hold sway over the entire planet.',Audio_no:1,Display_name:'4. Nomenclature- Real-time Observatory'},
+  {pk:5,lang:'English',Description:'E005 Nomenclature- Measuring Temperature',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This creative installation displays the current temperature of our surroundings.',Content:'Measuring Temperature\nThis installation displays the current temperature of our surroundings. Notice the difference in minimum and maximum temperature, known as diurnal range.',Audio_no:1,Display_name:'5. Nomenclature- Measuring Temperature'},
+  {pk:6,lang:'English',Description:'E006 Nomenclature- Witnessing Wind',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Through this installation/Wind Sculpture, you will be able to witness the way wind works in real time.',Content:'Witnessing Wind\nThe movement seen in the above sculpture is due to the kinetic energy of wind.',Audio_no:1,Display_name:'6. Nomenclature- Witnessing Wind'},
+  {pk:7,lang:'English',Description:'E007 Nomenclature- Our Evolving Planet',Path:'VO & Script for Gallery Locators/English VO',Introduction:'We live on an ever-evolving planet! Planet Earth has been evolving ever since it came into existence some 4.5 billion years ago.',Content:'Our Evolving Planet\nHow well do you know about Planet Earth?\nPlanet Earth has been evolving since it came into existence over 4.5 billion years ago.',Audio_no:1,Display_name:'7. Nomenclature- Our Evolving Planet'},
+  {pk:8,lang:'English',Description:'E008 Ramp models EXPLANATION AND INTRO',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this section, the models will acquaint you with Earth and its unique geological features.',Content:'In this section get to know trivia/facts about the Earth and its unique geological features.',Audio_no:1,Display_name:'8. Ramp models EXPLANATION AND INTRO'},
+  {pk:9,lang:'English',Description:'E009 Artefacts Display Panels',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this section, you will be able to view various artefacts and learn some more facts about Planet Earth.',Content:'Artefacts Display Panels\nHow hot is the centre of the earth?\nEarth\'s inner core is believed to have temperature similar to the surface of the Sun.',Audio_no:1,Display_name:'9. Artefacts Display Panels'},
+  {pk:10,lang:'English',Description:'E010 TOPIC- Layered Earth',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this interactive model, you will be able to explore the various layers of the earth.',Content:'TOPIC: Layered Earth\nThe layers of Earth -the crust, the mantle, and the core are the result of elemental distribution processes.',Audio_no:1,Display_name:'10. TOPIC- Layered Earth'},
+  {pk:11,lang:'English',Description:'E011 Instructions- Push the lever to view the plate boundaries of Earth-',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this interactive model, you will learn more about plate tectonics.',Content:'Plate Tectonics\nPlate tectonics is the theory that states that the Earth\'s outer shell, the lithosphere is divided into large slabs of solid rock.',Audio_no:1,Display_name:'11. Instructions- Push the lever to view the plate boundaries of Earth-'},
+  {pk:12,lang:'English',Description:'E012 TOPIC- Movement of Earth\'s crust',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this interactive model, you will gain more information about plate boundaries.',Content:'Movement of Earth\'s crust\nSections of the lithosphere, or plates, roughly fit together and meet at places called plate boundaries.',Audio_no:1,Display_name:'12. TOPIC- Movement of Earth\'s crust'},
+  {pk:13,lang:'English',Description:'E013 Nomenclature- Discover Fossils',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this gallery, we invite you to dig deeper into the fascinating world of soil and discover fossils belonging to the Kutch region.',Content:'Discover Fossils\nThis gallery invites you to dig deeper into the fascinating soil world to discover fossils.',Audio_no:1,Display_name:'13. Nomenclature- Discover Fossils'},
+  {pk:14,lang:'English',Description:'E014 Ichthyosaur',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this section, you shall see the rare fossil of an Ichthyosaur, a fish-reptile.',Content:'The rare fossil of Ichthyosaur, a fish-reptile, was found near Lodai village, Kutch in 2016 and it is dated to be over 152 million years old.',Audio_no:1,Display_name:'14. Ichthyosaur'},
+  {pk:15,lang:'English',Description:'E015 FOSSIL EXCAVATION COURTYARD',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this section, you shall also learn about other fossils such as Sea Cow, Ammonites and Ptilophyllum.',Content:'FOSSIL EXCAVATION COURTYARD\nIchthyosaur\nSea Cow\nAmmonites\nPtilophyllum',Audio_no:1,Display_name:'15. FOSSIL EXCAVATION COURTYARD'},
+  {pk:16,lang:'English',Description:'E016 C5 C3C5 C 3.9 Fossils (Artifacts)',Path:'VO & Script for Gallery Locators/English VO',Introduction:'The fossils that you see here have been excavated from the Kutch region and show how the landforms shifted over time.',Content:'Fossils (Artifacts)\nThese fossils are excavated from the Kutch region and they show the shifts in landforms over time.',Audio_no:1,Display_name:'16. Fossils (Artifacts)'},
+  {pk:17,lang:'English',Description:'E017 Fossils Artafacts',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Through this Applique Artwork, you shall understand the story of evolution in the plant and animal kingdoms.',Content:'The story of evolution in the plant and animal kingdoms is depicted through this applique artwork.',Audio_no:1,Display_name:'17. Fossils Artafacts'},
+  {pk:18,lang:'English',Description:'E018 Inner Globe Installation- Rift formation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this Inner Globe installation, you will understand about faults and rift formations.',Content:'Understanding Faults\nA fault is a fracture or zone of fractures between two blocks of rocks.',Audio_no:1,Display_name:'18. Inner Globe Installation- Rift formation'},
+  {pk:19,lang:'English',Description:'E019 Gallery Introduction- Human evolution, civilization of settlements, adaptation to the conditions, and flourishing through trade.-',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this gallery, you will explore the history of human evolution and the civilization of settlements.',Content:'Human evolution, civilization of settlements, adaptation to the conditions, and flourishing through trade.',Audio_no:1,Display_name:'19. Gallery Introduction- Human evolution, civilization of settlements, adaptation to the conditions, and flourishing through trade.-'},
+  {pk:20,lang:'English',Description:'E020 Nomenclature- Land of Migrations and Movements',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this gallery, you will be able to observe centuries worth of human endeavour and evolution.',Content:'How have cultures flourished?\nThe gallery showcases centuries\' old human endeavor and evolution.',Audio_no:1,Display_name:'20. Nomenclature- Land of Migrations and Movements'},
+  {pk:21,lang:'English',Description:'E021 Trade Map Installation- Trade map panel',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this Trade Map Installation, you will be able to see prominent trade routes during the Indus Valley civilization.',Content:'Trade as Testimony\nThis map displays prominent trade routes with objects that were traded in the Indus Valley civilization.',Audio_no:1,Display_name:'21. Trade Map Installation- Trade map panel'},
+  {pk:22,lang:'English',Description:'E022 Artifacts Display Unit',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this gallery, you will see various artefacts collected from the Indus Valley Civilization.',Content:'An Evolving Civilization\nIn this gallery, you will see various artefacts collected from the Indus Valley Civilization.',Audio_no:1,Display_name:'22. Artifacts Display Unit Nomenclature an evolving Civilization'},
+  {pk:23,lang:'English',Description:'E023 Tools for Survival',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this unit, you can see some of the earliest tools the humans used for survival.',Content:'Tools for Survival\nEarly traces of settlements around Gujarat have revealed primitive tools and stone blades known as Microliths.',Audio_no:1,Display_name:'23. Tools for Survival'},
+  {pk:24,lang:'English',Description:'E024 Pottery for Food',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this unit, you will observe the various kinds of pots that were made during this period through clay pottery.',Content:'Pottery for Food\nDifferent types of pots began to be made with clay pottery.',Audio_no:1,Display_name:'24. Pottery for Food'},
+  {pk:25,lang:'English',Description:'E025 Agriculture and Animal Husbandry-',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this unit, you will explore how Harappans grew ancient varieties of wheat, barley, pulses, rice, sesame and linseed.',Content:'Agriculture and Animal Husbandry\nHarappans grew ancient varieties of wheat, barley, pulses, rice, sesame and linseed.',Audio_no:1,Display_name:'25. Agriculture and Animal Husbandry-'},
+  {pk:26,lang:'English',Description:'E026 Sophisticated Building Systems',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this unit, you will explore the sophisticated and advanced culture of buildings, citadels, water channels and docks.',Content:'Sophisticated Building Systems\nAn advanced culture of buildings, citadels, water-channels and docks is found across Lothal, Dholavira and Mohenjo Daro.',Audio_no:1,Display_name:'26. Sophisticated Building Systems'},
+  {pk:27,lang:'English',Description:'E027 Processing Raw Materials',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this unit, you will explore the nature of raw materials in the Indus Valley Civilizations.',Content:'Processing Raw Materials\nRaw materials like semi-precious stones, metal ores, clays and shells were an important currency for trade and expansion.',Audio_no:1,Display_name:'27. Processing Raw Materials'},
+  {pk:28,lang:'English',Description:'E028 Land and Water Transpor',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this unit, you will understand how the Indus valley civilization had well developed routes for trade.',Content:'Land and Water Transport\nThe transport of raw materials and finished goods for trade was done through land, river and maritime routes.',Audio_no:1,Display_name:'28. Land and Water Transpor'},
+  {pk:29,lang:'English',Description:'E029 Weights for Trade',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this unit, you will get to see the precise weights and measures, made of stone.',Content:'Weights for Trade\nAn important aspect of internal trade was the use of precise weights and measures, made of stones.',Audio_no:1,Display_name:'29. Weights for Trade'},
+  {pk:30,lang:'English',Description:'E030 Seals for Trade',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this unit, you will see seals that were used to stamp bags or packets containing traded goods.',Content:'Seals for Trade\nSeals, such as those found at Dholavira, have been used to stamp bags or packets containing traded goods.',Audio_no:1,Display_name:'30. Seals for Trade'},
+  {pk:31,lang:'English',Description:'E031 C7 Gallery Introduction',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This gallery takes you into the Indus Valley Civilization, through its settlements and resilient building systems.',Content:'This gallery takes you into the IndusValley Civilization, through its settlements and resilient building systems.',Audio_no:1,Display_name:'31. Gallery Introduction'},
+  {pk:32,lang:'English',Description:'E032 Nomenclature- Culture of Resilience',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this Site Model Gallery, you will witness the embodiment of human resilience.',Content:'Culture of Resilience\nHow have civilizations adapted and evolved?',Audio_no:1,Display_name:'32. Nomenclature- Culture of Resilience'},
+  {pk:33,lang:'English',Description:'E033 C7 Artwork explanation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this section we see the artwork that depicts the dynamic landscape around us.',Content:'Artwork explanation\nThe artwork depicts the dynamic landscape around us, along with the evolution of various life-forms.',Audio_no:1,Display_name:'33. Artwork Explanation'},
+  {pk:34,lang:'English',Description:'E034 Exit Panel- Conclusion to C-Block, D block intro',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this block, you witnessed the history of the earth, how it formed and the natural forces.',Content:'Conclusion to C-Block, D block intro\nAfter experiencing the richness offered by the Rebirth block, we move to the Rediscover block.',Audio_no:1,Display_name:'34. Exit Panel- Conclusion to C-Block, D block intro'},
+  /* ── REDISCOVER ── */
+  {pk:35,lang:'English',Description:'E035 D(A) BLOCK  D1 Rediscover Block',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Welcome to the Rediscover block. In this block, you will discover the diverse natural features of Gujarat.',Content:'Rediscover Block\nWelcome to the Rediscover block.\nLet\'s discover the diverse natural features of Gujarat.',Audio_no:2,Display_name:'35. Introduction (Rediscover Block)'},
+  {pk:36,lang:'English',Description:'E036 D1 D1.6 Triangular unit (small)- Introductory gallery panel Nomenclature- Understanding the Region\'s Landscape',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this gallery, you will understand why Gujarat is so vulnerable to natural occurrences.',Content:'Understanding the Region\'s Landscape\nWhy is Gujarat vulnerable to natural occurrences?',Audio_no:2,Display_name:'36. Triangular unit (small)- Introductory gallery panel Nomenclature- Understanding the Region\'s Landscape'},
+  {pk:37,lang:'English',Description:'E037 D1 D1.5 Artwork explanation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this section we witness how using the layering and motifs of traditional block printing, this artwork depicts the vast landscapes of Gujarat.',Content:'Artwork explanation\nUsing the layering and motifs of traditional block printing, the artwork depicts the vast landscapes of Gujarat.',Audio_no:2,Display_name:'37. Artwork explanation'},
+  {pk:38,lang:'English',Description:'E038 Gallery Introduction Nomenclature- An Experiment in Transience  -',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this experiment, we observe here the slow yet persistent effects of wind, water and vibrations on three pieces of rock.',Content:'An Experiment in Transience\nEverything in our world is constantly acted upon by forces of nature.',Audio_no:2,Display_name:'38. Gallery Introduction Nomenclature- An Experiment in Transience  -'},
+  {pk:39,lang:'English',Description:'E039 D3 Nomenclature- Decoding Natural Occurrences',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This gallery unearths the science behind these frequently occurring natural events.',Content:'Decoding Natural Occurrences\nAfter exploring natural hazard related vulnerabilities faced by the Gujarat region.',Audio_no:2,Display_name:'39. Nomenclature- Decoding Natural Occurrences'},
+  {pk:40,lang:'English',Description:'E040 Cyclone-',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This model shows how a cyclone is formed, through the rapid movement of air from areas of high to low pressure.',Content:'Cyclone\nThis model shows how a cyclone is formed.',Audio_no:2,Display_name:'40. Cyclone-'},
+  {pk:41,lang:'English',Description:'E041 FLOOD (MODEL)-',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This model shows how large quantities of water submerge land rapidly.',Content:'FLOOD (MODEL)\nFloods are caused by overflowing rivers, excessive rainfall or a surge from a tropical cyclone.',Audio_no:2,Display_name:'41. FLOOD (MODEL)-'},
+  {pk:42,lang:'English',Description:'E042 Earthquake mode',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This model explains how Earth\'s tectonic plates move along fault-lines to cause an earthquake.',Content:'Earthquake model\nThe model explains how Earth\'s tectonic plates move along fault-lines to cause an earthquake.',Audio_no:2,Display_name:'42. Earthquake mode'},
+  {pk:43,lang:'English',Description:'E043 D4 Artwork explanation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'The artistic compositions for this gallery showcase the vibrant and ecologically unique landscapes of Banni grasslands.',Content:'Artwork explanation\nThe artistic compositions for this gallery showcase the vibrant and ecologically unique landscapes.',Audio_no:2,Display_name:'43. Artwork explanation'},
+  {pk:44,lang:'English',Description:'E044 Gallery Introductory Nomenclature- Responsive Environments',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This section highlights the fact that the Banni and Rann of Kutch are one-of-a-kind landscapes which transform over seasons.',Content:'Responsive Environments\nCan our environments be resilient too?\nThe Banni and Rann of Kutch are one-of-a-kind landscapes.',Audio_no:2,Display_name:'44. Gallery Introductory Nomenclature- Responsive Environments'},
+  {pk:45,lang:'English',Description:'E045 Gallery Introduction',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we learn how the plants and trees of the Kutch region have adapted to various conditions.',Content:'Gallery Introduction\nPlants and trees of Kutch region have adapted to various conditions of dry soil.',Audio_no:2,Display_name:'45. Gallery Introduction'},
+  {pk:46,lang:'English',Description:'E046 D6 Diorama explanation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Through this Diorama, you shall witness the timeline of socio-political events and natural calamities.',Content:'Diorama explanation\nThis is a timeline of socio-political events and natural calamities which have marked the history of Gujarat region.',Audio_no:2,Display_name:'46. Diorama explanation'},
+  {pk:47,lang:'English',Description:'E047 D7 D8 Gallery Introduction',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we learn that the earthquake of 1819 was a significant natural event which shaped the Kutch region.',Content:'Gallery Introduction\nThe earthquake of 1819 was a significant natural event.',Audio_no:2,Display_name:'47. Gallery Introduction'},
+  {pk:48,lang:'English',Description:'E048 Wall  Allah bund intro Nomenclature- Allah Bund',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we get to learn more about the impact of natural calamities like earthquakes on the terrain of a region.',Content:'Allah Bund\nCan an earthquake instantly change the terrain of a region?\nOn 16th June 1819, an earthquake of 7.9-8.2 magnitude transformed the geography of Rann of Kutch.',Audio_no:2,Display_name:'48. Wall  Allah bund intro Nomenclature- Allah Bund'},
+  {pk:49,lang:'English',Description:'E049 Allah bund Staircase panel-',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we witness Allah Bund or "mound of God".',Content:'Allah bund Staircase panel\nAllah Bund or "mound of God" – an uplifted piece of land.',Audio_no:2,Display_name:'49. Allah bund Staircase panel-'},
+  {pk:50,lang:'English',Description:'E050 D9 D9.1 Triangular Unit (Side 1)  Gallery Introductory  Nomenclature- Resilient innovations-',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This gallery illustrates how the hallmark of human civilisations has been the response to harsh conditions.',Content:'Resilient innovations\nThe hallmark of human civilisations has been the response to harsh conditions.',Audio_no:2,Display_name:'50. Triangular Unit (Side 1)  Gallery Introductory  Nomenclature- Resilient innovations-'},
+  {pk:51,lang:'English',Description:'E051 D9 Artwork explanation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This artwork depicts the vast landscapes of Gujarat using the layering and motifs of traditional block printing.',Content:'Blockprint Artwork created by: Dr. Ismail Khatri, Ajrakhpur',Audio_no:2,Display_name:'51. Artwork explanation'},
+  {pk:52,lang:'English',Description:'E052 D9 D9.2 Triangular Unit (Side 2) Bhunga Nomenclature- Earthquake -resistant Dwellings',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we get a glance at Bhungas which are traditional circular dwellings.',Content:'Earthquake -resistant Dwellings\nBhungas are traditional circular dwellings built by communities.',Audio_no:2,Display_name:'52. Triangular Unit (Side 2) Bhunga Nomenclature- Earthquake -resistant Dwellings'},
+  {pk:53,lang:'English',Description:'E053 Model 1 Virda Virda- An indigenous well system',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we get a glimpse of Virda, which is an indigenous rainwater harvesting practice.',Content:'Virda: An indigenous well system\nVirda, an indigenous rainwater harvesting practice, is a series of 9-12ft deep wells.',Audio_no:2,Display_name:'53. Model 1 Virda Virda- An indigenous well system'},
+  {pk:54,lang:'English',Description:'E054 D9.4 Model 2 -Stepwells Stepwells or vavs- Subterranean tradition of Gujarat',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we see Step-wells or vavs are traditional vertical well shafts found around Gujarat.',Content:'Stepwells or vavs: Subterranean tradition of Gujarat\nStep-wells or vavs are traditional vertical well shafts.',Audio_no:2,Display_name:'54. Model 2 -Stepwells Stepwells or vavs- Subterranean tradition of Gujarat'},
+  {pk:55,lang:'English',Description:'E055 D9.5 Model 3 - Hamirsar lake Hamirsar Lake - Sophisticated water management',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we see Hamirsar Lake located in Bhuj which is over 450 years old.',Content:'Hamirsar Lake : Sophisticated water management\nOver 450 years old, Hamirsar Lake located in Bhuj.',Audio_no:2,Display_name:'55. Model 3 - Hamirsar lake Hamirsar Lake - Sophisticated water management'},
+  {pk:56,lang:'English',Description:'E056 (Exterior) D9.8 Artwork  ARTWORK- BLOCK PRINT',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This artwork depicts the layering and motifs of traditional block printing.',Content:'ARTWORK: BLOCK PRINT\nUsing the layering and motifs of traditional block printing, the artwork depicts the vast landscapes of Gujarat.',Audio_no:2,Display_name:'56. ARTWORK- BLOCK PRINT'},
+  {pk:57,lang:'English',Description:'E057 D9 D9.6 Exit Artwork Panel - BACK Ea Block Introduction',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Through Rediscover, we experienced the resilient nature of Kutch.',Content:'BACK Ea Block Introduction\nThrough Rediscover, we experienced the resilient nature of Kutch.',Audio_no:2,Display_name:'57. Exit Artwork Panel - BACK Ea Block Introduction'},
+  /* ── RESTORE ── */
+  {pk:58,lang:'English',Description:'E058 E(A) BLOCK E0 Block Introduction',Path:'VO & Script for Gallery Locators/English VO',Introduction:'The Restore block recounts the tragic events of the 2001 earthquake.',Content:'Block Introduction\nThe Restore block recounts the tragic events of the 2001 earthquake.',Audio_no:3,Display_name:'58. Block Introduction'},
+  {pk:59,lang:'English',Description:'E059 E1 E2 Ceiling Artwork explanation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this artwork, we see how the ancient craft of shaping clay into various forms depicts the shattering effect of the earthquake.',Content:'Ceiling Artwork explanation.\nThrough the ancient craft form of shaping clay into various forms, the shattering effect of the earthquake is depicted.',Audio_no:3,Display_name:'59. Ceiling Artwork explanation'},
+  {pk:60,lang:'English',Description:'E060 Gallery stats',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this section, we get a glimpse of the exact details, facts and figures related to the occurrence and impact of the earthquake.',Content:'Gallery stats',Audio_no:3,Display_name:'60. Gallery stats'},
+  {pk:61,lang:'English',Description:'E061 E1-E2 WALL Debris Special Installation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'The installation represents the sheer physical destruction wreaked by the quake.',Content:'Within a few moments, homes, shops, hospitals and many public buildings were reduced to rubble.',Audio_no:3,Display_name:'61. Debris Special Installation'},
+  {pk:62,lang:'English',Description:'E062 Vibration Table',Path:'VO & Script for Gallery Locators/English VO',Introduction:'The table explains the seismic understanding of the 2001 earthquake.',Content:'Vibration Table\nThe table explains the seismic understanding of the 2001 earthquake.',Audio_no:3,Display_name:'62. Vibration Table'},
+  {pk:63,lang:'English',Description:'E063 E3-E5 E3. (1) Gallery Introduction Nomenclature- Witnessing Crisis',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This section shows the devastation caused by the earthquake.',Content:'Witnessing Crisis\nIs there hope after this tragedy?\nThis section shows the devastation caused by the earthquake.',Audio_no:3,Display_name:'63. Gallery Introduction Nomenclature- Witnessing Crisis'},
+  {pk:64,lang:'English',Description:'E064 E3(2) Control Room  Nomenclature- Telecommunications Emergency-',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we get a realistic view of the frantic control-room situation.',Content:'Telecommunications Emergency\nThe breakdown of telecommunications for a few hours led to paranoia.',Audio_no:3,Display_name:'64. Control Room  Nomenclature- Telecommunications Emergency-'},
+  {pk:65,lang:'English',Description:'E065 E4.1 Pyre Wood   Nomenclature- Piles of Pyres',Path:'VO & Script for Gallery Locators/English VO',Introduction:'The installation depicts the massive quantities of pyre-wood needed during the tragic times.',Content:'Piles of Pyres\nThe tragedy and loss around Kutch were such that last rites continued over days.',Audio_no:3,Display_name:'65. Pyre Wood   Nomenclature- Piles of Pyres'},
+  {pk:66,lang:'English',Description:'E066 E4 E4.2 Relief Boxes Installation   Nomenclature- A Heap of Relief',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we see how national and international communities rushed to send packaged food and essential supplies.',Content:'A Heap of Relief\nClothing, food and water became scarce immediately after the quake.',Audio_no:3,Display_name:'66. Relief Boxes Installation   Nomenclature- A Heap of Relief'},
+  {pk:67,lang:'English',Description:'E067 E5 (1) Hologram Installation  Nomenclature- Hazardous Rescue-',Path:'VO & Script for Gallery Locators/English VO',Introduction:'These holograms bring to life the various exhaustive scenarios portraying search and rescue operations.',Content:'Hazardous Rescue\nRescuing survivors trapped under debris became critical.',Audio_no:3,Display_name:'67. Hologram Installation  Nomenclature- Hazardous Rescue-'},
+  {pk:68,lang:'English',Description:'E068 E5 (2) Hanging Boxes Installation Nomenclature- Responses from the World',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we see how the world banded together instantaneously to donate essentials.',Content:'Responses from the World\nThe world banded together instantaneously to donate essentials.',Audio_no:3,Display_name:'68. Hanging Boxes Installation Nomenclature- Responses from the World'},
+  {pk:69,lang:'English',Description:'E069 E6 E6.1 Gallery Introduction   Nomenclature- Healing Together',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we get a glimpse of the families who had lost their permanent homes.',Content:'Healing Together\nMany families had lost their permanent homes and had to take refuge in temporary or makeshift shelters.',Audio_no:3,Display_name:'69. Gallery Introduction   Nomenclature- Healing Together'},
+  {pk:70,lang:'English',Description:'E070 Installation explanation (mural- songs of hope)',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This artistic depiction represents the spirit of hope and community during difficult circumstances.',Content:'Installation explanation (mural- songs of hope)\nThis artistic depiction represents the spirit of hope and community.',Audio_no:3,Display_name:'70. Installation explanation (mural- songs of hope)'},
+  {pk:71,lang:'English',Description:'E071 TERRACOTTA MURAL E6 E6.2 Song of Hope Nomenclature- Rising Hope',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This terracotta wall mural represents the mammoth scale at which the temporary shelters were constructed.',Content:'Rising Hope\nThe terracotta wall mural represents the mammoth scale at which the temporary shelters were constructed.',Audio_no:3,Display_name:'71. Song of Hope Nomenclature- Rising Hope'},
+  {pk:72,lang:'English',Description:'E072 E7 E7.1 Gallery Intro - Personal stories  Nomenclature- Earthquake Encounters',Path:'VO & Script for Gallery Locators/English VO',Introduction:'People from all walks of life were affected by the earthquake in some way.',Content:'Earthquake Encounters\nPeople from all walks of life were affected by the earthquake in some way.',Audio_no:3,Display_name:'72. Gallery Intro - Personal stories  Nomenclature- Earthquake Encounters'},
+  {pk:73,lang:'English',Description:'E073 E(a) E(a).0a Exit artwork  (8)',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Through the mouldable form of terracotta, this artwork illustrates the journey of people and places.',Content:'Exit artwork\nThrough the mouldable form of terracotta, this artwork illustrates the journey.',Audio_no:3,Display_name:'73. Exit Artwork '},
+  {pk:74,lang:'English',Description:'E074 E(a) E(a).0 Gallery exit (15)',Path:'VO & Script for Gallery Locators/English VO',Introduction:'The Restore block recounts the tragic events of the 2001 earthquake.',Content:'Gallery exit\nThe Restore block recounts the tragic events of the 2001 earthquake.',Audio_no:3,Display_name:'74. Gallery Exit '},
+  /* ── REBUILD ── */
+  {pk:75,lang:'English',Description:'E075 D(B) BLOCK D10 Entry Artwork Backside',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Welcome to the Rebuild block.',Content:'Welcome to the Rebuild block.\nThis section showcases the collective effort channelized towards rebuilding Gujarat.',Audio_no:4,Display_name:'75. Entry Artwork Backside'},
+  {pk:76,lang:'English',Description:'E076 Artwork ex planation D10 Entry Artwork Glass Panel (Back Panel)',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Many threads have come together in this hand woven artwork, to narrate Gujarat\'s journey from chaos to order.',Content:'Artwork explanation - Many threads have come together in this hand woven artwork.',Audio_no:4,Display_name:'76. Artwork ex planation D10 Entry Artwork Glass Panel (Back Panel)'},
+  {pk:77,lang:'English',Description:'E077 Ramp Nomenclature- A New Organization',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Within weeks of the earthquake, a swift transition from relief towards reconstruction and recovery became imperative.',Content:'A New Organization\nWhat was the need of the hour?\nWithin weeks of the earthquake, a swift transition became imperative.',Audio_no:4,Display_name:'77. Ramp Nomenclature- A New Organization'},
+  {pk:78,lang:'English',Description:'E078 D11.1 40-50 words Gallery Introduction Nomenclature- Rebuilding Cities Collaboratively',Path:'VO & Script for Gallery Locators/English VO',Introduction:'The process of rebuilding cities involves seamless collaboration and coordination.',Content:'Rebuilding Cities Collaboratively\nHow do we rebuild cities together?\nThe process of rebuilding cities involves seamless collaboration.',Audio_no:4,Display_name:'78. Gallery Introduction Nomenclature- Rebuilding Cities Collaboratively'},
+  {pk:79,lang:'English',Description:'E079 30 Gallery Introduction',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This gallery showcases Gujarat\'s stunning recovery and accelerated growth.',Content:'Gallery Introduction - The upcoming gallery showcases Gujarat\'s stunning recovery.',Audio_no:4,Display_name:'79. Gallery Introduction'},
+  {pk:80,lang:'English',Description:'E080 D12 D12.1 Hand in hand to restore lives 30-40 words Nomenclature- Reviving Gujarat',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Post-earthquake, the Government of Gujarat launched the GEERP with the Central Government, World Bank and Asian Development Bank.',Content:'Reviving Gujarat\nWhat does the Earthquake Reconstruction Project entail?\nPost-earthquake, the Government of Gujarat launched the GEERP.',Audio_no:4,Display_name:'80. Hand in hand to restore lives 30-40 words Nomenclature- Reviving Gujarat'},
+  {pk:81,lang:'English',Description:'E081 32 Gallery explanation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we see the timeline of recovery and redevelopment through digital pods.',Content:'This multi-media gallery presents a panorama of the various stories and steps undertaken post-earthquake.',Audio_no:4,Display_name:'81. Gallery explanation'},
+  {pk:82,lang:'English',Description:'E082 D13 40 Gallery Introduction',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This model illustrates how authorities, engineering experts and NGOs came together to develop earthquake resistant building systems.',Content:'Authorities, engineering experts and NGOs came together to develop earthquake resistant building systems.',Audio_no:4,Display_name:'82. Gallery Introduction'},
+  {pk:83,lang:'English',Description:'E083 42 Model explanation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'The building construction techniques using earthquake resistant technologies are shown here through scaled models.',Content:'Model explanation\nBuilding construction techniques using earthquake resistant technologies.',Audio_no:4,Display_name:'83. Model explanation'},
+  {pk:84,lang:'English',Description:'E084 D15 50 Gallery Introduction Nomenclature- Build Back Better',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In this gallery you will witness the process of Gujarat\'s recovery and rebuilding.',Content:'Build Back Better\nIn the process of Gujarat\'s recovery and rebuilding, GSDMA used the \'Build Back Better\' approach.',Audio_no:4,Display_name:'84. Gallery Introduction Nomenclature- Build Back Better'},
+  {pk:85,lang:'English',Description:'E085 53 Artwork explanation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Using the metaphor of weaving, a traditional craft form practiced in Kutch for several centuries, this artwork recounts the story of Gujarat\'s rebuilding.',Content:'Artwork explanation\nUsing the metaphor of weaving, this artwork recounts the story of Gujarat\'s rebuilding.',Audio_no:4,Display_name:'85. Artwork explanation'},
+  {pk:86,lang:'English',Description:'E086 D15 model Bhuj before and after 54  Model explanation',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This model depicts a part of Bhuj city before and after 2001.',Content:'Urban Reengineering / Comparative Changes\nThe model shows a part of Bhuj city before and after 2001.',Audio_no:4,Display_name:'86. Model Bhuj before and after 54  Model explanation'},
+  {pk:87,lang:'English',Description:'E087 D 16 Nomenclature-',Path:'VO & Script for Gallery Locators/English VO',Introduction:'This gallery depicts the story of the 2001 earthquake and its recovery processes.',Content:'Gallery Introduction - Triumphant Testimonies\nThis gallery culminates the story of the 2001 earthquake.',Audio_no:4,Display_name:'87. Nomenclature-'},
+  {pk:88,lang:'English',Description:'E088 Artwork explanation (loom)',Path:'VO & Script for Gallery Locators/English VO',Introduction:'Here we witness many threads that have come together in this hand woven artwork.',Content:'Artwork explanation (loom)\nMany threads have come together in this handwoven artwork.',Audio_no:4,Display_name:'88. Artwork explanation (loom)'},
+  {pk:89,lang:'English',Description:'E089 02  Block exit',Path:'VO & Script for Gallery Locators/English VO',Introduction:'In Rebuild, the last block, we understood how the collective power came to help Gujarat rebuild.',Content:'Block exit\nThe Rebuild block gave us a comprehensive understanding of the collective process of rebuilding.',Audio_no:4,Display_name:'89. Block Exit'},
+  /* ── HINDI TRACKS ── */
+  {pk:179,lang:'Hindi',Description:'1. C BLOCK  C1.4 Block Introduction- Rebirth',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'पुनरुत्थान / पुनःसंरचना ब्लॉक में आपका स्वागत है।',Content:'',Audio_no:1,Display_name:'1. Introduction- Rebirth'},
+  {pk:180,lang:'Hindi',Description:'2.   C1 C 1.1 Nomenclature- Changing Panorama ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'बदलता परिदृश्य नामक इस गैलरी में हम जानेंगे।',Content:'',Audio_no:1,Display_name:'2. Nomenclature Changing Panorama'},
+  {pk:181,lang:'Hindi',Description:'3.  11 Shell Artwork explanation',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ आप जो कलाकृति देख रहे हैं, यह कच्छ क्षेत्र के एक पारंपरिक शिल्प रूप का उपयोग करके बनाई गयी है।',Content:'',Audio_no:1,Display_name:'3. Shell Artwork explanation'},
+  {pk:182,lang:'Hindi',Description:'4.  C2 C 2.1 Real-time Observatory ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस रियल टाइम ऑब्जर्वेटरी में आप जलवायु और विवर्तनिकी जैसी प्राकृतिक घटनाओं को विस्तार से जानेंगे।',Content:'',Audio_no:1,Display_name:'4. Nomenclature- Real-time Observatory'},
+  {pk:183,lang:'Hindi',Description:'5. C2   Measuring Temperature',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह रचनात्मक स्थापना हमारे परिवेश के वर्तमान तापमान को प्रदर्शित करती है।',Content:'',Audio_no:1,Display_name:'5. Nomenclature- Measuring Temperature'},
+  {pk:184,lang:'Hindi',Description:'6.   Ceiling Wind Installation- Wind sculpture Nomenclature- Witnessing Wind ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इंस्टालेशन के द्वारा आप वास्तविक समय में हवा के काम करने के तरीके को देख पाएंगे।',Content:'',Audio_no:1,Display_name:'6. Nomenclature- Witnessing Wind'},
+  {pk:185,lang:'Hindi',Description:'7.     C3    C 3.1 Our Evolving Planet...',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'हम एक ऐसे ग्रह पर रहते हैं जो निरंतर विकसित होता रहता है।',Content:'',Audio_no:1,Display_name:'7. Nomenclature- Our Evolving Planet'},
+  {pk:186,lang:'Hindi',Description:'8. Ramp models  EXPLANATION AND INTRO',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस भाग में जो मॉडल पेश किये गए हैं वे आपको पृथ्वी और उसकी विभिन्न भौगोलिक विशेषताओं से परिचित कराएंगे।',Content:'',Audio_no:1,Display_name:'8. Ramp models EXPLANATION AND INTRO'},
+  {pk:187,lang:'Hindi',Description:'9. C 3.2- 3.5 Artefacts Display Panels',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस भाग में आप विभिन्न कलाकृतियों को देख पाएंगे।',Content:'',Audio_no:1,Display_name:'9. Artefacts Display Panels'},
+  {pk:188,lang:'Hindi',Description:'10. C3+C5 C 3.6 - 3.8 MODEL-1 TOPIC- Layered Earth ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इंटरैक्टिव मॉडल के माध्यम से आप पृथ्वी की विभिन्न परतों के विषय में जान पाएंगे।',Content:'',Audio_no:1,Display_name:'10. TOPIC- Layered Earth'},
+  {pk:189,lang:'Hindi',Description:'11. MODEL-2 TOPIC- Instructions push the lever to view the plate boundries of earth',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इंटरैक्टिव मॉडल के माध्यम से आप प्लेट विवर्तनिकी के विषय में विस्तार से जान पाएंगे।',Content:'',Audio_no:1,Display_name:'11. Instructions- Push the lever to view the plate boundaries of Earth-'},
+  {pk:190,lang:'Hindi',Description:'12. MODEL-3 TOPIC- Movement of Earth\'s crust',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इंटरैक्टिव मॉडल के माध्यम से आप प्लेट सीमाओं के बारे में जानकारी प्राप्त करेंगे।',Content:'',Audio_no:1,Display_name:'12. TOPIC- Movement of Earth\'s crust'},
+  {pk:191,lang:'Hindi',Description:'13. C4 C 4.1 Gallery Introduction- Fossil Excavation  ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह गैलरी आपको मिट्टी की लुभावनी दुनिया में प्रवेश करने के लिए आमंत्रित करती है।',Content:'',Audio_no:1,Display_name:'13. Nomenclature- Discover Fossils'},
+  {pk:192,lang:'Hindi',Description:'14. C4 C 4.2 Ichthyosaur',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस हिस्से में आप इच्थ्योसौर के जीवाश्म को देखेंगे।',Content:'',Audio_no:1,Display_name:'14. Ichthyosaur'},
+  {pk:193,lang:'Hindi',Description:'15. C4 C 4.3 FOSSIL EXCAVATION COURTYARD',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ आपको सी-काऊ, अमोनाइट्स और टीलोफ़ाइलम नामक अन्य जीवाश्म भी देखने को मिलेंगे।',Content:'',Audio_no:1,Display_name:'15. FOSSIL EXCAVATION COURTYARD'},
+  {pk:194,lang:'Hindi',Description:'16.  C5 C3C5 C 3.9 Fossils Artifacts',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'आप जिन जीवाश्मों को यहाँ देख रहे हैं, वे कच्छ के क्षेत्र में हुई खुदाई में पाए गए।',Content:'',Audio_no:1,Display_name:'16. Fossils (Artifacts)'},
+  {pk:195,lang:'Hindi',Description:'17.  Fossils Artifacts',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस एप्लीक आर्टवर्क के माध्यम से आप पौधों और जानवरों के साम्राज्य में विकास की कहानी को समझेंगे।',Content:'',Audio_no:1,Display_name:'17. Fossils Artafacts'},
+  {pk:196,lang:'Hindi',Description:'18. C3C5  C 3.21 Inner Globe Installation- Rift formation',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इनर ग्लोब इंस्टॉलेशन में आप फ़ॉल्ट और रिफ्ट संरचनाओं के विषय में जानेंगे।',Content:'',Audio_no:1,Display_name:'18. Inner Globe Installation- Rift formation'},
+  {pk:197,lang:'Hindi',Description:'19. C6  C 6.1 Gallery Introduction',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस गैलरी में आप मनुष्य के क्रम विकास के इतिहास का अन्वेषण करेंगे।',Content:'',Audio_no:1,Display_name:'19. Gallery Introduction- Human evolution, civilization of settlements, adaptation to the conditions, and flourishing through trade.-'},
+  {pk:198,lang:'Hindi',Description:'20.  Nomenclature- Land of Migrations and Movements',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस गैलरी में आप सदियों के मानव प्रयास और विकास की कहानी से परिचित होंगे।',Content:'',Audio_no:1,Display_name:'20. Nomenclature- Land of Migrations and Movements'},
+  {pk:199,lang:'Hindi',Description:'21. C6 C 6.3 Trade Map Installation- Trade map panel',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस व्यापार मानचित्र इंस्टालेशन से आप सिंधु घाटी सभ्यता के प्रमुख व्यापार मार्गों को देख पाएंगे।',Content:'',Audio_no:1,Display_name:'21. Trade Map Installation- Trade map panel'},
+  {pk:200,lang:'Hindi',Description:'22. C6 C 6.4 - 6.9 Artifacts Display Unit Nomenclature- An Evolving Civilization',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस गैलरी में आप सिंधु घाटी सभ्यता में पाई गई विभिन्न कलाकृतियों को देखेंगे।',Content:'',Audio_no:1,Display_name:'22. Artifacts Display Unit Nomenclature- An Evolving Civilization'},
+  {pk:230,lang:'Hindi',Description:'23. 1) Tools for Survival',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इकाई में हम उन औजरो को देखते है जो प्राचीन काल में पहले पहल मनुष्य ने इस्तेमाल किए होंगे।',Content:'',Audio_no:1,Display_name:'23. Tools for Survival'},
+  {pk:231,lang:'Hindi',Description:'24.  2) Pottery for Food',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इकाई हम उन विभिन्न तरह के बर्तनों को देखेंगे।',Content:'',Audio_no:1,Display_name:'24. Pottery for Food'},
+  {pk:232,lang:'Hindi',Description:'25. 3) Agriculture and Animal Husbandry',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इकाई मे आप जानेंगे की कैसे हड़प्पावासी गेहूं, जौ, दाल, चावल, तिल और अलसी की पुरानी किस्मे उगाते थे।',Content:'',Audio_no:1,Display_name:'25. Agriculture and Animal Husbandry-'},
+  {pk:233,lang:'Hindi',Description:'26. 4) Sophisticated Building Systems',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इकाई में आप जानेंगे कि कैसे लोथल, धोलावीरा और मोहनजोदड़ो में भवनों का निर्माण हुआ।',Content:'',Audio_no:1,Display_name:'26. Sophisticated Building Systems'},
+  {pk:234,lang:'Hindi',Description:'27. 5) Processing Raw Materials ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इकाई मे आपको पता चलेगा की उपरत्न, धातु के अयस्क, चिकनी मिट्टी और कौड़ी जैसे कच्चे माल व्यापार के लिए उपयोग किए जाते थे।',Content:'',Audio_no:1,Display_name:'27. Processing Raw Materials'},
+  {pk:235,lang:'Hindi',Description:'28.  6) Land and Water Transport',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इकाई मे आप जानेंगे की व्यापार के लिए कच्चे मालों तथा तैयार सामानों की ढुलाई स्थल, नदी और समुद्री मार्गों से होती थी।',Content:'',Audio_no:1,Display_name:'28. Land and Water Transpor'},
+  {pk:236,lang:'Hindi',Description:'29.  Weight for trade',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इकाई में आपको पता चलेगा कि आंतरिक व्यापार का एक महत्वपूर्ण पहलू पत्थरों से बने सटीक बाटों का उपयोग था।',Content:'',Audio_no:1,Display_name:'29. Weights for Trade'},
+  {pk:237,lang:'Hindi',Description:'30. 8) Seals for Trade',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस इकाई में आप जानेंगे कि धोलावीरा में पाए गए मुहरों का उपयोग व्यापार के लिए किया गया।',Content:'',Audio_no:1,Display_name:'30. Seals for Trade'},
+  {pk:238,lang:'Hindi',Description:'31. C7 Gallery Introduction',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह गैलरी आपको सिंधु घाटी सभ्यता की बस्तियों और तन्यक निर्माण प्रणालियों से अवगत कराती है।',Content:'',Audio_no:1,Display_name:'31. Gallery Introduction'},
+  {pk:239,lang:'Hindi',Description:'32.C7 C 7.3 - 7.6 Site Models Nomenclature- Culture of Resilience ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस साइट मॉडल गैलरी में आप स्केल किए गए मॉडल, वी.आर. अनुभव और फिल्म के माध्यम से मानव तन्यकता की कहानी देखेंगे।',Content:'',Audio_no:1,Display_name:'32. Nomenclature- Culture of Resilience'},
+  {pk:240,lang:'Hindi',Description:'33. 77 Artwork explanation',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस भाग में हम ऐसी कलाकृतियों को देख सकते हैं जो विभिन्न जीवन-रूपों के विकास के साथ-साथ हमारे चारों ओर गतिशील परिदृश्य को दर्शाती हैं।',Content:'',Audio_no:1,Display_name:'33. Artwork explanation'},
+  {pk:241,lang:'Hindi',Description:'34. C Exterior C 0.4 Exit Panel- Conclusion to C-Block, D block intro',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस ब्लॉक में आपने पृथ्वी के इतिहास को जाना।',Content:'',Audio_no:1,Display_name:'34. Exit Panel- Conclusion to C-Block, D block intro'},
+  {pk:255,lang:'Hindi',Description:'35.  D(A) BLOCK D1 D1 (Exterior) D1.4 Entry artwork (Block introduction)  Rediscover Block ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'पुनः परिचय ब्लॉक में आपका स्वागत है।',Content:'',Audio_no:2,Display_name:'35. Rediscover Block'},
+  {pk:256,lang:'Hindi',Description:'36.  D1 D1.6 Triangular unit (small)  Introductory gallery panel',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस गैलरी में आप जानेंगे कि गुजरात में प्राकृतिक घटनाएं होने की सम्भावना इतनी अधिक क्यों है।',Content:'',Audio_no:2,Display_name:'36. Rediscover Block'},
+  {pk:257,lang:'Hindi',Description:'37.  D1 D1.5 Artwork explanation  ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस खंड में हम देखेंगे कि कैसे पारंपरिक ब्लॉक प्रिंटिंग के लेयरिंग और रूपांकनों का उपयोग करते हुए, यह कलाकृति गुजरात के विशाल परिदृश्य को दर्शाती है।',Content:'',Audio_no:2,Display_name:'37. Artwork explanation'},
+  {pk:258,lang:'Hindi',Description:'38. D2 D2.1 Gallery Introductory and experiment in transcience',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस प्रयोग में हम, चट्टान के तीन टुकड़ों पर, समय के साथ होने वाले हवा, पानी और कंपन के धीमे लेकिन लगातार प्रभाव को देखेंगे।',Content:'',Audio_no:2,Display_name:'38. Gallery Introduction Nomenclature- An Experiment in Transience  -'},
+  {pk:259,lang:'Hindi',Description:'39. D3 D3.1 Gallery Introductory 50-60 words Nomenclature- Decoding Natural Occurrences ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह गैलरी बार-बार होने वाली प्राकृतिक घटनाओं के पीछे के विज्ञान पर प्रकाश डालती हैं।',Content:'',Audio_no:2,Display_name:'39. Nomenclature- Decoding Natural Occurrences'},
+  {pk:260,lang:'Hindi',Description:'40. Cyclone',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह नमूना हमें दिखाता है कि उच्च दबाव वाले क्षेत्रों से हवा तीव्र गति से निम्न दबाव वाले क्षेत्र की तरफ आती है।',Content:'',Audio_no:2,Display_name:'40. Cyclone-'},
+  {pk:261,lang:'Hindi',Description:'41. FLOOD (MODEL)',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह नमूना हमें दिखाता है कि कैसे तेज़ी से बड़ी मात्रा में पानी के आ जाने से ज़मीन जलमग्न हो जाती है।',Content:'',Audio_no:2,Display_name:'41. FLOOD (MODEL)-'},
+  {pk:262,lang:'Hindi',Description:'42.  Earthquake model',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह मॉडल बताता है कि कैसे फाल्टलाइन में टेक्टोनिक प्लेटों में होने वाली हलचल के कारण भूकंप आता है।',Content:'',Audio_no:2,Display_name:'42. Earthquake mode'},
+  {pk:263,lang:'Hindi',Description:'43. D4 41 Artwork explanation',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस गैलरी की कलात्मक रचनाएं बन्नी घास के मैदानों और कच्छ के रण के जीवंत परिदृश्य को प्रदर्शित करती हैं।',Content:'',Audio_no:2,Display_name:'43. Artwork explanation'},
+  {pk:264,lang:'Hindi',Description:'44. (D4D6).1 Gallery Introductory Nomencaltore Responce invironment',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह खंड इस तथ्य पर प्रकाश डालता है कि बन्नी और रण ऑफ़ कच्छ अपनी तरह के इकलौते परिदृश्य हैं।',Content:'',Audio_no:2,Display_name:'44. Gallery Introductory Nomenclature- Responsive Environments'},
+  {pk:265,lang:'Hindi',Description:'45. D5  Gallery Introduction ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हम जान पाएंगे कि कच्छ क्षेत्र के पेड़-पौधों ने शुष्क मिट्टी के अनुकूल खुद को कैसे ढाला।',Content:'',Audio_no:2,Display_name:'45. Gallery Introduction'},
+  {pk:266,lang:'Hindi',Description:'46. D6 Diorama explanation',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस डायोरमा के माध्यम से, आप उन सामाजिक-राजनीतिक घटनाओं और प्राकृतिक आपदाओं की समयरेखा देखेंगे।',Content:'',Audio_no:2,Display_name:'46. Diorama explanation'},
+  {pk:267,lang:'Hindi',Description:'47. D7 Gallaery introduction ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हम जानेंगे कि सन अठारह सौ उन्नीस का भूकंप एक महत्वपूर्ण प्राकृतिक घटना थी।',Content:'',Audio_no:2,Display_name:'47. Gallery Introduction'},
+  {pk:268,lang:'Hindi',Description:'48.  D8.1 Wall Allah bund intro Nomenclature- Allah Bund',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हमें किसी भी भूभाग पर भूकंप जैसी प्राकृतिक आपदाओं के प्रभाव के बारे में अधिक जानकारी मिलेगी।',Content:'',Audio_no:2,Display_name:'48. Wall  Allah bund intro Nomenclature- Allah Bund'},
+  {pk:269,lang:'Hindi',Description:'49. Allah bund Staircase panel',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हमें असलाह बंद का दृश्य मिलता है।',Content:'',Audio_no:2,Display_name:'49. Allah bund Staircase panel-'},
+  {pk:270,lang:'Hindi',Description:'50. D9 Gallery introduction resilent innovation',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह गैलरी बताती है कि कैसे मानव सभ्यताओं की पहचान कठोर परिस्थितियों के प्रति मनुष्य की प्रतिक्रिया में झलकती है।',Content:'',Audio_no:2,Display_name:'50. Triangular Unit (Side 1)  Gallery Introductory  Nomenclature- Resilient innovations-'},
+  {pk:271,lang:'Hindi',Description:'51. 93 Artwork explanation',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह कलाकृति पारंपरिक ब्लॉक प्रिंटिंग के लेयरिंग और रूपांकन का उपयोग करके गुजरात के विशाल परिदृश्य को दर्शाती है।',Content:'',Audio_no:2,Display_name:'51. Artwork explanation'},
+  {pk:272,lang:'Hindi',Description:'52. D9 D9.2 Triangular Unit (Side 2) Bhunga Nomenclature- Earthquake -resistant Dwellings ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हम भुंगों पर एक नजर डालते हैं।',Content:'',Audio_no:2,Display_name:'52. Triangular Unit (Side 2) Bhunga Nomenclature- Earthquake -resistant Dwellings'},
+  {pk:273,lang:'Hindi',Description:'53. D9.3 Model 1 Virda Virda- An indigenous well system ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हमें विरदा की एक झलक मिलती है।',Content:'',Audio_no:2,Display_name:'53. Model 1 Virda Virda- An indigenous well system'},
+  {pk:274,lang:'Hindi',Description:'54. D9.4 Model 2 -Stepwells Stepwells or vavs- Subterranean tradition of Gujarat',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हम देखते हैं कि बावड़ी या वाव गुजरात के आसपास पाए जाने वाले पारंपरिक कुएं हैं।',Content:'',Audio_no:2,Display_name:'54. Model 2 -Stepwells Stepwells or vavs- Subterranean tradition of Gujarat'},
+  {pk:275,lang:'Hindi',Description:'55. D9.5 Model 3 - Hamirsar lake Hamirsar Lake - Sophisticated water management',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हम भुज में स्थित हमीरसर झील को देखते हैं।',Content:'',Audio_no:2,Display_name:'55. Model 3 - Hamirsar lake Hamirsar Lake - Sophisticated water management'},
+  {pk:276,lang:'Hindi',Description:'56. D9 (Exterior) D9.8 Artwork ARTWORK- BLOCK PRINT ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह कलाकृति पारंपरिक ब्लॉक प्रिंटिंग के लेयरिंग और रूपांकन का उपयोग करके गुजरात के विशाल परिदृश्य को दर्शाती है।',Content:'',Audio_no:2,Display_name:'56. Artwork  ARTWORK- BLOCK PRINT'},
+  {pk:277,lang:'Hindi',Description:'57. D9 D9.6 Exit Artwork Panel - BACK Ea Block Introduction ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'पुनः परिचय के माध्यम से, हमने कच्छ की तन्यक प्रकृति को करीब से जाना।',Content:'',Audio_no:2,Display_name:'57. Exit Artwork Panel - BACK Ea Block Introduction'},
+  {pk:278,lang:'Hindi',Description:'58. E(A) BLOCK E0 Block Introduction',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'पुनःप्रत्यावर्तन ब्लॉक संदो हजार एक के भूकंप की दुखद घटनाओं को याद करता है।',Content:'',Audio_no:3,Display_name:'58. Block Introduction'},
+  {pk:279,lang:'Hindi',Description:'59. E1 E2 Ceiling Artwork explanation',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस कलाकृति में हम देखते हैं कि मिट्टी को विभिन्न रूपों में आकार देने का प्राचीन शिल्प भूकंप के विनाशकारी प्रभाव को दर्शाता है।',Content:'',Audio_no:3,Display_name:'59. Ceiling Artwork explanation'},
+  {pk:280,lang:'Hindi',Description:'60. 13  Gallery stats',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस खंड में हमें दीवार पर प्रोजेक्टर के माध्यम से भूकंप की घटना और प्रभाव से संबंधित सटीक विवरण की एक झलक मिलती है।',Content:'',Audio_no:3,Display_name:'60. Gallery stats'},
+  {pk:282,lang:'Hindi',Description:'61. E1-E2 WALL Debris Special Installation',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह इंस्टालेशन भूकंप के भौतिक विनाश को दर्शाती है।',Content:'',Audio_no:3,Display_name:'61. Debris Special Installation'},
+  {pk:283,lang:'Hindi',Description:'62. Vibration Table',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह टेबल संदो हजार एक के भूकंप की भूकंपीय समझ की व्याख्या करता है।',Content:'',Audio_no:3,Display_name:'62. Vibration Table'},
+  {pk:284,lang:'Hindi',Description:'63. E3 E3-E5 E3. (1) Gallery Introduction  Nomenclature- Witnessing Crisis',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह खंड भूकंप के कारण हुई तबाही को दर्शाता है।',Content:'',Audio_no:3,Display_name:'63. Gallery Introduction Nomenclature- Witnessing Crisis'},
+  {pk:285,lang:'Hindi',Description:'64. Control room explanation E3E5 E3(2) Control Room  Nomenclature- Telecommunications Emergency',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हमें उन्मत्त नियंत्रण-कक्ष की स्थिति का एक यथार्थवादी दृष्टिकोण मिलता है।',Content:'',Audio_no:3,Display_name:'64. Control Room  Nomenclature- Telecommunications Emergency-'},
+  {pk:286,lang:'Hindi',Description:'65. E4 E4.1 Pyre Wood  Nomenclature- Piles of Pyres',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह इंस्टालेशन दर्शाती है कि उस दुखद समय के दौरान बड़ी मात्रा में चिता-लकड़ी की आवश्यकता पड़ी थी।',Content:'',Audio_no:3,Display_name:'65. Pyre Wood   Nomenclature- Piles of Pyres'},
+  {pk:287,lang:'Hindi',Description:'66. E4 E4.2 Relief Boxes Installation  Nomenclature- A Heap of Relief',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'भूकंप के तुरंत बाद कपड़े, भोजन और पानी की अत्यधिक कमी हो गई थी।',Content:'',Audio_no:3,Display_name:'66. Relief Boxes Installation   Nomenclature- A Heap of Relief'},
+  {pk:288,lang:'Hindi',Description:'67. E5 E3E5 E5 (1) Hologram Installation  Nomenclature- Hazardous Rescue',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'ये होलोग्राम खोज और बचाव कार्यों के विभिन्न जीवंत परिदृश्यों को चित्रित करते हैं।',Content:'',Audio_no:3,Display_name:'67. Hologram Installation  Nomenclature- Hazardous Rescue-'},
+  {pk:289,lang:'Hindi',Description:'68. Model explanation E3E5 E5 (2) Hanging Boxes Installation  Nomenclature- Responses from the World ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हम देखेंगे कि कैसे आवश्यक वस्तुओं को दान करने के लिए दुनिया एक साथ खड़ी हुई।',Content:'',Audio_no:3,Display_name:'68. Hanging Boxes Installation Nomenclature- Responses from the World'},
+  {pk:290,lang:'Hindi',Description:'69. E6 E6 E6.1 Gallery Introduction Nomenclature- Healing Together',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हमें उन परिवारों की एक झलक मिलती है, जिन्होंने अपने स्थायी घर खो दिए थे।',Content:'',Audio_no:3,Display_name:'69. Gallery Introduction   Nomenclature- Healing Together'},
+  {pk:291,lang:'Hindi',Description:'70. Installation explanation (mural- songs of hope)',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह कलात्मक चित्रण कठिन परिस्थितियों के दौरान आशा और समुदाय की भावना का प्रतिनिधित्व करता है।',Content:'',Audio_no:3,Display_name:'70. Installation explanation (mural- songs of hope)'},
+  {pk:292,lang:'Hindi',Description:'71. TERRACOTTA MURAL E6 E6.2 Song of Hope   Nomenclature- Rising Hope',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह टेराकोटा दीवार भित्ति दर्शाती है कि कितने बड़े पैमाने पर अस्थायी आश्रयों का निर्माण किया गया था।',Content:'',Audio_no:3,Display_name:'71. Song of Hope Nomenclature- Rising Hope'},
+  {pk:293,lang:'Hindi',Description:'72. E7 E7.1 Gallery Intro - Personal stories Nomenclature- Earthquake Encounters',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'भूकंप से हर क्षेत्र के लोग किसी न किसी तरह से प्रभावित हुए।',Content:'',Audio_no:3,Display_name:'72. Gallery Intro - Personal stories  Nomenclature- Earthquake Encounters'},
+  {pk:294,lang:'Hindi',Description:'73. E(a) E(a).0a Exit artwork  ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'टेराकोटा के ढलने योग्य रूप के माध्यम से, यह कलाकृति भूकंप से प्रभावित लोगों की यात्रा को दर्शाती है।',Content:'',Audio_no:3,Display_name:'73. Exit Artwork '},
+  {pk:295,lang:'Hindi',Description:'74. E(a) E(a).0 Gallery exit ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'पुनः प्रत्यावर्तन ब्लॉक संदो हजार एक के भूकंप की दुखद घटनाओं का वर्णन करता है।',Content:'',Audio_no:3,Display_name:'74. Gallery Exit '},
+  {pk:296,lang:'Hindi',Description:'75. D(B) BLOCK Entry Artwork Backside ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'पुनर्निर्माण ब्लॉक का यह खंड संदो हजार एक के भूकंप के बाद गुजरात के पुनर्निर्माण की दिशा में किए गए सामूहिक प्रयास को प्रदर्शित करता है।',Content:'',Audio_no:4,Display_name:'75. Entry Artwork Backside'},
+  {pk:297,lang:'Hindi',Description:'76. D10 Entry Artwork Glass Panel (Back Panel) ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'गुजरात की विध्वंस से व्यवस्था तक की यात्रा को बयां करने के लिए इस हाथ से बुनी हुई कलाकृति में कई धागे सम्मिलित किये गए है।',Content:'',Audio_no:4,Display_name:'76. Artwork ex planation D10 Entry Artwork Glass Panel (Back Panel)'},
+  {pk:298,lang:'Hindi',Description:'77. D10 Ramp Nomenclature- A New Organization',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'भूकंप के कुछ ही हफ्तों के भीतर, राहत से पुनर्निर्माण की ओर तेजी से परिवर्तन होना अनिवार्य हो गया।',Content:'',Audio_no:4,Display_name:'77. Ramp Nomenclature- A New Organization'},
+  {pk:299,lang:'Hindi',Description:'78.  D11 D11.1 40-50  Gallery Introduction Nomenclature- Rebuilding Cities Collaboratively ',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'शहरों के पुनर्निर्माण की प्रक्रिया में विभिन्न लोगों, हितधारकों और दृष्टिकोणों के बीच सहज सहयोग शामिल होता है।',Content:'',Audio_no:4,Display_name:'78. Gallery Introduction Nomenclature- Rebuilding Cities Collaboratively'},
+  {pk:300,lang:'Hindi',Description:'79. D12 Gallery Introduction',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह गैलरी GSDMA द्वारा समन्वित गुजरात आपातकालीन भूकंप पुनर्निर्माण परियोजना के माध्यम से गुजरात के आश्चर्यजनक पुनर्निर्माण को प्रदर्शित करती है।',Content:'',Audio_no:4,Display_name:'79. Gallery Introduction'},
+  {pk:301,lang:'Hindi',Description:'80.  D12 D12.1 Hand in hand to restore lives  Nomenclature- Reviving Gujarat',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'भूकंप के बाद, गुजरात सरकार ने केंद्र सरकार, विश्व बैंक और एशियाई विकास बैंक के साथ GEERP पुनर्निर्माण परियोजना शुरू की।',Content:'',Audio_no:4,Display_name:'80. Hand in hand to restore lives 30-40 words Nomenclature- Reviving Gujarat'},
+  {pk:302,lang:'Hindi',Description:'81. 32 Gallery explanation',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हम डिजिटल पॉड्स और गुजरात के नक़्शे के डायनामिक प्रोजेक्शन के माध्यम से पुनर्विकास की समयरेखा को देखेंगे।',Content:'',Audio_no:4,Display_name:'81. Gallery explanation'},
+  {pk:303,lang:'Hindi',Description:'82.  D13  Gallery Introduction',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह मॉडल दर्शाता है कि कैसे प्राधिकरण, इंजीनियरिंग विशेषज्ञ और गैर सरकारी संगठन साथ आए।',Content:'',Audio_no:4,Display_name:'82. Gallery Introduction'},
+  {pk:304,lang:'Hindi',Description:'83. 42 Model explanation',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ स्केल किए गए मॉडल के माध्यम से कई भूकंप-सुरक्षित भवन निर्माण तकनीक दिखाई गई हैं।',Content:'',Audio_no:4,Display_name:'83. Model explanation'},
+  {pk:305,lang:'Hindi',Description:'84. D15 50  Gallery Introduction Nomenclature- Build Back Better',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'इस गैलरी में आप गुजरात के पुनर्निर्माण की प्रक्रिया को देखेंगे।',Content:'',Audio_no:4,Display_name:'84. Gallery Introduction Nomenclature- Build Back Better'},
+  {pk:306,lang:'Hindi',Description:'85. 53 Artwork explanation',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'बुनाई के रूपक का उपयोग करते हुए यह कलाकृति गुजरात के पुनर्निर्माण की कहानी को दर्शाती है।',Content:'',Audio_no:4,Display_name:'85. Artwork explanation'},
+  {pk:307,lang:'Hindi',Description:'86. D15 model Bhuj before and after',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह मॉडल भुज शहर के एक हिस्से को संदो हजार एक से पहले और उसके बाद में दर्शाता है।',Content:'',Audio_no:4,Display_name:'86. Model Bhuj before and after 54  Model explanation'},
+  {pk:308,lang:'Hindi',Description:'87. D16 Nomenclature-',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यह गैलरी व्यक्तिगत और सामूहिक विजय गाथाओं द्वारा संदो हजार एक के भूकंप की कहानी को दर्शाती है।',Content:'',Audio_no:4,Display_name:'87. Nomenclature-'},
+  {pk:309,lang:'Hindi',Description:'88. 62 Artwork explanation (loom)',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'यहाँ हम कई धागे देखते हैं जो इस हाथ से बुनी हुई कलाकृति में एक साथ आए हैं।',Content:'',Audio_no:4,Display_name:'88. Artwork explanation (loom)'},
+  {pk:310,lang:'Hindi',Description:'89. 02  Block exit',Path:'VO & Script for Gallery Locators/Hindi VO',Introduction:'पुनः निर्माण ब्लॉक में हमने समझा कि कैसे लोगों के सामूहिक सार्थक प्रयासों से गुजरात का पुनः निर्माण हुआ।',Content:'',Audio_no:4,Display_name:'89. Block Exit'},
+  /* ── GUJARATI TRACKS ── */
+  {pk:90,lang:'Gujarati',Description:'1. C BLOCK  C1.4 Block Introduction- Rebirth',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ પુનર્જન્મ બ્લોક છે.',Content:'',Audio_no:1,Display_name:'1. Introduction- Rebirth'},
+  {pk:91,lang:'Gujarati',Description:'2 Nomenclature - Changing Panaroma',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:1,Display_name:'2. Nomenclature - Changing Panaroma'},
+  {pk:92,lang:'Gujarati',Description:'3. 11 Shell Artwork explanation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'તમે અહીં જે કલાકામ જુઓ છો તે એપ્લીકનો ઉપયોગ કરીને બનાવવામાં આવ્યું છે.',Content:'',Audio_no:1,Display_name:'3. Shell Artwork explanation'},
+  {pk:93,lang:'Gujarati',Description:'4. 2.1 Real time Observatory',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ વાસ્તવિક સમયની વેધશાળામાં, તમે વાસ્તવિક સમયમાં આબોહવા અને ટેકટોનિક્સની કુદરતી ઘટનાઓનું અવલોકન કરશો.',Content:'',Audio_no:1,Display_name:'4. Nomenclature- Real-time Observatory'},
+  {pk:95,lang:'Gujarati',Description:'5. Mesuring Temprature',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ રચનાત્મક સ્થાપન આપણી આસપાસના વર્તમાન તાપમાનને દર્શાવે છે.',Content:'',Audio_no:1,Display_name:'5. Nomenclature- Measuring Temperature'},
+  {pk:96,lang:'Gujarati',Description:'6. Wind Installation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ સ્થાપન / પવન શિલ્પ દ્વારા, તમે વાસ્તવિક સમયમાં પવન કેવી રીતે કાર્ય કરે છે તે જોવા માટે સમર્થ હશો.',Content:'',Audio_no:1,Display_name:'6. Nomenclature- Witnessing Wind'},
+  {pk:97,lang:'Gujarati',Description:'7. Our Evolving Planet',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આપણે સતત વિકસતા ગ્રહ પર રહીએ છીએ!',Content:'',Audio_no:1,Display_name:'7. Nomenclature- Our Evolving Planet'},
+  {pk:98,lang:'Gujarati',Description:'8. Ramp Models & Explanation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ વિભાગમાં, મોડેલો તમને પૃથ્વી અને તેની વિશિષ્ટ ભૂસ્તરશાસ્ત્રીય વિશેષતાઓથી પરિચિત કરાવશે.',Content:'',Audio_no:1,Display_name:'8. Ramp models EXPLANATION AND INTRO'},
+  {pk:99,lang:'Gujarati',Description:'9. Artifacts Display Panels',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ વિભાગમાં, તમે વિવિધ કલાકૃતિઓ જોઈ શકશો.',Content:'',Audio_no:1,Display_name:'9. Artifacts Display Panels'},
+  {pk:100,lang:'Gujarati',Description:'10 Model 1 Topic Layered Earth',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ ઇન્ટરેક્ટિવ મોડલમાં, તમે પૃથ્વીના વિવિધ સ્તરોનું અન્વેષણ કરી શકશો.',Content:'',Audio_no:1,Display_name:'10. TOPIC- Layered Earth'},
+  {pk:101,lang:'Gujarati',Description:'011 Model 2 Topic Instructions Push the Lever to view the plate Boundries',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ ઇન્ટરેક્ટિવ મોડલમાં, તમે પ્લેટ ટેકટોનિક્સ વિશે વધુ શીખી શકશો.',Content:'',Audio_no:1,Display_name:'11. Instructions- Push the lever to view the plate boundaries of Earth-'},
+  {pk:102,lang:'Gujarati',Description:'012 Model 3 Topic Movment of Earth\'s Crust',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ ઇન્ટરેક્ટિવ મૉડલમાં, તમે પ્લેટની સીમાઓ વિશે વધુ માહિતી મેળવશો.',Content:'',Audio_no:1,Display_name:'12. TOPIC- Movement of Earth\'s crust'},
+  {pk:103,lang:'Gujarati',Description:'013 Galley Introduction - Fossil Excavation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ ગેલેરીમાં, અમે તમને માટીની રસપ્રદ દુનિયામાં ઊંડા ઉતરવા અને કચ્છ પ્રદેશના અવશેષો શોધવા માટે આમંત્રિત કરીએ છીએ.',Content:'',Audio_no:1,Display_name:'13. Nomenclature- Discover Fossils'},
+  {pk:104,lang:'Gujarati',Description:'014 Ichthyosaur',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ વિભાગમાં, તમે માછલી-સરિસૃપ, ઇચથિઓસૌરનું દુર્લભ અશ્મિ જોશો.',Content:'',Audio_no:1,Display_name:'14. Ichthyosaur'},
+  {pk:105,lang:'Gujarati',Description:'015 Fossil Excavation Court Yard',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ વિભાગમાં, તમે અન્ય અવશેષો વિશે પણ શીખી શકશો.',Content:'',Audio_no:1,Display_name:'15. FOSSIL EXCAVATION COURTYARD'},
+  {pk:106,lang:'Gujarati',Description:'016.C5C3C5C3.9 Fossils (Artifacts)',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'તમે અહીં જુઓ છો તે અવશેષો કચ્છ પ્રદેશમાંથી ખોદવામાં આવ્યા છે.',Content:'',Audio_no:1,Display_name:'16. Fossils (Artifacts)'},
+  {pk:107,lang:'Gujarati',Description:'017 Fossils Artifacts',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ એપ્લીક કલાકામ દ્વારા, તમે વનસ્પતિ અને પ્રાણી સામ્રાજ્યમાં ઉત્ક્રાંતિની વાર્તાને સમજી શકશો.',Content:'',Audio_no:1,Display_name:'17. Fossils Artafacts'},
+  {pk:108,lang:'Gujarati',Description:'018 Inner Globe Installation rift formation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ ઇનર ગ્લોબ સ્થાપનમાં, તમે ખામીઓ અને અણબનાવની રચના વિશે સમજી શકશો.',Content:'',Audio_no:1,Display_name:'18. Inner Globe Installation- Rift formation'},
+  {pk:109,lang:'Gujarati',Description:'019 gallery introduction',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ ગેલેરીમાં, તમે માનવ ઉત્ક્રાંતિના ઇતિહાસ અને વસાહતોની સંસ્કૃતિ વિશે અન્વેષણ કરશો.',Content:'',Audio_no:1,Display_name:'19. Gallery Introduction- Human evolution, civilization of settlements, adaptation to the conditions, and flourishing through trade.-'},
+  {pk:110,lang:'Gujarati',Description:'020 Nomenclature - Land of Migration & Movments',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ ગેલેરીમાં, તમે માનવીય પ્રયત્નો અને ઉત્ક્રાંતિના સદીઓ મૂલ્યનું અવલોકન કરી શકશો.',Content:'',Audio_no:1,Display_name:'20. Nomenclature- Land of Migrations and Movements'},
+  {pk:111,lang:'Gujarati',Description:'021 Trade Map Installation - Trade Map Panel',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ ટ્રેડ મેપ સ્થાપનમાં, તમે સિંધુ ખીણની સંસ્કૃતિ દરમિયાનના અગ્રણી વેપાર માર્ગો જોઈ શકશો.',Content:'',Audio_no:1,Display_name:'21. Trade Map Installation- Trade map panel'},
+  {pk:112,lang:'Gujarati',Description:'022 Artifacts Display Unit Nomenclature an evolving Civilization',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ ગેલેરીમાં, તમે સિંધુ ખીણની સંસ્કૃતિમાંથી એકત્રિત કરેલી વિવિધ કલાકૃતિઓ જોશો.',Content:'',Audio_no:1,Display_name:'22. Artifacts Display Unit Nomenclature an evolving Civilization'},
+  {pk:113,lang:'Gujarati',Description:'023  tools for Survival',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:1,Display_name:'23. Tools for Survival'},
+  {pk:114,lang:'Gujarati',Description:'024 Pottery for Food',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:1,Display_name:'24. Pottery for Food'},
+  {pk:115,lang:'Gujarati',Description:'025 Agriculture and Animal Husbandry',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:1,Display_name:'25. Agriculture and Animal Husbandry-'},
+  {pk:116,lang:'Gujarati',Description:'026 Sophisticated Bulding Systems',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:1,Display_name:'26. Sophisticated Building Systems'},
+  {pk:117,lang:'Gujarati',Description:'027 Processing Raw Meterials',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:1,Display_name:'27. Processing Raw Materials'},
+  {pk:118,lang:'Gujarati',Description:'028 Land & Water Transport',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:1,Display_name:'28. Land and Water Transpor'},
+  {pk:119,lang:'Gujarati',Description:'029 Weights for Trade',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:1,Display_name:'29. Weights for Trade'},
+  {pk:120,lang:'Gujarati',Description:'030 Seals for Trade',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:1,Display_name:'30. Seals for Trade'},
+  {pk:121,lang:'Gujarati',Description:'031 C7 Gallery Introduction',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ ગેલેરી તમને સિંધુ ખીણની સંસ્કૃતિ દ્વારા લઈ જાય છે.',Content:'',Audio_no:1,Display_name:'31. Gallery Introduction'},
+  {pk:122,lang:'Gujarati',Description:'032.Site Models Nomenclature - Culture of Resilience',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'આ સાઇટ મૉડલ ગૅલેરીમાં, તમે સ્કેલ કરેલા મૉડલ, VR અનુભવ અને ફિલ્મના ઉપયોગ દ્વારા માનવીય સ્થિતિસ્થાપકતાના મૂર્ત સ્વરૂપના સાક્ષી હશો.',Content:'',Audio_no:1,Display_name:'32. Nomenclature - Culture of Resilience'},
+  {pk:123,lang:'Gujarati',Description:'033. 77 Artwork Explanation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:1,Display_name:'33. Artwork Explanation'},
+  {pk:124,lang:'Gujarati',Description:'034. Exterior C.04 Exit Panel Conclusion to C Block D Block Intro',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:1,Display_name:'34. Exit Panel Conclusion to C Block D Block Intro'},
+  {pk:125,lang:'Gujarati',Description:'035. Entry Art work Block Introduction (Rediscover Block)',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'પુનર્જન્મ બ્લોકમાં આપનું સ્વાગત છે.',Content:'',Audio_no:2,Display_name:'35. Introduction (Rediscover Block)'},
+  {pk:126,lang:'Gujarati',Description:'036. Triangular Unit Small Introductory gallery Panel',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'36. Triangular unit (small)- Introductory gallery panel Nomenclature- Understanding the Region\'s Landscape'},
+  {pk:127,lang:'Gujarati',Description:'037. Art Work Explanation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'37. Artwork explanation'},
+  {pk:128,lang:'Gujarati',Description:'038 Gallery Introductory and an experiment in Transcience',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'38. Gallery Introduction Nomenclature- An Experiment in Transience  -'},
+  {pk:129,lang:'Gujarati',Description:'039 Decoding Natural Occurrences',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'39. Nomenclature- Decoding Natural Occurrences'},
+  {pk:130,lang:'Gujarati',Description:'040 cyclone',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'40. Cyclone-'},
+  {pk:131,lang:'Gujarati',Description:'041 flood model',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'41. FLOOD (MODEL)-'},
+  {pk:132,lang:'Gujarati',Description:'042 Earthqueak Model',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'42. Earthquake mode'},
+  {pk:133,lang:'Gujarati',Description:'043 Artwork Explanation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'43. Artwork explanation'},
+  {pk:134,lang:'Gujarati',Description:'044 Gallery Introductory Nomenclature- Responsive Enviourment',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'44. Gallery Introductory Nomenclature- Responsive Environments'},
+  {pk:135,lang:'Gujarati',Description:'045 Gallery Introduction',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'45. Gallery Introduction'},
+  {pk:136,lang:'Gujarati',Description:'046 Diorama Explanation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'46. Diorama explanation'},
+  {pk:137,lang:'Gujarati',Description:'047 - Gallery Introduction',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'47. Gallery Introduction'},
+  {pk:138,lang:'Gujarati',Description:'048 Wall Allah Bund',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'48. Wall  Allah bund intro Nomenclature- Allah Bund'},
+  {pk:139,lang:'Gujarati',Description:'049 Allah Bund Staircase panel',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'49. Allah bund Staircase panel-'},
+  {pk:140,lang:'Gujarati',Description:'050 Gallery Introduction Resilient Innovations',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'50. Triangular Unit (Side 1)  Gallery Introductory  Nomenclature- Resilient innovations-'},
+  {pk:141,lang:'Gujarati',Description:'051 Artwork Explaniation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'51. Artwork explanation'},
+  {pk:142,lang:'Gujarati',Description:'052 Triangukar Unit Side B- Bunga Nomenclature Earthquake Resistant Dwellings',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'52. Triangular Unit (Side 2) Bhunga Nomenclature- Earthquake -resistant Dwellings'},
+  {pk:143,lang:'Gujarati',Description:'053 Virdha An Indigenous well system',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'53. Model 1 Virda Virda- An indigenous well system'},
+  {pk:144,lang:'Gujarati',Description:'054 Model 2 Stepwells or Vavs sub terraian tradition of Gujarat',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'54. Model 2 -Stepwells Stepwells or vavs- Subterranean tradition of Gujarat'},
+  {pk:145,lang:'Gujarati',Description:'055 Hamirsar Lake - Sophisticated Water Managment.',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'55. Model 3 - Hamirsar lake Hamirsar Lake - Sophisticated water management'},
+  {pk:146,lang:'Gujarati',Description:'056 Artwork Block Print',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'56. ARTWORK- BLOCK PRINT'},
+  {pk:147,lang:'Gujarati',Description:'057 Exit Art Wotk PanelBack Ea Block Introduction',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:2,Display_name:'57. Exit Artwork Panel - BACK Ea Block Introduction'},
+  {pk:148,lang:'Gujarati',Description:'058 E0 Block Introduction',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'58. Block Introduction'},
+  {pk:149,lang:'Gujarati',Description:'059 E1 E2 Celing Art Explanation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'59. Ceiling Artwork explanation'},
+  {pk:150,lang:'Gujarati',Description:'060 13 Gallery Stats',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'60. Gallery stats'},
+  {pk:151,lang:'Gujarati',Description:'061 E1E2 Wall Debris Special Installation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'61. Debris Special Installation'},
+  {pk:152,lang:'Gujarati',Description:'062 Vibration Table',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'62. Vibration Table'},
+  {pk:153,lang:'Gujarati',Description:'063 E3E5 E3 Gallery Introduction Nomenclature Witnessing Crisis',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'63. Gallery Introduction Nomenclature- Witnessing Crisis'},
+  {pk:154,lang:'Gujarati',Description:'064 Control Room Explanation E3E5E3 to Control Room Nomenclature Telecomunnication',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'64. Control Room  Nomenclature- Telecommunications Emergency-'},
+  {pk:155,lang:'Gujarati',Description:'065 Piles of Pyres',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'65. Pyre Wood   Nomenclature- Piles of Pyres'},
+  {pk:156,lang:'Gujarati',Description:'066 Relief Boxes Installation - A Heap of Relief',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'66. Relief Boxes Installation   Nomenclature- A Heap of Relief'},
+  {pk:157,lang:'Gujarati',Description:'067 Hologram Rescue Nomenclature Hazardous Rescue',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'67. Hologram Installation  Nomenclature- Hazardous Rescue-'},
+  {pk:158,lang:'Gujarati',Description:'068 Hanging Boxes Installation - Responses from the world',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'68. Hanging Boxes Installation Nomenclature- Responses from the World'},
+  {pk:159,lang:'Gujarati',Description:'069 Gallery Introduction - Healing Togather',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'69. Gallery Introduction   Nomenclature- Healing Together'},
+  {pk:160,lang:'Gujarati',Description:'070 Explanation of Mural Songs of Hope',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'70. Installation explanation (mural- songs of hope)'},
+  {pk:161,lang:'Gujarati',Description:'071 Terekotta Mural Song of Hope - Risisng Hope',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'71. Song of Hope Nomenclature- Rising Hope'},
+  {pk:162,lang:'Gujarati',Description:'072 Gallery Intro Personal Stories',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'72. Gallery Intro - Personal stories  Nomenclature- Earthquake Encounters'},
+  {pk:163,lang:'Gujarati',Description:'073 Exit Artwork',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'73. Exit Artwork '},
+  {pk:164,lang:'Gujarati',Description:'074 Ea Gallery Exit',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:3,Display_name:'74. Gallery Exit '},
+  {pk:165,lang:'Gujarati',Description:'075 Db Block Entry Artwork Backside',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'75. Entry Artwork Backside'},
+  {pk:166,lang:'Gujarati',Description:'076 Entry Artwork Glass panel (Back Panel)',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'76. Artwork ex planation D10 Entry Artwork Glass Panel (Back Panel)'},
+  {pk:167,lang:'Gujarati',Description:'077 Ramp A New Organazation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'77. Ramp Nomenclature- A New Organization'},
+  {pk:168,lang:'Gujarati',Description:'078 D11, 11.1 40-50 Gallery Introduction Rebuilding Cites Collaboratively',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'78. Gallery Introduction Nomenclature- Rebuilding Cities Collaboratively'},
+  {pk:169,lang:'Gujarati',Description:'079 D12 Gallery Introduction.',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'79. Gallery Introduction'},
+  {pk:170,lang:'Gujarati',Description:'080 hand in hand tp restore riving gujarat',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'80. Hand in hand to restore lives 30-40 words Nomenclature- Reviving Gujarat'},
+  {pk:171,lang:'Gujarati',Description:'081 Gallery introduction',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'81. Gallery explanation'},
+  {pk:172,lang:'Gujarati',Description:'082 gallery Introduction Nomenclature Building Material library',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'82. Gallery Introduction'},
+  {pk:173,lang:'Gujarati',Description:'083 Model Explanation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'83. Model explanation'},
+  {pk:174,lang:'Gujarati',Description:'084 Gallery Introduction - Build Back Better',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'84. Gallery Introduction Nomenclature- Build Back Better'},
+  {pk:175,lang:'Gujarati',Description:'085 Artwork Explanation',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'85. Artwork explanation'},
+  {pk:176,lang:'Gujarati',Description:'086 Model Bhuj Before and After',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'86. Model Bhuj before and after 54  Model explanation'},
+  {pk:177,lang:'Gujarati',Description:'087 Nomencalture',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'87. Nomenclature-'},
+  {pk:178,lang:'Gujarati',Description:'088 Artwork Explanation - Loom',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'88. Artwork explanation (loom)'},
+  {pk:94,lang:'Gujarati',Description:'089 Block Exit',Path:'VO & Script for Gallery Locators/Gujarati VO',Introduction:'',Content:'',Audio_no:4,Display_name:'89. Block Exit'}
+];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+var currentLang  = 'English';
+var allTracks    = [];
+var flatList     = [];
+var currentIdx   = -1;
+var isPlaying    = false;
+var isShuffle    = false;
+var isRepeat     = false;
+var audio        = document.getElementById('audio');
+
+/* ── Header scroll ── */
+window.addEventListener('scroll', function() {
+  document.getElementById('hdr').classList.toggle('scrolled', scrollY > 40);
+}, {passive:true});
+
+/* ── Hamburger ── */
+var ham = document.getElementById('ham-btn'),
+    mob = document.getElementById('mob-nav'),
+    ov  = document.getElementById('mob-ov'),
+    cl  = document.getElementById('mob-close');
+function openNav()  { mob.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; }
+function closeNav() { mob.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; }
+ham.addEventListener('click', openNav);
+ov.addEventListener('click', closeNav);
+cl.addEventListener('click', closeNav);
+
+/* ═══════════════════════════════════════════
+   GET TRACKS FOR LANGUAGE
+═══════════════════════════════════════════ */
+function getTracksForLang(lang) {
+  return RAW_TRACKS
+    .filter(function(t) { return t.lang === lang; })
+    .map(function(t) {
+      t._section  = sectionById(t.Audio_no);
+      t._audioUrl = buildAudioUrl(t.Path, t.Description);
+      return t;
+    })
+    .sort(function(a,b) { return a.pk - b.pk; });
+}
+
+/* ═══════════════════════════════════════════
+   LANGUAGE SELECTION
+═══════════════════════════════════════════ */
+window.selectLang = function(lang, btn) {
+  if (lang === currentLang) return;
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  stopAudio();
+  currentIdx = -1;
+  showEmpty();
+  initTracks(lang);
+};
+
+function initTracks(lang) {
+  allTracks = getTracksForLang(lang);
+  flatList  = allTracks.slice();
+  renderSidebar(flatList, null);
+}
+
+/* ═══════════════════════════════════════════
+   RENDER SIDEBAR
+═══════════════════════════════════════════ */
+function renderSidebar(tracks, openSectionId) {
+  var container = document.getElementById('track-sections');
+  if (!tracks || !tracks.length) {
+    container.innerHTML = '<div style="padding:40px 24px;text-align:center;font-size:13px;color:var(--dim2)">No tracks found.</div>';
+    return;
+  }
+  var groups = {};
+  SECTIONS.forEach(function(s) { groups[s.id] = []; });
+  tracks.forEach(function(t) {
+    var sid = t._section || sectionById(t.Audio_no);
+    if (!groups[sid]) groups[sid] = [];
+    groups[sid].push(t);
+  });
+
+  var html = '';
+  SECTIONS.forEach(function(sec, si) {
+    var secTracks = groups[sec.id] || [];
+    var isOpen = openSectionId ? sec.id === openSectionId : si === 0;
+    html += '<div class="section-group' + (isOpen?' open':'') + '" id="sg-' + sec.id + '">';
+    html += '<div class="section-group__hd" onclick="toggleSection(\'' + sec.id + '\')">';
+    html += '<div><div class="section-group__label">' + esc(sec.label) + '</div>'
+          + '<div class="section-group__title">' + esc(sec.title) + '</div></div>';
+    html += '<div style="display:flex;align-items:center;gap:10px">'
+          + '<span class="section-group__count">' + secTracks.length + ' tracks</span>'
+          + '<svg class="section-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'
+          + '</div></div>';
+    html += '<div class="section-group__tracks">';
+    if (!secTracks.length) {
+      html += '<div style="padding:16px 24px"><p class="ctext-none">No tracks in this section.</p></div>';
+    } else {
+      secTracks.forEach(function(t) {
+        var globalIdx = flatList.indexOf(t);
+        var isActive  = globalIdx !== -1 && globalIdx === currentIdx;
+        var playing   = isActive && isPlaying;
+        var displayName = t.Display_name || t.Description || ('Track ' + t.pk);
+        html += '<div class="track-item' + (isActive?' active':'') + (playing?' playing':'') + '" '
+              + 'data-gidx="' + globalIdx + '" onclick="selectTrack(' + globalIdx + ')">';
+        html += '<span class="track-num">' + String(t.pk).padStart(2,'0') + '</span>';
+        html += '<div class="track-info">'
+              + '<div class="track-name">' + esc(displayName) + '</div>';
+        if (t.Introduction) {
+          html += '<div class="track-sub">' + esc(t.Introduction.substring(0,60)) + (t.Introduction.length>60?'…':'') + '</div>';
+        }
+        html += '</div>'
+              + '<div class="track-bars"><span></span><span></span><span></span></div>'
+              + '</div>';
+      });
+    }
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+}
+
+window.toggleSection = function(id) {
+  var el = document.getElementById('sg-' + id);
+  if (el) el.classList.toggle('open');
+};
+
+/* ═══════════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════════ */
+window.doSearch = function(q) {
+  q = q.trim().toLowerCase();
+  var openEl = document.querySelector('.section-group.open');
+  var openSec = openEl ? openEl.id.replace('sg-','') : null;
+  flatList = !q ? allTracks.slice() : allTracks.filter(function(t) {
+    return (t.Display_name||'').toLowerCase().indexOf(q)!==-1
+        || (t.Introduction||'').toLowerCase().indexOf(q)!==-1
+        || (t.Content||'').toLowerCase().indexOf(q)!==-1;
+  });
+  renderSidebar(flatList, openSec);
+};
+
+/* ═══════════════════════════════════════════
+   SELECT & PLAY TRACK
+═══════════════════════════════════════════ */
+window.selectTrack = function(idx) {
+  if (idx<0 || idx>=flatList.length) return;
+  currentIdx = idx;
+  var track = flatList[idx];
+  var sec   = sectionMeta(track._section || sectionById(track.Audio_no));
+  renderSidebar(flatList, sec.id);
+  showPlayer(track, sec);
+  loadAndPlayAudio(track);
+  setTimeout(function() {
+    var el = document.querySelector('.track-item.active');
+    if (el) el.scrollIntoView({block:'nearest', behavior:'smooth'});
+  }, 80);
+};
+
+/* ═══════════════════════════════════════════
+   PLAYER UI
+═══════════════════════════════════════════ */
+function showPlayer(track, sec) {
+  document.getElementById('player-empty').style.display = 'none';
+  document.getElementById('player-loaded').classList.add('show');
+  setAudioStatus('','');
+  var displayName = track.Display_name || track.Description || ('Track ' + track.pk);
+  document.getElementById('pl-img').src = sec.image;
+  document.getElementById('pl-section-badge').textContent = sec.title;
+  document.getElementById('pl-lang-badge').textContent = currentLang;
+  document.getElementById('pl-num').textContent = 'Track ' + String(track.pk).padStart(2,'0');
+  document.getElementById('pl-title').textContent = displayName;
+  document.getElementById('tab-intro').innerHTML = formatText(track.Introduction)
+    || '<p class="ctext-none">No introduction available for this track.</p>';
+  document.getElementById('tab-script').innerHTML = formatText(track.Content)
+    || '<p class="ctext-none">Full script not available for this track.</p>';
+  document.getElementById('npb-thumb').src = sec.image;
+  document.getElementById('npb-name').textContent = displayName;
+  document.getElementById('npb-sec').textContent = sec.title + ' · ' + currentLang;
+  document.getElementById('npbar').classList.add('show');
+}
+
+function showEmpty() {
+  document.getElementById('player-empty').style.display = '';
+  document.getElementById('player-loaded').classList.remove('show');
+  document.getElementById('npbar').classList.remove('show');
+}
+
+function formatText(txt) {
+  if (!txt || !txt.trim()) return '';
+  return txt.split('\n').map(function(l){return l.trim();}).filter(function(l){return l.length>0;})
+    .map(function(l){return '<p class="ctext">'+esc(l)+'</p>';}).join('');
+}
+
+function setAudioStatus(type, msg) {
+  var el = document.getElementById('audio-status');
+  el.className = 'audio-status' + (type?' '+type:'');
+  el.textContent = msg;
+}
+
+/* ═══════════════════════════════════════════
+   AUDIO ENGINE — direct URL, no proxy
+═══════════════════════════════════════════ */
+function loadAndPlayAudio(track) {
+  audio.pause();
+  audio.src = '';
+  setPlaying(false);
+  resetProgress();
+
+  var url = track._audioUrl;
+
+  if (!url) {
+    setAudioStatus('no-audio','⚠ No audio file path for this track.');
+    document.getElementById('btn-play').disabled = true;
+    return;
+  }
+
+  console.log('🎵 Playing:', url);
+  setAudioStatus('loading','Loading audio…');
+  document.getElementById('btn-play').disabled = false;
+
+  audio.src = url;
+  audio.load();
+  audio.play()
+    .then(function() { setPlaying(true); setAudioStatus('',''); })
+    .catch(function(err) {
+      console.warn('Play failed:', err.message, url);
+      setAudioStatus('error','⚠ Audio could not be played. The script is still available below.');
+      setPlaying(false);
+    });
+}
+
+function stopAudio() {
+  audio.pause(); audio.src='';
+  setPlaying(false); resetProgress(); setAudioStatus('','');
+}
+
+function resetProgress() {
+  ['progress-fill','npb-fill'].forEach(function(id){document.getElementById(id).style.width='0%';});
+  ['progress-input','npb-input'].forEach(function(id){document.getElementById(id).value=0;});
+  ['pl-cur','npb-cur','pl-dur','npb-dur'].forEach(function(id){document.getElementById(id).textContent='0:00';});
+}
+
+var PLAY_ICON  = '<polygon points="6,4 20,12 6,20"/>';
+var PAUSE_ICON = '<rect x="5" y="4" width="4" height="16"/><rect x="15" y="4" width="4" height="16"/>';
+
+function setPlaying(v) {
+  isPlaying = v;
+  document.getElementById('play-icon').innerHTML     = v ? PAUSE_ICON : PLAY_ICON;
+  document.getElementById('npb-play-icon').innerHTML = v ? PAUSE_ICON : PLAY_ICON;
+  document.querySelectorAll('.track-item').forEach(function(el) {
+    var gi = parseInt(el.getAttribute('data-gidx'));
+    el.classList.toggle('playing', v && gi===currentIdx);
+  });
+}
+
+window.togglePlay = function() {
+  if (currentIdx<0) return;
+  if (isPlaying) { audio.pause(); setPlaying(false); }
+  else { audio.play().catch(function(){}); setPlaying(true); }
+};
+
+window.nextTrack = function() {
+  if (!flatList.length) return;
+  var next = isShuffle ? Math.floor(Math.random()*flatList.length) : (currentIdx+1)%flatList.length;
+  selectTrack(next);
+};
+
+window.prevTrack = function() {
+  if (!flatList.length) return;
+  if (audio.currentTime>3) { audio.currentTime=0; return; }
+  selectTrack((currentIdx-1+flatList.length)%flatList.length);
+};
+
+window.toggleShuffle = function() {
+  isShuffle=!isShuffle;
+  document.getElementById('btn-shuffle').classList.toggle('on',isShuffle);
+};
+
+window.toggleRepeat = function() {
+  isRepeat=!isRepeat;
+  audio.loop=isRepeat;
+  document.getElementById('btn-repeat').classList.toggle('on',isRepeat);
+};
+
+window.setVol = function(v) { audio.volume=v/100; };
+
+window.closePlayer = function() {
+  stopAudio(); currentIdx=-1;
+  renderSidebar(flatList,null); showEmpty();
+};
+
+/* Progress */
+audio.addEventListener('timeupdate', function() {
+  if (!audio.duration || !isFinite(audio.duration)) return;
+  var pct = (audio.currentTime/audio.duration)*100;
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-thumb').style.left=pct+'%';
+  document.getElementById('npb-fill').style.width=pct+'%';
+  document.getElementById('progress-input').value=pct;
+  document.getElementById('npb-input').value=pct;
+  var c=fmt(audio.currentTime);
+  document.getElementById('pl-cur').textContent=c;
+  document.getElementById('npb-cur').textContent=c;
+});
+
+audio.addEventListener('loadedmetadata', function() {
+  var d=fmt(audio.duration);
+  document.getElementById('pl-dur').textContent=d;
+  document.getElementById('npb-dur').textContent=d;
+});
+
+audio.addEventListener('ended', function() { if (!isRepeat) { setPlaying(false); nextTrack(); } });
+
+audio.addEventListener('error', function() {
+  var msg='⚠ Audio file could not be loaded.';
+  if (audio.error) {
+    if (audio.error.code===2) msg+=' (Network error — the file may not exist at this URL)';
+    if (audio.error.code===4) msg+=' (File not found or format not supported)';
+  }
+  msg+=' You can still read the script below.';
+  setAudioStatus('error', msg);
+  setPlaying(false);
+  document.getElementById('btn-play').disabled=false;
+});
+
+audio.addEventListener('canplay', function() {
+  setAudioStatus('','');
+  document.getElementById('btn-play').disabled=false;
+});
+
+document.getElementById('progress-input').addEventListener('input', function() {
+  if (audio.duration) audio.currentTime=(this.value/100)*audio.duration;
+});
+
+window.seekBar = function(el) {
+  if (audio.duration) audio.currentTime=(el.value/100)*audio.duration;
+};
+
+window.switchTab = function(name, btn) {
+  document.querySelectorAll('.ctab').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.cpane').forEach(function(p){p.classList.remove('active');});
+  btn.classList.add('active');
+  var pane=document.getElementById('tab-'+name);
+  if (pane) pane.classList.add('active');
+};
+
+document.addEventListener('keydown', function(e) {
+  if (e.target.tagName==='INPUT') return;
+  if (e.code==='Space')     { e.preventDefault(); togglePlay(); }
+  if (e.code==='ArrowRight') nextTrack();
+  if (e.code==='ArrowLeft')  prevTrack();
+});
+
+function fmt(s) {
+  if (!s||!isFinite(s)) return '0:00';
+  var m=Math.floor(s/60), sc=Math.floor(s%60);
+  return m+':'+(sc<10?'0':'')+sc;
+}
+
+function esc(s) {
+  return !s?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* BOOT */
+initTracks('English');
+
+})();
+</script>
+}

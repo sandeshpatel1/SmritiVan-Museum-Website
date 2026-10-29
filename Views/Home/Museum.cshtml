@@ -1,0 +1,1057 @@
+@{
+    ViewData["Title"] = "Earthquake Museum";
+}
+
+@section Styles {
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:#060504;color:#e4ddd0;overflow-x:hidden;line-height:1.6}
+img{display:block;max-width:100%}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+:root{
+  --gold:#c9a96e;--gold-lt:#e8d5a3;--gold-dk:#9a7a47;
+  --white:#f2ece2;--dim:rgba(242,236,226,0.45);--faint:rgba(242,236,226,0.04);
+  --border:rgba(201,169,110,0.12);--t:0.35s cubic-bezier(0.4,0,0.2,1);
+  --bg:#060504;--bg2:#0a0807;
+}
+
+      /* ══ HEADER ══ */
+    .hdr { position:fixed;top:0;left:0;right:0;z-index:900;height:68px;padding:0 48px;display:flex;align-items:center;transition:background var(--t),border-color var(--t);border-bottom:1px solid transparent; }
+    .hdr.scrolled { background:rgba(0,0,0,0.95);border-bottom-color:var(--border);backdrop-filter:blur(20px); }
+    .hdr__inner { width:100%;max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between; }
+    .hdr__logo { display:flex;align-items:center;gap:12px; }
+    .hdr__logo img { width:38px;height:38px;object-fit:contain; }
+    .hdr__wordmark { font-family:'Cormorant',serif;font-size:22px;font-weight:600;color:var(--white);letter-spacing:2px; }
+    .hdr__nav { display:flex;align-items:center; }
+    .hdr__link { color:var(--dim);font-size:12.5px;font-weight:400;padding:8px 13px;letter-spacing:0.3px;transition:color var(--t); }
+    .hdr__link:hover { color:var(--white); }
+    .hdr__link.active { color:var(--white); border-bottom: 1px solid var(--gold); }
+    .hdr__btn { background:var(--gold);color:#000;font-size:11px;font-weight:600;padding:9px 22px;letter-spacing:1.5px;text-transform:uppercase;transition:background var(--t),transform var(--t);margin-left:12px; }
+    .hdr__btn:hover { background:var(--gold-lt);transform:translateY(-1px); }
+    .hdr__drop { position:relative; }
+    .hdr__drop-menu { position:absolute;top:calc(100% + 8px);left:0;background:#090909;border:1px solid var(--border);min-width:200px;padding:6px;opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity 0.2s,transform 0.2s; }
+    .hdr__drop.open .hdr__drop-menu { opacity:1;pointer-events:all;transform:translateY(0); }
+    .hdr__drop-item { display:block;padding:10px 16px;font-size:13px;color:var(--dim);transition:background 0.2s,color 0.2s; }
+    .hdr__drop-item:hover { background:var(--faint);color:var(--white); }
+    .ham { display:none;flex-direction:column;gap:5px;padding:8px; }
+    .ham span { display:block;width:22px;height:1.5px;background:var(--white);transition:var(--t); }
+    .mob-ov { position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.3s; }
+    .mob-ov.open { opacity:1;pointer-events:all; }
+    .mob-nav { position:fixed;top:0;right:0;bottom:0;width:300px;background:#050505;border-left:1px solid var(--border);z-index:1100;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column; }
+    .mob-nav.open { transform:translateX(0); }
+    .mob-nav__hd { display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid var(--border); }
+    .mob-nav__close { font-size:24px;color:var(--dim); }
+    .mob-nav__links { flex:1;overflow-y:auto;padding:12px 0; }
+    .mob-nav__links a { display:block;padding:13px 24px;color:var(--dim);font-size:14px;border-bottom:1px solid rgba(255,255,255,0.04);transition:color 0.2s,padding-left 0.2s; }
+    .mob-nav__links a:hover { color:var(--white);padding-left:32px; }
+    .mob-nav__links a.active { color:var(--white); }
+    .mob-nav__foot { padding:20px 24px;border-top:1px solid var(--border);display:flex;gap:20px; }
+    .mob-nav__foot a { color:var(--dim);font-size:11px;letter-spacing:1px;text-transform:uppercase;transition:color 0.2s; }
+    .mob-nav__foot a:hover { color:var(--gold); }
+
+/* ACTIVE NAV */
+        .hdr__link.active {
+            color: var(--white);
+            border-bottom: 2px solid var(--gold);
+        }
+.hdr__drop-btn.active { color:var(--white); }
+.hdr__drop-btn.active::after { content:''; position:absolute; bottom:-2px; left:12px; right:12px; height:1px; background:var(--gold); }
+.hdr__drop-item.active { color:var(--gold); }
+
+/* HERO */
+.hero{position:relative;height:88vh;min-height:580px;display:flex;overflow:hidden}
+.hero__bg{position:absolute;inset:0}
+.hero__bg img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.hero__ov{position:absolute;inset:0;background:linear-gradient(170deg,rgba(6,5,4,0.3) 0%,rgba(6,5,4,0.65) 50%,rgba(6,5,4,0.97) 100%)}
+.hero__line{position:absolute;left:56px;top:0;bottom:0;width:1px;
+  background:linear-gradient(to bottom,transparent 0%,var(--gold) 25%,rgba(201,169,110,0.3) 75%,transparent 100%);z-index:2}
+.hero__content{position:relative;z-index:3;padding:110px 60px 20px 110px; max-width:860px;text-align:left}
+.hero__kicker{font-size:9px;font-weight:500;letter-spacing:6px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:22px;display:flex;align-items:center;gap:16px;
+  opacity:0;animation:fadeUp 0.9s 0.2s forwards}
+.hero__kicker::before{content:'';width:32px;height:1px;background:var(--gold)}
+.hero__title{font-family:'Cormorant',serif;font-size:clamp(52px,7.5vw,104px);
+  font-weight:700;line-height:0.88;letter-spacing:-2px;color:var(--white);
+  margin-bottom:30px;opacity:0;animation:fadeUp 1s 0.4s forwards}
+.hero__title em{display:block;font-style:italic;font-weight:300;font-size:0.52em;
+  letter-spacing:3px;color:rgba(201,169,110,0.8);margin-bottom:10px}
+.hero__desc{font-size:14px;font-weight:300;color:var(--dim);line-height:1.9;
+  max-width:600px;opacity:0;animation:fadeUp 0.9s 0.65s forwards;
+  padding-left:22px;border-left:1px solid rgba(201,169,110,0.25)}
+.hero__stats{display:flex;gap:52px;margin-top:44px;opacity:0;animation:fadeUp 0.9s 0.9s forwards}
+.stat-num{font-family:'Cormorant',serif;font-size:44px;font-weight:700;color:var(--white);line-height:1}
+.stat-num span{color:var(--gold)}
+.stat-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-top:5px}
+.hero__scroll{position:absolute;bottom:0;left:57px;transform:translateX(-50%);
+  width:1px;height:72px;background:linear-gradient(to bottom,var(--gold),transparent);z-index:3;
+  animation:pulse 2.5s ease-in-out infinite}
+@@keyframes pulse{0%,100%{opacity:1;transform:translateX(-50%) scaleY(1)}50%{opacity:0.25;transform:translateX(-50%) scaleY(0.4)}}
+@@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+/* COMMON */
+.tag{font-size:9px;font-weight:500;letter-spacing:5px;text-transform:uppercase;
+  color:var(--gold);display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.tag::before{content:'';width:24px;height:1px;background:var(--gold)}
+.sec-title{font-family:'Cormorant',serif;font-size:clamp(32px,4.5vw,58px);
+  font-weight:700;color:var(--white);line-height:0.95;letter-spacing:-0.5px}
+.rule{width:40px;height:1px;background:var(--gold);margin:22px 0 30px}
+.reveal{opacity:0;transform:translateY(36px);transition:opacity 0.85s ease,transform 0.85s ease}
+.reveal.in{opacity:1;transform:none}
+.reveal-l{opacity:0;transform:translateX(-36px);transition:opacity 0.85s ease,transform 0.85s ease}
+.reveal-l.in{opacity:1;transform:none}
+.reveal-r{opacity:0;transform:translateX(36px);transition:opacity 0.85s ease,transform 0.85s ease}
+.reveal-r.in{opacity:1;transform:none}
+
+/* INTRO */
+.intro{padding:110px 80px;background:var(--bg);position:relative;overflow:hidden}
+.intro::before{content:'MUSEUM';position:absolute;right:-30px;top:50%;transform:translateY(-50%);
+  font-family:'Cormorant',serif;font-size:220px;font-weight:700;color:rgba(201,169,110,0.022);
+  line-height:1;pointer-events:none;letter-spacing:-8px;white-space:nowrap}
+.intro__grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:88px;align-items:center}
+.intro__body{font-size:15px;font-weight:300;color:var(--dim);line-height:1.95;margin-bottom:40px}
+.intro__nums{display:flex;gap:36px;flex-wrap:wrap}
+.intro__num-val{font-family:'Cormorant',serif;font-size:40px;font-weight:700;color:var(--white);line-height:1}
+.intro__num-val span{color:var(--gold)}
+.intro__num-lbl{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);margin-top:5px}
+.intro__img-wrap{position:relative}
+.intro__img-wrap::before{content:'';position:absolute;top:-14px;left:-14px;right:14px;bottom:14px;
+  border:1px solid var(--border);pointer-events:none}
+.intro__img-wrap img{position:relative;z-index:1;width:100%;height:500px;object-fit:cover}
+.intro__award{position:absolute;bottom:-18px;right:-18px;z-index:2;
+  background:var(--bg2);border:1px solid var(--border);padding:18px 22px;display:flex;gap:14px;align-items:center}
+.intro__award-icon{font-size:28px;line-height:1}
+.intro__award-text strong{display:block;font-size:11px;font-weight:500;color:var(--white);letter-spacing:0.5px}
+.intro__award-text span{font-size:10px;color:var(--gold);letter-spacing:1px;text-transform:uppercase}
+
+/* BLOCKS HEADER */
+.blocks-hd{padding:80px 80px 0;background:var(--bg2)}
+.blocks-hd__inner{max-width:1200px;margin:0 auto;display:flex;align-items:flex-end;
+  justify-content:space-between;gap:32px;flex-wrap:wrap;padding-bottom:52px;border-bottom:1px solid var(--border)}
+.blocks-hd__note{max-width:360px;font-size:13px;font-weight:300;color:var(--dim);line-height:1.85}
+
+/* BLOCKS */
+.blocks{background:var(--bg2);padding:0 80px 100px}
+.blocks__timeline{max-width:1200px;margin:0 auto;position:relative}
+.blocks__timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;
+  background:linear-gradient(to bottom,transparent,var(--border) 5%,var(--border) 95%,transparent);
+  transform:translateX(-50%);pointer-events:none}
+
+.block{display:grid;grid-template-columns:1fr 1fr;gap:0;position:relative;
+  padding:72px 0;border-bottom:1px solid var(--border)}
+.block:last-child{border-bottom:none}
+.block--flip{direction:rtl}
+.block--flip>*{direction:ltr}
+.block__badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:52px;height:52px;background:var(--bg2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;z-index:4;
+  font-family:'Cormorant',serif;font-size:18px;font-weight:700;color:var(--gold)}
+
+/* 360 MINI VIEWER */
+.viewer-wrap{position:relative;overflow:hidden}
+.pano-container{position:relative;height:460px;background:#060504;overflow:hidden;cursor:grab}
+.pano-container:active{cursor:grabbing}
+.pano-canvas{width:100%;height:100%;display:block}
+
+.pano-loading{position:absolute;inset:0;background:rgba(6,5,4,0.9);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  z-index:20;transition:opacity 0.4s}
+.pano-loading.hidden{opacity:0;pointer-events:none}
+.pano-spinner{width:26px;height:26px;border:1.5px solid var(--border);
+  border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
+@@keyframes spin{to{transform:rotate(360deg)}}
+.pano-loading span{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim)}
+
+.pano-badge{position:absolute;top:14px;left:14px;z-index:10;
+  background:rgba(0,0,0,0.75);border:1px solid rgba(201,169,110,0.2);
+  padding:5px 12px;display:flex;align-items:center;gap:8px;pointer-events:none}
+.pano-badge-ring{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:4.5px;color:var(--gold);font-weight:700;letter-spacing:-0.2px}
+.pano-badge span{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold)}
+
+.drag-hint{position:absolute;bottom:56px;left:50%;transform:translateX(-50%);
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);
+  pointer-events:none;transition:opacity 0.5s;white-space:nowrap;z-index:10;
+  display:flex;align-items:center;gap:6px}
+.drag-hint.hidden{opacity:0}
+
+.pano-scene-info{position:absolute;top:14px;right:14px;z-index:10;
+  background:rgba(0,0,0,0.65);border:1px solid var(--border);padding:6px 12px;pointer-events:none}
+.pano-scene-info__counter{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,169,110,0.5);margin-bottom:2px}
+.pano-scene-info__name{font-family:'Cormorant',serif;font-size:14px;font-weight:600;color:var(--gold);letter-spacing:0.5px}
+
+.scene-strip{background:rgba(0,0,0,0.9);border-top:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.scene-strip::-webkit-scrollbar{display:none}
+.scene-strip-inner{display:flex;align-items:stretch;min-width:max-content}
+.scene-thumb{padding:10px 14px;text-align:center;cursor:pointer;
+  border-right:1px solid var(--border);transition:background 0.2s;position:relative;
+  display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+.scene-thumb:last-child{border-right:none}
+.scene-thumb:hover{background:rgba(201,169,110,0.07)}
+.scene-thumb.active{background:rgba(201,169,110,0.13)}
+.scene-thumb.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold)}
+.scene-dot{width:5px;height:5px;border-radius:50%;background:rgba(201,169,110,0.25);transition:background 0.2s,transform 0.2s}
+.scene-thumb.active .scene-dot{background:var(--gold);transform:scale(1.4)}
+.scene-thumb-label{font-size:8.5px;letter-spacing:0.5px;text-transform:uppercase;
+  color:rgba(242,236,226,0.28);white-space:nowrap;transition:color 0.2s;line-height:1.3}
+.scene-thumb.active .scene-thumb-label{color:var(--gold)}
+
+.tour-btn{display:inline-flex;align-items:center;gap:10px;
+  background:transparent;border:1px solid rgba(201,169,110,0.3);
+  color:var(--gold);padding:10px 20px;font-size:10px;font-weight:500;
+  letter-spacing:2px;text-transform:uppercase;transition:var(--t);margin-top:22px;cursor:pointer}
+.tour-btn:hover{background:rgba(201,169,110,0.09);border-color:var(--gold)}
+.tour-btn svg{width:14px;height:14px;flex-shrink:0}
+
+.block__content{padding:52px 60px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:1}
+.block--flip .block__content{padding:52px 60px 52px 0}
+.block__num{font-family:'Cormorant',serif;font-size:110px;font-weight:700;
+  line-height:0.85;color:transparent;letter-spacing:-4px;margin-bottom:18px;
+  -webkit-text-stroke:1px rgba(201,169,110,0.12)}
+.block__tag{font-size:9px;font-weight:500;letter-spacing:4.5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.block__title{font-family:'Cormorant',serif;font-size:clamp(34px,3.5vw,50px);
+  font-weight:700;color:var(--white);line-height:1;margin-bottom:18px}
+.block__body{font-size:13.5px;font-weight:300;color:var(--dim);line-height:1.9;margin-bottom:28px}
+.block__pts{display:flex;flex-direction:column;gap:9px}
+.block__pt{font-size:12.5px;color:rgba(242,236,226,0.38);font-weight:300;
+  display:flex;align-items:flex-start;gap:10px;padding-top:9px;border-top:1px solid rgba(255,255,255,0.04)}
+.block__pt::before{content:'';width:3px;height:3px;border-radius:50%;background:var(--gold);margin-top:8px;flex-shrink:0}
+
+/* FULLSCREEN TOUR MODAL */
+.tour-modal{position:fixed;inset:0;z-index:9999;background:#000;
+  opacity:0;pointer-events:none;transition:opacity 0.45s cubic-bezier(0.4,0,0.2,1);
+  display:flex;flex-direction:column}
+.tour-modal.open{opacity:1;pointer-events:all}
+
+.tour-bar{height:58px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;border-bottom:1px solid var(--border);background:rgba(6,5,4,0.95);
+  backdrop-filter:blur(20px);z-index:10}
+.tour-bar__left{display:flex;align-items:center;gap:18px;min-width:0}
+.tour-bar__logo{font-family:'Cormorant',serif;font-size:16px;font-weight:600;
+  color:var(--white);letter-spacing:2px;white-space:nowrap}
+.tour-bar__sep{width:1px;height:18px;background:var(--border);flex-shrink:0}
+.tour-bar__info{min-width:0}
+.tour-bar__block-tag{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,169,110,0.6)}
+.tour-bar__title{font-family:'Cormorant',serif;font-size:18px;font-weight:700;
+  color:var(--white);line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tour-bar__right{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.tour-counter{font-size:10px;letter-spacing:2px;color:var(--dim);white-space:nowrap}
+.tour-close-btn{width:38px;height:38px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;color:var(--dim);transition:var(--t)}
+.tour-close-btn:hover{border-color:var(--gold);color:var(--gold)}
+.tour-close-btn svg{width:14px;height:14px}
+
+.tour-pano{flex:1;position:relative;overflow:hidden;cursor:grab;min-height:0}
+.tour-pano:active{cursor:grabbing}
+.tour-canvas{width:100%;height:100%;display:block}
+
+.tour-loading{position:absolute;inset:0;background:rgba(6,5,4,0.88);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  z-index:20;transition:opacity 0.4s}
+.tour-loading.hidden{opacity:0;pointer-events:none}
+.tour-spinner{width:32px;height:32px;border:1.5px solid var(--border);
+  border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
+.tour-loading span{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim)}
+
+.tour-scene-badge{position:absolute;top:20px;left:24px;z-index:10;
+  background:rgba(0,0,0,0.72);border:1px solid var(--border);padding:12px 18px;pointer-events:none}
+.tour-scene-badge__counter{font-size:8px;letter-spacing:4px;text-transform:uppercase;
+  color:rgba(201,169,110,0.5);margin-bottom:4px}
+.tour-scene-badge__name{font-family:'Cormorant',serif;font-size:22px;font-weight:700;
+  color:var(--white);letter-spacing:-0.3px}
+
+.tour-drag-hint{position:absolute;bottom:160px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:10px;padding:10px 22px;
+  background:rgba(0,0,0,0.6);border:1px solid var(--border);
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);
+  pointer-events:none;transition:opacity 0.6s;white-space:nowrap;z-index:10}
+.tour-drag-hint.hidden{opacity:0}
+
+.tour-zoom{position:absolute;right:24px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:4px;z-index:10}
+.tour-zoom-btn{width:38px;height:38px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;color:var(--dim);
+  background:rgba(0,0,0,0.72);transition:var(--t);font-size:18px;line-height:1;font-weight:300}
+.tour-zoom-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+.tour-controls{flex-shrink:0;background:rgba(6,5,4,0.96);border-top:1px solid var(--border);z-index:10}
+.tour-nav-row{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--border)}
+.tour-arrow{width:52px;height:44px;border-right:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;color:var(--dim);
+  transition:var(--t);flex-shrink:0}
+.tour-arrow:last-of-type{border-right:none;border-left:1px solid var(--border)}
+.tour-arrow:hover:not([disabled]){color:var(--gold);background:rgba(201,169,110,0.07)}
+.tour-arrow[disabled]{opacity:0.22;cursor:not-allowed}
+.tour-arrow svg{width:15px;height:15px}
+.tour-progress-wrap{flex:1;padding:0 20px;display:flex;align-items:center;gap:16px}
+.tour-progress-track{flex:1;height:1px;background:var(--border);position:relative}
+.tour-progress-fill{position:absolute;left:0;top:0;height:100%;background:var(--gold);transition:width 0.4s}
+.tour-progress-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+
+.tour-block-tabs{display:flex;overflow-x:auto;border-bottom:1px solid var(--border);scrollbar-width:none}
+.tour-block-tabs::-webkit-scrollbar{display:none}
+.tour-block-tab{flex-shrink:0;padding:10px 22px;font-size:9px;font-weight:500;
+  letter-spacing:2.5px;text-transform:uppercase;color:rgba(242,236,226,0.22);
+  border-right:1px solid var(--border);transition:all 0.2s;cursor:pointer;
+  display:flex;align-items:center;gap:8px}
+.tour-block-tab:last-child{border-right:none}
+.tour-block-tab:hover{color:var(--dim);background:rgba(255,255,255,0.025)}
+.tour-block-tab.active{color:var(--gold);background:rgba(201,169,110,0.07)}
+.tour-block-tab__num{font-family:'Cormorant',serif;font-size:16px;font-weight:700;line-height:1}
+
+.tour-scene-row{display:flex;overflow-x:auto;scrollbar-width:none;padding:8px 12px;gap:6px}
+.tour-scene-row::-webkit-scrollbar{display:none}
+.tour-scene-pill{flex-shrink:0;padding:5px 12px;font-size:8.5px;letter-spacing:1px;
+  text-transform:uppercase;color:rgba(242,236,226,0.3);
+  border:1px solid rgba(201,169,110,0.1);transition:all 0.2s;cursor:pointer;white-space:nowrap}
+.tour-scene-pill:hover{color:var(--dim);border-color:rgba(201,169,110,0.25)}
+.tour-scene-pill.active{color:var(--gold);border-color:var(--gold);background:rgba(201,169,110,0.08)}
+
+/* INAUGURATION */
+.inaug{padding:120px 80px;background:var(--bg);position:relative;overflow:hidden}
+.inaug::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 80% at 70% 50%,rgba(201,169,110,0.05) 0%,transparent 60%);
+  pointer-events:none}
+.inaug__grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:88px;align-items:center}
+.inaug__date-card{background:var(--bg2);border:1px solid var(--border);padding:32px 36px;
+  display:flex;align-items:center;gap:28px;margin:28px 0 32px}
+.inaug__day{font-family:'Cormorant',serif;font-size:76px;font-weight:700;color:var(--white);
+  line-height:0.85;letter-spacing:-3px}
+.inaug__month{font-family:'Cormorant',serif;font-size:26px;font-weight:400;color:var(--gold);display:block}
+.inaug__year{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);display:block;margin-top:5px}
+.inaug__quote{font-family:'Cormorant',serif;font-size:clamp(16px,1.8vw,21px);
+  font-style:italic;color:rgba(242,236,226,0.55);line-height:1.85;
+  border-left:2px solid var(--gold);padding-left:22px;margin-bottom:16px}
+.inaug__attr{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold)}
+.inaug__note{font-size:13px;font-weight:300;color:var(--dim);line-height:1.85;margin-top:22px}
+.inaug__img-wrap{position:relative}
+.inaug__img-wrap::after{content:'';position:absolute;top:-16px;right:-16px;
+  width:160px;height:160px;border:1px solid var(--border);pointer-events:none}
+.inaug__img-wrap img{width:100%;height:560px;object-fit:cover;object-position:top;filter:brightness(0.85)}
+.inaug__plaque{position:absolute;bottom:-18px;left:-18px;background:var(--gold);
+  color:#000;padding:18px 24px;z-index:2}
+.inaug__plaque strong{display:block;font-family:'Cormorant',serif;font-size:17px;font-weight:700;line-height:1.2}
+.inaug__plaque span{font-size:9px;letter-spacing:2px;text-transform:uppercase;opacity:0.65;margin-top:4px;display:block}
+
+/* VISITOR INFO */
+.vinfo{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:64px 80px}
+.vinfo__grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;gap:44px;align-items:start}
+.vinfo__div{background:var(--border);height:100%;min-height:80px}
+.vinfo__label{font-size:8.5px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:16px}
+.vinfo__title{font-family:'Cormorant',serif;font-size:21px;color:var(--white);margin-bottom:10px}
+.vinfo__detail{font-size:13px;font-weight:300;color:var(--dim);line-height:1.85}
+.closed-badge{display:inline-block;margin-top:8px;font-size:9.5px;letter-spacing:2px;
+  text-transform:uppercase;color:#d96060;border:1px solid rgba(217,96,96,0.25);padding:3px 12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;font-size:10px;
+  font-weight:500;letter-spacing:2px;text-transform:uppercase;transition:var(--t);cursor:pointer}
+.btn-gold{background:var(--gold);color:#000;border:1px solid var(--gold)}
+.btn-gold:hover{background:var(--gold-lt);border-color:var(--gold-lt);transform:translateY(-2px);
+  box-shadow:0 12px 32px rgba(201,169,110,0.25)}
+
+     /* ══ FOOTER ══ */
+   .ftr { background:#000;border-top:1px solid var(--border);padding:80px 80px 40px; }
+   .ftr__inner { max-width:1200px;margin:0 auto; }
+   .ftr__top { display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:56px;padding-bottom:60px;border-bottom:1px solid var(--border);margin-bottom:32px; }
+   .ftr__brand { display:flex;flex-direction:column;gap:16px; }
+   .ftr__logo { display:flex;align-items:center;gap:12px; }
+   .ftr__logo img { width:34px; }
+   .ftr__logo strong { font-family:'Cormorant',serif;font-size:18px;color:var(--white);font-weight:600;letter-spacing:1px; }
+   .ftr__brand p { font-size:13px;color:rgba(255,255,255,0.28);line-height:1.7;font-weight:300; }
+   .ftr__partners { display:flex;gap:18px;flex-wrap:wrap;margin-top:8px; }
+   .ftr__partners a:hover { opacity:0.6; }
+   .ftr__col h4 { font-size:9px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:20px; }
+   .ftr__col a { display:block;font-size:13px;color:rgba(255,255,255,0.3);padding:6px 0;transition:color 0.2s,padding-left 0.2s; }
+   .ftr__col a:hover { color:var(--white);padding-left:8px; }
+   .ftr__bot { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:11px;color:rgba(255,255,255,0.18);letter-spacing:0.5px; }
+   .ftr__bot a { color:rgba(255,255,255,0.22);transition:color 0.2s; }
+   .ftr__bot a:hover { color:var(--white); }
+   .ftr__atm { color:var(--gold) !important;font-weight:500; }
+   .ftr__atm:hover { color:var(--gold-lt) !important; }
+   .sp-wrap { display:flex;align-items:center;justify-content:center;min-height:300px; }
+   .sp { width:30px;height:30px;border:1.5px solid rgba(201,169,110,0.1);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite; }
+
+ @@media(max-width:1100px){
+      .intro__grid,.inaug__grid{grid-template-columns:1fr;gap:56px}
+      .blocks__timeline::before{display:none}
+      .block{grid-template-columns:1fr}
+      .block--flip{direction:ltr}
+      .pano-container{height:300px}
+      .block--flip .block__content{padding:40px 0}
+      .block__badge{display:none}
+      .ftr__top{grid-template-columns:1fr 1fr}
+      .vinfo__grid{grid-template-columns:1fr;gap:36px}
+      .vinfo__div{display:none}
+    }
+    @@media(max-width:768px){
+      .hdr__nav{display:none}
+      .ham{display:flex}
+      .hero__content{padding:0 24px 60px}
+      .hero__line{left:24px}
+      .hero__scroll{left:24px}
+      .intro,.blocks,.blocks-hd,.inaug,.vinfo,.ftr{padding-left:24px;padding-right:24px}
+      .block{padding:52px 0}
+      .block__content{padding:28px 0!important}
+      .block__num{font-size:80px}
+      .ftr__top{grid-template-columns:1fr;gap:32px}
+      .ftr__bot{flex-direction:column;align-items:flex-start}
+      .hero__stats{flex-wrap:wrap;gap:28px}
+      .inaug img{height:340px!important}
+      .pano-container{height:240px}
+      .tour-bar__title{display:none}
+      .tour-scene-badge__name{font-size:16px}
+    }
+</style>
+}
+
+<div class="tour-modal" id="tour-modal">
+  <div class="tour-bar">
+    <div class="tour-bar__left">
+      <span class="tour-bar__logo">Smritivan</span>
+      <div class="tour-bar__sep"></div>
+      <div class="tour-bar__info">
+        <div class="tour-bar__block-tag" id="tm-block-tag">Block One</div>
+        <div class="tour-bar__title" id="tm-block-title">Rebirth</div>
+      </div>
+    </div>
+    <div class="tour-bar__right">
+      <span class="tour-counter" id="tm-counter">1 / 9</span>
+      <button class="tour-close-btn" id="tour-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="tour-pano" id="tour-pano">
+    <canvas id="tour-canvas"></canvas>
+    <div class="tour-loading" id="tour-loading">
+      <div class="tour-spinner"></div>
+      <span>Loading panorama</span>
+    </div>
+    <div class="tour-scene-badge">
+      <div class="tour-scene-badge__counter" id="tm-scene-counter">01 / 09</div>
+      <div class="tour-scene-badge__name" id="tm-scene-name">Geological Overview</div>
+    </div>
+    <div class="tour-drag-hint" id="tour-drag-hint">&#8592; Drag to explore &middot; Scroll to zoom &#8594;</div>
+    <div class="tour-zoom">
+      <button class="tour-zoom-btn" id="tz-in">+</button>
+      <button class="tour-zoom-btn" id="tz-out">&#8722;</button>
+    </div>
+  </div>
+  <div class="tour-controls">
+    <div class="tour-nav-row">
+      <button class="tour-arrow" id="tm-prev">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="tour-progress-wrap">
+        <div class="tour-progress-track"><div class="tour-progress-fill" id="tm-progress-fill"></div></div>
+        <span class="tour-progress-label" id="tm-progress-label">Scene 1 of 9</span>
+      </div>
+      <button class="tour-arrow" id="tm-next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    <div class="tour-block-tabs" id="tm-block-tabs"></div>
+    <div class="tour-scene-row" id="tm-scene-row"></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero__bg">
+    <img src="https://www.smritivanearthquakemuseum.biz/assets2/BHA_8446-2.jpeg"
+         alt="Smritivan Earthquake Museum exterior" loading="eager"
+         onerror="this.src='https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1800&q=85'"/>
+  </div>
+  <div class="hero__ov"></div>
+  <div class="hero__line"></div>
+  <div class="hero__scroll"></div>
+  <div class="hero__content">
+    <p class="hero__kicker">About the Museum</p>
+    <h1 class="hero__title"><em>Smritivan</em>Earthquake<br>Museum</h1>
+    <p class="hero__desc">11,500 sq. mt. of memory, resilience, and hope — spread across seven immersive blocks chronicling the story of the 2001 Kutch earthquake and Gujarat's extraordinary rebirth.</p>
+    <div class="hero__stats">
+      <div><div class="stat-num">11<span>,500</span></div><div class="stat-lbl">Sq. Mt. Museum</div></div>
+      <div><div class="stat-num">7</div><div class="stat-lbl">Immersive Blocks</div></div>
+      <div><div class="stat-num">470<span> ac</span></div><div class="stat-lbl">Acres Memorial</div></div>
+      <div><div class="stat-num">13<span>k</span></div><div class="stat-lbl">Lives Remembered</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="intro">
+  <div class="intro__grid">
+    <div class="reveal-l">
+      <span class="tag">Our Story</span>
+      <h2 class="sec-title">A Living<br>Monument<br>to Resilience</h2>
+      <div class="rule"></div>
+      <p class="intro__body">From the earth's geological evolution to Gujarat's topography and its vulnerabilities — from the devastating aftermath of the 2001 Kutch Earthquake to Gujarat's saga of extraordinary rebuilding — to finally paying digital homage to every soul lost. All experienced through artifacts, immersive art, and virtual simulations.</p>
+      <p class="intro__body" style="margin-top:-16px">In 2024, Smritivan became the <strong style="color:var(--white);font-weight:400">first museum in India</strong> to receive the prestigious <strong style="color:var(--gold);font-weight:400">UNESCO Prix Versailles Award</strong> — recognised among the world's most beautiful museums.</p>
+      <div class="intro__nums">
+        <div><div class="intro__num-val">13<span>,000</span></div><div class="intro__num-lbl">Lives Remembered</div></div>
+        <div><div class="intro__num-val">2001</div><div class="intro__num-lbl">Gujarat Earthquake</div></div>
+        <div><div class="intro__num-val">2022</div><div class="intro__num-lbl">Inauguration</div></div>
+      </div>
+    </div>
+    <div class="reveal-r">
+      <div class="intro__img-wrap">
+        <img src="https://www.smritivanearthquakemuseum.biz/assets2/DJI_0960-Enhanced-2%20.jpg"
+             alt="Smritivan aerial view" loading="lazy"
+             onerror="this.src='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80'"/>
+        <div class="intro__award">
+          <div class="intro__award-icon">🏛️</div>
+          <div class="intro__award-text">
+            <strong>UNESCO Prix Versailles 2024</strong>
+            <span>First Indian Museum</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOCKS HEADER -->
+<div class="blocks-hd">
+  <div class="blocks-hd__inner reveal">
+    <div>
+      <span class="tag">The Seven Blocks</span>
+      <h2 class="sec-title">Seven Chapters<br>of Memory &amp; Hope</h2>
+    </div>
+    <div>
+      <p class="blocks-hd__note">Each block takes you deeper into the story of the 2001 earthquake. Explore each space in 360° — or take the full immersive tour across all seven galleries.</p>
+      <button class="tour-btn" style="margin-top:18px" onclick="window.openTour(1,0)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+        Start Full 360&deg; Museum Tour
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- BLOCKS (rendered by JS) -->
+<div class="blocks"><div class="blocks__timeline" id="blocks-root"></div></div>
+
+<!-- INAUGURATION -->
+<section class="inaug">
+  <div class="inaug__grid">
+    <div class="reveal-l">
+      <span class="tag">Inauguration Day</span>
+      <h2 class="sec-title">Honoured by the<br>Prime Minister</h2>
+      <div class="rule"></div>
+      <div class="inaug__date-card">
+        <div class="inaug__day">28</div>
+        <div>
+          <span class="inaug__month">August</span>
+          <span class="inaug__year">2022 &middot; Bhuj, Gujarat</span>
+        </div>
+      </div>
+      <p class="inaug__quote">&ldquo;Smritivan is not just a memorial — it is a symbol of the indomitable spirit of Gujarat, a testament to how a society rises from devastation and transforms tragedy into triumph.&rdquo;</p>
+      <div class="inaug__attr">— PM Narendra Modi</div>
+      <p class="inaug__note">The state-of-the-art memorial and museum were inaugurated on 28 August 2022. The memorial carries the names of nearly 13,000 people who lost their lives — paying tribute to the lost, while celebrating the perseverance of the people of Kutch.</p>
+    </div>
+    <div class="reveal-r">
+      <div class="inaug__img-wrap">
+        <img src="https://i0.wp.com/www.socialnews.xyz/wp-content/uploads/2025/08/15/20250815221f.jpg?fit=6000%2C10552&quality=80&zoom=1&ssl=1"
+             alt="PM Narendra Modi inaugurating Smritivan" loading="lazy"
+             onerror="this.src='https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=800&q=80'"/>
+        <div class="inaug__plaque">
+          <strong>Honourable Prime Minister<br>Shri Narendra Modi</strong>
+          <span>Inaugurated Smritivan &middot; 28.08.2022</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISITOR INFO -->
+<section class="vinfo reveal">
+  <div class="vinfo__grid">
+    <div>
+      <div class="vinfo__label">Museum Timings</div>
+      <div class="vinfo__title">Earthquake Museum</div>
+      <div class="vinfo__detail">Open Tuesday – Sunday<br>9:00 AM — 7:00 PM<br><span class="closed-badge">Monday Closed</span></div>
+    </div>
+    <div class="vinfo__div"></div>
+    <div>
+      <div class="vinfo__label">Memorial Timings</div>
+      <div class="vinfo__title">Smritivan Memorial</div>
+      <div class="vinfo__detail">Open Tuesday – Sunday<br>5:00 AM — 11:00 PM<br><span class="closed-badge">Monday Closed</span></div>
+    </div>
+    <div class="vinfo__div"></div>
+    <div>
+      <div class="vinfo__label">Plan Your Visit</div>
+      <div class="vinfo__title">Book in Advance</div>
+      <div class="vinfo__detail" style="margin-bottom:20px">All entrance tickets include admission to the permanent collection and current exhibitions. Audio guide available in 5 languages.</div>
+      <a href="@Url.Action("Tickets","Home")" class="btn btn-gold">Book Tickets &rarr;</a>
+    </div>
+  </div>
+</section>
+
+@section Scripts {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ── Mark active nav links ── */
+(function(){
+  /* Mark "About" dropdown and "Earthquake Museum" item as active */
+  var dropBtn = document.querySelector('#nd-about .hdr__drop-btn, #nd-about > button');
+  if(dropBtn) dropBtn.classList.add('active');
+  var museumItem = document.querySelector('.hdr__drop-item[href*="Museum"]');
+  if(museumItem) museumItem.classList.add('active');
+})();
+
+/* ══ BLOCK DATA
+   Scene files are in: wwwroot/assets/Block/Scene 1.jpg  etc.
+   Actual file names from your screenshot:
+     Block (folder): Scene 1, 2, 3, 4, 5, 6, 7, 8, 11.2, 11.3, 13.2, 14.2
+   We map each block to the correct set of scene filenames.
+   scenePath() will produce:  assets/Block/Scene 1.jpg
+══ */
+var BLOCKS = [
+  { num:1, tag:'Block One',   title:'Rebirth',    folder:'Block',
+    desc:'Through a 360\u00b0 immersive theatre, witness the ever-changing and transforming landscapes of Earth. Visitors glimpse prosperous ancient human civilisations of the Kutch region, historic trade routes of Gujarat, and the tale of its advancement and resilience across millennia.',
+    pts:['360\u00b0 immersive theatre \u2014 Earth\u2019s geological evolution','Ancient civilisations of the Kutch region','Historic trade routes and Gujarat\u2019s cultural tapestry'],
+    /* Exact filenames (without extension) as they appear in the Block folder */
+    scenes:[
+      { name:'Geological Overview',     file:'Scene 1'   },
+      { name:'Ancient Civilisations',   file:'Scene 2'   },
+      { name:'Kutch Landscape',         file:'Scene 3'   },
+      { name:'Trade Routes',            file:'Scene 4'   },
+      { name:'Indus Valley',            file:'Scene 5'   },
+      { name:'Rann Formation',          file:'Scene 6'   },
+      { name:'Tectonic History',        file:'Scene 7'   },
+      { name:'Earth\'s Transformation', file:'Scene 8'   },
+      { name:'Ancient Gateway',         file:'Scene 11.2'},
+      { name:'River Civilisation',      file:'Scene 11.3'},
+      { name:'Trade Network',           file:'Scene 13.2'},
+      { name:'Dawn of Gujarat',         file:'Scene 14.2'}
+    ]
+  },
+  { num:2, tag:'Block Two',   title:'Rediscover', folder:'Block 2',
+    desc:'Experience the resilient nature of Kutch and the innovative spirit of Gujarat\u2019s people. A large-scale model of Allah Bund with floor projection mapping emphasises the dramatic scale of changes that natural phenomena can create across this extraordinary landscape.',
+    pts:['Large-scale Allah Bund model with floor projection mapping','Interactive models on Gujarat\u2019s geological vulnerability','Resilient responses of communities in erratic environments'],
+    scenes:[
+      { name:'Allah Bund Model',    file:'Scene 1' },
+      { name:'Floor Projection',    file:'Scene 2' },
+      { name:'Kutch Topography',    file:'Scene 3' },
+      { name:'Seismic Fault Lines', file:'Scene 4' },
+      { name:'Salt Desert Ecology', file:'Scene 5' },
+      { name:'Rann of Kutch',       file:'Scene 6' },
+      { name:'Geological Surveys',  file:'Scene 7' },
+      { name:'Natural Phenomena',   file:'Scene 8' }
+    ]
+  },
+  { num:3, tag:'Block Three', title:'Restore',    folder:'Block 3',
+    desc:'Recount the tragic events of the 2001 Bhuj earthquake and the immediate response that followed. A life-size sectional bus with film projection acquaints visitors with the measures taken by the Government of Gujarat, while a hologram theatre recreates the global aid missions.',
+    pts:['Life-size sectional bus with film projection experience','Hologram theatre of global aid and rescue missions','Testimonies and recollections of earthquake survivors'],
+    scenes:[
+      { name:'26 January 2001',        file:'Scene 1' },
+      { name:'Aftermath \u2014 Bhuj', file:'Scene 2' },
+      { name:'Rescue Operations',      file:'Scene 3' },
+      { name:'Sectional Bus',          file:'Scene 4' },
+      { name:'Hologram Theatre',       file:'Scene 5' },
+      { name:'Government Response',    file:'Scene 6' },
+      { name:'International Aid',      file:'Scene 7' },
+      { name:'Survivor Testimonies',   file:'Scene 8' },
+      { name:'Path to Recovery',       file:'Scene 9' }
+    ]
+  },
+  { num:4, tag:'Block Four',  title:'Rebuild',    folder:'Block 4',
+    desc:'A comprehensive understanding of the collective process of rebuilding, reconstructing, and reviving Gujarat for long-term disaster mitigation. A table projection multimedia show recreates the formation of GSDMA \u2014 the cornerstone institution of Gujarat\u2019s extraordinary recovery.',
+    pts:['Formation and role of GSDMA in disaster recovery','Collective reconstruction efforts \u2014 documented through data','Table projection multimedia narrating the recovery saga'],
+    scenes:[
+      { name:'GSDMA Formation',       file:'Scene 1' },
+      { name:'Table Projection Show', file:'Scene 2' },
+      { name:'Reconstruction Data',   file:'Scene 3' },
+      { name:'New Bhuj Rising',       file:'Scene 4' },
+      { name:'Infrastructure Revival',file:'Scene 5' }
+    ]
+  },
+  { num:5, tag:'Block Five',  title:'Rethink',    folder:'Block 5',
+    desc:'Imparting knowledge of global disaster response and preparedness through games and interactive activities. The emotional and psychosocial ramifications of post-disaster management are documented through first-person interviews and immersive experiences.',
+    pts:['Interactive disaster preparedness games and activities','First-person testimonies on psychosocial recovery','India\u2019s vulnerability to natural hazards \u2014 mapped and illustrated'],
+    scenes:[
+      { name:'Preparedness Games',      file:'Scene 1' },
+      { name:'India Hazard Map',        file:'Scene 2' },
+      { name:'First-Person Testimonies',file:'Scene 3' },
+      { name:'Psychosocial Recovery',   file:'Scene 4' }
+    ]
+  },
+  { num:6, tag:'Block Six',   title:'Relive',     folder:'Block 6',
+    desc:'Experience the tremors of the 2001 earthquake with the world\u2019s largest 360\u00b0 earthquake simulation. This block also houses the iconic Tree of Smritivan \u2014 set inside an infinity room where visitors add paper petals to branches as messages of remembrance, enclosed in a forest of mirrors and light.',
+    pts:['World\u2019s largest 360\u00b0 earthquake simulation experience','The Tree of Smritivan \u2014 an infinity room of living memory','Specialised mirrors and automated lighting forming a forest'],
+    scenes:[
+      { name:'Earthquake Simulator', file:'Scene 1' },
+      { name:'7.7 Magnitude Tremor', file:'Scene 2' },
+      { name:'Simulation Chamber',   file:'Scene 3' },
+      { name:'Tree of Smritivan',    file:'Scene 4' }
+    ]
+  },
+  { num:7, tag:'Block Seven', title:'Renew',      folder:'Block 7',
+    desc:'Visitors light a digital flame through touch panels \u2014 it travels through LED walls to the ceiling, forming one united light. India\u2019s highest concentration of optical fibre sensor-based lighting in a single location, projecting a beam across Bhuj as an eternal homage to the 13,000 lives lost.',
+    pts:['Touch-activated digital flame \u2014 a personal act of remembrance','India\u2019s highest concentration of optical fibre sensor lighting','A united beam of light visible across the city of Bhuj'],
+    scenes:[
+      { name:'Digital Flame Wall', file:'Scene 1' }
+    ]
+  }
+];
+
+var ACCENTS = ['#7a2d4a','#1e7a4e','#a03d22','#1e5580','#b8932a','#8b2d2d','#2a6045'];
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+/*
+ * scenePath — builds the URL to the 360 image.
+ * Uses @Url.Content to get the app-root-relative base,
+ * then appends folder + exact filename.
+ * Result: /SmritivanApp/assets/Block/Scene 1.jpg
+ */
+var ASSETS_BASE = '@Url.Content("~/assets/")';
+
+function scenePath(folder, sceneFile){
+  return ASSETS_BASE + encodeURIComponent(folder) + '/' + encodeURIComponent(sceneFile) + '.jpg';
+}
+
+/* ═══════════ RENDER BLOCKS HTML ═══════════ */
+function renderBlocks(){
+  var root = document.getElementById('blocks-root');
+  var html = '';
+  BLOCKS.forEach(function(b, i){
+    var flip  = i % 2 === 1;
+    var fc    = flip ? ' block--flip' : '';
+    var rv    = flip ? 'reveal-r' : 'reveal-l';
+    var rc    = flip ? 'reveal-l' : 'reveal-r';
+    var acDir = flip ? 'right:0;border-radius:2px 0 0 2px' : 'left:0;border-radius:0 2px 2px 0';
+    var ac    = ACCENTS[i];
+    var numStr = pad(b.num);
+
+    var thumbs = b.scenes.map(function(s, si){
+      return '<div class="scene-thumb' + (si === 0 ? ' active' : '') + '" data-bn="' + b.num + '" data-si="' + si + '">'
+        + '<div class="scene-dot"></div>'
+        + '<span class="scene-thumb-label">' + s.name + '</span>'
+        + '</div>';
+    }).join('');
+
+    var pts = b.pts.map(function(p){ return '<div class="block__pt">' + p + '</div>'; }).join('');
+
+    html += '<article class="block block--' + b.num + fc + '">'
+      + '<div class="block__badge">' + numStr + '</div>'
+      + '<div class="viewer-wrap ' + rv + '">'
+        + '<div style="position:absolute;top:0;bottom:0;width:3px;z-index:3;background:linear-gradient(to bottom,' + ac + ',' + ac + '99);' + acDir + '"></div>'
+        + '<div class="pano-container" id="pano-' + b.num + '">'
+          + '<canvas class="pano-canvas" id="canvas-' + b.num + '"></canvas>'
+          + '<div class="pano-loading" id="pload-' + b.num + '"><div class="pano-spinner"></div><span>Loading</span></div>'
+          + '<div class="pano-badge"><div class="pano-badge-ring">360\u00b0</div><span>360\u00b0 View</span></div>'
+          + '<div class="drag-hint" id="hint-' + b.num + '">\u2190 Drag to explore \u2192</div>'
+          + '<div class="pano-scene-info" id="pinfo-' + b.num + '">'
+            + '<div class="pano-scene-info__counter">01 / ' + pad(b.scenes.length) + '</div>'
+            + '<div class="pano-scene-info__name">' + b.scenes[0].name + '</div>'
+          + '</div>'
+        + '</div>'
+        + '<div class="scene-strip"><div class="scene-strip-inner" id="strip-' + b.num + '">' + thumbs + '</div></div>'
+      + '</div>'
+      + '<div class="block__content ' + rc + '">'
+        + '<div class="block__num">' + numStr + '</div>'
+        + '<div class="block__tag">' + b.tag + '</div>'
+        + '<h2 class="block__title">' + b.title + '</h2>'
+        + '<p class="block__body">' + b.desc + '</p>'
+        + '<div class="block__pts">' + pts + '</div>'
+        + '<button class="tour-btn" onclick="window.openTour(' + b.num + ',0)">'
+          + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>'
+          + 'Explore This Block in Full 360\u00b0'
+        + '</button>'
+      + '</div>'
+    + '</article>';
+  });
+  root.innerHTML = html;
+}
+
+/* ═══════════ MINI VIEWERS ═══════════ */
+var miniV = {};
+
+function makeMini(bn){
+  var b      = BLOCKS[bn - 1];
+  var canvas = document.getElementById('canvas-' + bn);
+  var cont   = document.getElementById('pano-' + bn);
+  if (!canvas || !cont) return;
+
+  var w = cont.clientWidth  || 600;
+  var h = cont.clientHeight || 460;
+
+  var ren = new THREE.WebGLRenderer({ canvas: canvas, antialias: false });
+  ren.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  ren.setSize(w, h);
+
+  var sc  = new THREE.Scene();
+  var cam = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
+  cam.position.set(0, 0, 0.001);
+
+  var geo = new THREE.SphereGeometry(500, 48, 32);
+  geo.scale(-1, 1, 1);
+  var mat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+  sc.add(new THREE.Mesh(geo, mat));
+
+  var lon = 0, lat = 0, drag = false, px = 0, py = 0, auto = true;
+  var loadEl = document.getElementById('pload-' + bn);
+  var hintEl = document.getElementById('hint-' + bn);
+  var infoEl = document.getElementById('pinfo-' + bn);
+
+  function loadS(si){
+    if (loadEl) loadEl.classList.remove('hidden');
+    var scene = b.scenes[si];
+    if (infoEl){
+      infoEl.querySelector('.pano-scene-info__counter').textContent = pad(si + 1) + ' / ' + pad(b.scenes.length);
+      infoEl.querySelector('.pano-scene-info__name').textContent    = scene.name;
+    }
+    var strip = document.getElementById('strip-' + bn);
+    if (strip) strip.querySelectorAll('.scene-thumb').forEach(function(t, i){ t.classList.toggle('active', i === si); });
+
+    var url = scenePath(b.folder, scene.file);
+    new THREE.TextureLoader().load(
+      url,
+      function(tex){
+        tex.minFilter    = THREE.LinearFilter;
+        mat.map          = tex;
+        mat.color.set(0xffffff);
+        mat.needsUpdate  = true;
+        if (loadEl) loadEl.classList.add('hidden');
+      },
+      undefined,
+      function(err){
+        console.warn('[Smritivan] Mini failed:', url, err);
+        if (loadEl) loadEl.classList.add('hidden');
+      }
+    );
+  }
+
+  (function loop(){
+    requestAnimationFrame(loop);
+    if (auto && !drag) lon += 0.03;
+    lat = Math.max(-85, Math.min(85, lat));
+    var phi = THREE.MathUtils.degToRad(90 - lat);
+    var th  = THREE.MathUtils.degToRad(lon);
+    cam.lookAt(500 * Math.sin(phi) * Math.cos(th), 500 * Math.cos(phi), 500 * Math.sin(phi) * Math.sin(th));
+    ren.render(sc, cam);
+  })();
+
+  new ResizeObserver(function(){
+    var nw = cont.clientWidth, nh = cont.clientHeight;
+    ren.setSize(nw, nh); cam.aspect = nw / nh; cam.updateProjectionMatrix();
+  }).observe(cont);
+
+  canvas.addEventListener('mousedown', function(e){ drag = true; px = e.clientX; py = e.clientY; auto = false; if (hintEl) hintEl.classList.add('hidden'); });
+  window.addEventListener('mousemove', function(e){ if (!drag) return; lon -= (e.clientX - px) * 0.18; lat += (e.clientY - py) * 0.18; px = e.clientX; py = e.clientY; });
+  window.addEventListener('mouseup',   function(){ drag = false; });
+  canvas.addEventListener('touchstart', function(e){ drag = true; px = e.touches[0].clientX; py = e.touches[0].clientY; auto = false; if (hintEl) hintEl.classList.add('hidden'); }, { passive: true });
+  canvas.addEventListener('touchmove',  function(e){ if (!drag) return; lon -= (e.touches[0].clientX - px) * 0.18; lat += (e.touches[0].clientY - py) * 0.18; px = e.touches[0].clientX; py = e.touches[0].clientY; }, { passive: true });
+  canvas.addEventListener('touchend',   function(){ drag = false; });
+  canvas.addEventListener('wheel', function(e){ cam.fov = Math.max(30, Math.min(100, cam.fov + e.deltaY * 0.05)); cam.updateProjectionMatrix(); }, { passive: true });
+
+  miniV[bn] = { loadScene: loadS };
+  loadS(0);
+}
+
+function bindStrips(){
+  document.querySelectorAll('.scene-thumb').forEach(function(t){
+    t.addEventListener('click', function(){
+      var bn = parseInt(this.getAttribute('data-bn'));
+      var si = parseInt(this.getAttribute('data-si'));
+      if (miniV[bn]) miniV[bn].loadScene(si);
+    });
+  });
+}
+
+function lazyMini(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var bn = parseInt(e.target.id.replace('pano-', ''));
+      if (!miniV[bn]) makeMini(bn);
+      obs.unobserve(e.target);
+    });
+  }, { rootMargin: '200px' });
+  for (var b = 1; b <= 7; b++){
+    var el = document.getElementById('pano-' + b);
+    if (el) obs.observe(el);
+  }
+}
+
+/* ═══════════ FULLSCREEN TOUR ═══════════ */
+var TS   = { bi: 0, si: 0, open: false };
+var TR, TC, TSc, TMAT, TSPH;
+var TL = 0, TLAT = 0, TDR = false, TPX = 0, TPY = 0, TAUTO = true;
+
+function initTR(){
+  if (TR) return;
+  var canvas = document.getElementById('tour-canvas');
+  var pano   = document.getElementById('tour-pano');
+  TR = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+  TR.setPixelRatio(Math.min(devicePixelRatio, 2));
+  TR.setSize(pano.clientWidth, pano.clientHeight);
+  TSc = new THREE.Scene();
+  TC  = new THREE.PerspectiveCamera(75, pano.clientWidth / pano.clientHeight, 0.1, 1000);
+  TC.position.set(0, 0, 0.001);
+  var geo = new THREE.SphereGeometry(500, 72, 48);
+  geo.scale(-1, 1, 1);
+  TMAT = new THREE.MeshBasicMaterial({ color: 0x111111 });
+  TSPH = new THREE.Mesh(geo, TMAT);
+  TSc.add(TSPH);
+
+  canvas.addEventListener('mousedown', function(e){ TDR = true; TPX = e.clientX; TPY = e.clientY; TAUTO = false; document.getElementById('tour-drag-hint').classList.add('hidden'); });
+  window.addEventListener('mousemove', function(e){ if (!TDR) return; TL -= (e.clientX - TPX) * 0.14; TLAT += (e.clientY - TPY) * 0.14; TPX = e.clientX; TPY = e.clientY; });
+  window.addEventListener('mouseup',   function(){ TDR = false; });
+  canvas.addEventListener('touchstart', function(e){ TDR = true; TPX = e.touches[0].clientX; TPY = e.touches[0].clientY; TAUTO = false; document.getElementById('tour-drag-hint').classList.add('hidden'); }, { passive: true });
+  canvas.addEventListener('touchmove',  function(e){ if (!TDR) return; TL -= (e.touches[0].clientX - TPX) * 0.14; TLAT += (e.touches[0].clientY - TPY) * 0.14; TPX = e.touches[0].clientX; TPY = e.touches[0].clientY; }, { passive: true });
+  canvas.addEventListener('touchend',   function(){ TDR = false; });
+  canvas.addEventListener('wheel', function(e){ TC.fov = Math.max(28, Math.min(110, TC.fov + e.deltaY * 0.04)); TC.updateProjectionMatrix(); }, { passive: true });
+  new ResizeObserver(function(){ TR.setSize(pano.clientWidth, pano.clientHeight); TC.aspect = pano.clientWidth / pano.clientHeight; TC.updateProjectionMatrix(); }).observe(pano);
+  document.getElementById('tz-in').addEventListener('click',  function(){ TC.fov = Math.max(28, TC.fov - 8);  TC.updateProjectionMatrix(); });
+  document.getElementById('tz-out').addEventListener('click', function(){ TC.fov = Math.min(110, TC.fov + 8); TC.updateProjectionMatrix(); });
+
+  (function loop(){
+    requestAnimationFrame(loop);
+    if (TAUTO && !TDR) TL += 0.02;
+    TLAT = Math.max(-85, Math.min(85, TLAT));
+    var phi = THREE.MathUtils.degToRad(90 - TLAT);
+    var th  = THREE.MathUtils.degToRad(TL);
+    TC.lookAt(500 * Math.sin(phi) * Math.cos(th), 500 * Math.cos(phi), 500 * Math.sin(phi) * Math.sin(th));
+    TR.render(TSc, TC);
+  })();
+}
+
+function tLoadScene(){
+  var b     = BLOCKS[TS.bi];
+  var scene = b.scenes[TS.si];
+  var ld    = document.getElementById('tour-loading');
+  ld.classList.remove('hidden');
+  var url = scenePath(b.folder, scene.file);
+  new THREE.TextureLoader().load(
+    url,
+    function(tex){
+      tex.minFilter    = THREE.LinearFilter;
+      TMAT.map         = tex;
+      TMAT.color.set(0xffffff);
+      TMAT.needsUpdate = true;
+      ld.classList.add('hidden');
+    },
+    undefined,
+    function(err){
+      console.warn('[Smritivan] Tour failed:', url, err);
+      ld.classList.add('hidden');
+    }
+  );
+  TLAT = 0; TAUTO = true;
+  tUpdateUI();
+}
+
+function tUpdateUI(){
+  var b     = BLOCKS[TS.bi];
+  var si    = TS.si;
+  var total = b.scenes.length;
+  document.getElementById('tm-block-tag').textContent    = b.tag;
+  document.getElementById('tm-block-title').textContent  = b.title;
+  document.getElementById('tm-counter').textContent      = (si + 1) + ' / ' + total;
+  document.getElementById('tm-scene-counter').textContent = pad(si + 1) + ' / ' + pad(total);
+  document.getElementById('tm-scene-name').textContent    = b.scenes[si].name;
+  var pct = (si / Math.max(total - 1, 1)) * 100;
+  document.getElementById('tm-progress-fill').style.width  = pct + '%';
+  document.getElementById('tm-progress-label').textContent = 'Scene ' + (si + 1) + ' of ' + total;
+  var all = allFlat(), gi = getGI();
+  document.getElementById('tm-prev').disabled = (gi === 0);
+  document.getElementById('tm-next').disabled = (gi === all.length - 1);
+  document.querySelectorAll('.tour-block-tab').forEach(function(t, i){ t.classList.toggle('active', i === TS.bi); });
+  buildScenePills();
+}
+
+function allFlat(){
+  var a = [];
+  BLOCKS.forEach(function(b, bi){ b.scenes.forEach(function(s, si){ a.push({ bi: bi, si: si }); }); });
+  return a;
+}
+function getGI(){
+  var a = allFlat();
+  for (var i = 0; i < a.length; i++){ if (a[i].bi === TS.bi && a[i].si === TS.si) return i; }
+  return 0;
+}
+
+function buildBlockTabs(){
+  var tabs = document.getElementById('tm-block-tabs');
+  tabs.innerHTML = BLOCKS.map(function(b, i){
+    return '<button class="tour-block-tab' + (i === TS.bi ? ' active' : '') + '" data-bi="' + i + '">'
+      + '<span class="tour-block-tab__num">' + pad(b.num) + '</span>' + b.title
+      + '</button>';
+  }).join('');
+  tabs.querySelectorAll('.tour-block-tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      TS.bi = parseInt(this.getAttribute('data-bi')); TS.si = 0;
+      tLoadScene();
+    });
+  });
+}
+
+function buildScenePills(){
+  var b   = BLOCKS[TS.bi];
+  var row = document.getElementById('tm-scene-row');
+  row.innerHTML = b.scenes.map(function(s, si){
+    return '<button class="tour-scene-pill' + (si === TS.si ? ' active' : '') + '" data-si="' + si + '">' + s.name + '</button>';
+  }).join('');
+  row.querySelectorAll('.tour-scene-pill').forEach(function(p){
+    p.addEventListener('click', function(){ TS.si = parseInt(this.getAttribute('data-si')); tLoadScene(); });
+  });
+  var active = row.querySelector('.active');
+  if (active) active.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+}
+
+function tNav(dir){
+  var all = allFlat(), gi = getGI() + dir;
+  if (gi < 0 || gi >= all.length) return;
+  TS.bi = all[gi].bi; TS.si = all[gi].si;
+  tLoadScene();
+  document.querySelectorAll('.tour-block-tab').forEach(function(t, i){ t.classList.toggle('active', i === TS.bi); });
+}
+
+window.openTour = function(blockNum, si){
+  TS.bi = blockNum - 1; TS.si = si || 0; TS.open = true;
+  document.getElementById('tour-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('tour-drag-hint').classList.remove('hidden');
+  initTR();
+  buildBlockTabs();
+  tLoadScene();
+};
+
+document.getElementById('tour-close').addEventListener('click', function(){
+  document.getElementById('tour-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  TS.open = false;
+});
+document.getElementById('tm-prev').addEventListener('click', function(){ tNav(-1); });
+document.getElementById('tm-next').addEventListener('click', function(){ tNav(1); });
+document.addEventListener('keydown', function(e){
+  if (!TS.open) return;
+  if (e.key === 'Escape')                              document.getElementById('tour-close').click();
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') tNav(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   tNav(-1);
+});
+
+/* ═══════════ SCROLL REVEAL ═══════════ */
+function initReveal(){
+  var els = document.querySelectorAll('.reveal,.reveal-l,.reveal-r');
+  var io  = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.06 });
+  els.forEach(function(el){ io.observe(el); });
+}
+
+/* ═══════════ BOOT ═══════════ */
+renderBlocks();
+bindStrips();
+lazyMini();
+initReveal();
+
+})();
+</script>
+}

@@ -1,0 +1,174 @@
+@{
+    ViewData["Title"] = "Audio Detail 4";
+}
+
+<main>
+<!-- SHARED: mobile-nav -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+  <aside class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav__header">
+      <img src="https://www.smritivanearthquakemuseum.biz/assets2/logo.png" alt="Smritivan" width="40">
+      <button class="mobile-nav__close" id="mobile-nav-close" aria-label="Close menu">&times;</button>
+    </div>
+    <nav class="mobile-nav__links">
+      <a href="/Home/Index">Home</a>
+      <a href="/Home/Museum">Earthquake Museum</a>
+      <a href="/Home/Memorial">Memorial</a>
+      <a href="/Home/BriefHistory">Brief History</a>
+      <a href="/Home/Gallery">Gallery</a>
+      <a href="/Home/Events">Events</a>
+      <a href="/Home/Tickets">Tickets</a>
+      <a href="/Home/MuseumTour">Audio Guide</a>
+      <a href="/Home/Amenities">Amenities</a>
+      <a href="/Home/MapPage">Museum Map</a>
+      <a href="/Home/Faq">FAQ</a>
+      <a href="/Home/Contact">Contact</a>
+    </nav>
+    <div class="mobile-nav__footer">
+      <div class="mobile-nav__social">
+        <a href="https://www.instagram.com/smritivanearthquakemuseum/?hl=en" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.facebook.com/SmritivanEarthquakeMuseum/" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://twitter.com/smritivan/" target="_blank" rel="noopener">Twitter</a>
+      </div>
+    </div>
+  </aside>
+
+  <main id="page-content">
+    <div class="page-section">
+      <div style="margin-bottom:var(--sp-xl);">
+        <img class="audio-detail__hero-img" src="https://smritivanearthquakemuseum.com/images/about/masterOfRebuild.jpg" alt="Rebuild" loading="eager">
+      </div>
+      <div class="audio-detail__info">
+        <h1 class="audio-detail__title">Rebuild</h1>
+        <p class="audio-detail__desc">Witness how an apex body formed within weeks post-earthquake ensured timely rehabilitation, reconstruction, and recovery.</p>
+        <div class="lang-selector" id="lang-selector">
+          <button class="lang-btn active" data-lang="English">English</button>
+          <button class="lang-btn" data-lang="Hindi">Hindi</button>
+          <button class="lang-btn" data-lang="Gujarati">Gujarati</button>
+        </div>
+        <div id="track-list" style="margin-top:var(--sp-lg);">
+          <div class="loader"><div class="loader__spinner"></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- SHARED: footer -->
+</main>
+
+@section Scripts {
+<script src="js/common.js"></script>
+  <script>
+    (function() {
+      var btn = document.getElementById('hamburger-btn');
+      var nav = document.getElementById('mobile-nav');
+      var overlay = document.getElementById('mobile-nav-overlay');
+      var closeBtn = document.getElementById('mobile-nav-close');
+      function toggle() { nav.classList.toggle('open'); overlay.classList.toggle('open'); document.body.classList.toggle('nav-open'); }
+      function close() { nav.classList.remove('open'); overlay.classList.remove('open'); document.body.classList.remove('nav-open'); }
+      btn.addEventListener('click', toggle);
+      overlay.addEventListener('click', close);
+      closeBtn.addEventListener('click', close);
+      nav.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', close); });
+      var dropBtn = document.querySelector('.site-nav__link--dropdown');
+      if (dropBtn) {
+        dropBtn.addEventListener('click', function(e) { e.preventDefault(); dropBtn.parentElement.classList.toggle('open'); });
+        document.addEventListener('click', function(e) { if (!dropBtn.parentElement.contains(e.target)) dropBtn.parentElement.classList.remove('open'); });
+      }
+    })();
+  </script>
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+  Smritivan.initPage();
+
+  var audioNo = document.body.getAttribute('data-audio-no') || '1';
+  var sectionImage = document.querySelector('.audio-detail__hero-img').src;
+  var langSelector = document.getElementById('lang-selector');
+  var trackListEl = document.getElementById('track-list');
+  if (!langSelector || !trackListEl) return;
+
+  var currentLang = 'English';
+
+  function renderTracks(data) {
+    while (trackListEl.firstChild) trackListEl.removeChild(trackListEl.firstChild);
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      var msg = document.createElement('div');
+      msg.className = 'empty-state';
+      var p = document.createElement('p');
+      p.textContent = 'Audio guides are available when visiting the museum.';
+      msg.appendChild(p);
+      trackListEl.appendChild(msg);
+      return;
+    }
+    data.forEach(function(track) {
+      var audioPath = Smritivan.assetUrl(track.Audio_Path);
+      var title = track.Audio_Title || 'Untitled Track';
+      var card = document.createElement('div');
+      card.className = 'tour-card';
+      card.style.cursor = 'pointer';
+      /* Play icon — trusted static SVG, not user input */
+      var iconWrap = document.createElement('div');
+      iconWrap.setAttribute('style', 'width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--color-primary);');
+      var iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      iconSvg.setAttribute('width', '24');
+      iconSvg.setAttribute('height', '24');
+      iconSvg.setAttribute('viewBox', '0 0 24 24');
+      iconSvg.setAttribute('fill', 'currentColor');
+      var iconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      iconPath.setAttribute('d', 'M8 5v14l11-7z');
+      iconSvg.appendChild(iconPath);
+      iconWrap.appendChild(iconSvg);
+      card.appendChild(iconWrap);
+      var body = document.createElement('div');
+      body.className = 'tour-card__body';
+      var titleEl = document.createElement('div');
+      titleEl.className = 'tour-card__title';
+      titleEl.textContent = title;
+      body.appendChild(titleEl);
+      card.appendChild(body);
+      card.addEventListener('click', function() {
+        localStorage.setItem('currentAudio', JSON.stringify({
+          url: audioPath,
+          title: title,
+          image: sectionImage
+        }));
+        location.href = 'audioplayer.html';
+      });
+      trackListEl.appendChild(card);
+    });
+  }
+
+  function showLoader() {
+    while (trackListEl.firstChild) trackListEl.removeChild(trackListEl.firstChild);
+    var loader = document.createElement('div');
+    loader.className = 'loader';
+    var spinner = document.createElement('div');
+    spinner.className = 'loader__spinner';
+    loader.appendChild(spinner);
+    trackListEl.appendChild(loader);
+  }
+
+  function loadTracks(lang) {
+    showLoader();
+    Smritivan.api.getAudioDetails(audioNo, lang).then(function(data) {
+      renderTracks(data);
+    }).catch(function() {
+      renderTracks(null);
+    });
+  }
+
+  langSelector.addEventListener('click', function(e) {
+    var btn = e.target.closest('.lang-btn');
+    if (!btn) return;
+    var lang = btn.dataset.lang;
+    if (lang === currentLang) return;
+    currentLang = lang;
+    langSelector.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    loadTracks(lang);
+  });
+
+  loadTracks(currentLang);
+});
+</script>
+}

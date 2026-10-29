@@ -1,0 +1,213 @@
+[
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetAlbums",
+    "RelativePath": "api/albums",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetAudioDetails",
+    "RelativePath": "api/audio/details",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "audioNo",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "lang",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetPmAudio",
+    "RelativePath": "api/audio/pm",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetCheckDamAllFilter",
+    "RelativePath": "api/checkdam/allfilter",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "city",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetCheckDamCities",
+    "RelativePath": "api/checkdam/cities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetCheckDamDashboard",
+    "RelativePath": "api/checkdam/dashboard",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetCheckDamFilter",
+    "RelativePath": "api/checkdam/filter",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "city",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetEvents",
+    "RelativePath": "api/events",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetUpcomingEvents",
+    "RelativePath": "api/events/upcoming",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "SubmitFeedback",
+    "RelativePath": "api/feedback",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fields",
+        "Type": "System.Collections.Generic.Dictionary\u00602[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.GalleryApiController",
+    "Method": "GetAlbums",
+    "RelativePath": "api/gallery/albums",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.GalleryApiController",
+    "Method": "GetImages",
+    "RelativePath": "api/gallery/images/{albumName}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "albumName",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetImages",
+    "RelativePath": "api/images/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetMuseum",
+    "RelativePath": "api/museum",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetTestimonials",
+    "RelativePath": "api/testimonials",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmritivanWeb.Controllers.ApiController",
+    "Method": "GetTickets",
+    "RelativePath": "api/tickets",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]

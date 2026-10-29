@@ -1,0 +1,196 @@
+@{
+    ViewData["Title"] = "Audio Guide";
+}
+
+<main>
+<!-- SHARED: mobile-nav -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+  <aside class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav__header">
+      <img src="https://www.smritivanearthquakemuseum.biz/assets2/logo.png" alt="Smritivan" width="40">
+      <button class="mobile-nav__close" id="mobile-nav-close" aria-label="Close menu">&times;</button>
+    </div>
+    <nav class="mobile-nav__links">
+      <a href="/Home/Index">Home</a>
+      <a href="/Home/Museum">Earthquake Museum</a>
+      <a href="/Home/Memorial">Memorial</a>
+      <a href="/Home/BriefHistory">Brief History</a>
+      <a href="/Home/Gallery">Gallery</a>
+      <a href="/Home/Events">Events</a>
+      <a href="/Home/Tickets">Tickets</a>
+      <a href="/Home/MuseumTour">Audio Guide</a>
+      <a href="/Home/Amenities">Amenities</a>
+      <a href="/Home/MapPage">Museum Map</a>
+      <a href="/Home/Faq">FAQ</a>
+      <a href="/Home/Contact">Contact</a>
+    </nav>
+    <div class="mobile-nav__footer">
+      <div class="mobile-nav__social">
+        <a href="https://www.instagram.com/smritivanearthquakemuseum/?hl=en" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.facebook.com/SmritivanEarthquakeMuseum/" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://twitter.com/smritivan/" target="_blank" rel="noopener">Twitter</a>
+      </div>
+    </div>
+  </aside>
+
+  <main id="page-content">
+    <div id="player-empty" style="display:none;">
+      <div class="empty-state"><p>No audio selected. Please choose a track from the <a href="/Home/MuseumTour">museum tour</a>.</p></div>
+    </div>
+    <div id="player-container">
+      <div id="player-hero"></div>
+      <div class="full-player">
+        <input type="range" class="full-player__slider" id="audio-seek" min="0" max="100" value="0" step="0.1">
+        <div class="full-player__time">
+          <span id="audio-current">00:00</span>
+          <span id="audio-total">00:00</span>
+        </div>
+        <div class="full-player__controls">
+          <button class="full-player__btn full-player__btn--skip" id="btn-prev" aria-label="Previous track">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="19 20 9 12 19 4 19 20"></polygon>
+              <line x1="5" y1="19" x2="5" y2="5"></line>
+            </svg>
+          </button>
+          <button class="full-player__btn" id="btn-play" aria-label="Play">
+            <svg id="icon-play" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            <svg id="icon-pause" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+          </button>
+          <button class="full-player__btn full-player__btn--skip" id="btn-next" aria-label="Next track">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 4 15 12 5 20 5 4"></polygon>
+              <line x1="19" y1="5" x2="19" y2="19"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- SHARED: footer -->
+</main>
+
+@section Scripts {
+<script src="js/common.js"></script>
+  <script>
+    (function() {
+      var btn = document.getElementById('hamburger-btn');
+      var nav = document.getElementById('mobile-nav');
+      var overlay = document.getElementById('mobile-nav-overlay');
+      var closeBtn = document.getElementById('mobile-nav-close');
+      function toggle() { nav.classList.toggle('open'); overlay.classList.toggle('open'); document.body.classList.toggle('nav-open'); }
+      function close() { nav.classList.remove('open'); overlay.classList.remove('open'); document.body.classList.remove('nav-open'); }
+      btn.addEventListener('click', toggle);
+      overlay.addEventListener('click', close);
+      closeBtn.addEventListener('click', close);
+      nav.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', close); });
+      var dropBtn = document.querySelector('.site-nav__link--dropdown');
+      if (dropBtn) {
+        dropBtn.addEventListener('click', function(e) { e.preventDefault(); dropBtn.parentElement.classList.toggle('open'); });
+        document.addEventListener('click', function(e) { if (!dropBtn.parentElement.contains(e.target)) dropBtn.parentElement.classList.remove('open'); });
+      }
+    })();
+  </script>
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+  Smritivan.initPage();
+
+  var playerEmpty = document.getElementById('player-empty');
+  var playerContainer = document.getElementById('player-container');
+  var playerHero = document.getElementById('player-hero');
+
+  var audioData = null;
+  try {
+    audioData = JSON.parse(localStorage.getItem('currentAudio'));
+  } catch (e) {
+    /* ignore parse errors */
+  }
+
+  if (!audioData || !audioData.url) {
+    playerEmpty.style.display = '';
+    playerContainer.style.display = 'none';
+    return;
+  }
+
+  /* Render hero section dynamically — uses Smritivan.renderHero from common.js */
+  var heroMarkup = Smritivan.renderHero({
+    imageAbsolute: audioData.image,
+    tag: 'Audio Guide',
+    title: audioData.title || 'Audio Player'
+  });
+  playerHero.textContent = '';
+  var heroTemp = document.createElement('div');
+  heroTemp.insertAdjacentHTML('beforeend', heroMarkup);
+  while (heroTemp.firstChild) {
+    playerHero.appendChild(heroTemp.firstChild);
+  }
+
+  /* Format time helper */
+  function formatTime(seconds) {
+    if (!seconds || isNaN(seconds)) return '00:00';
+    var mins = Math.floor(seconds / 60);
+    var secs = Math.floor(seconds % 60);
+    return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+  }
+
+  /* Set up audio player */
+  var audio = new Audio(audioData.url);
+  var seekSlider = document.getElementById('audio-seek');
+  var currentTimeEl = document.getElementById('audio-current');
+  var totalTimeEl = document.getElementById('audio-total');
+  var btnPlay = document.getElementById('btn-play');
+  var iconPlay = document.getElementById('icon-play');
+  var iconPause = document.getElementById('icon-pause');
+
+  if (!seekSlider || !btnPlay) return;
+
+  var isSeeking = false;
+
+  audio.addEventListener('loadedmetadata', function() {
+    totalTimeEl.textContent = formatTime(audio.duration);
+    seekSlider.max = audio.duration || 100;
+  });
+
+  audio.addEventListener('timeupdate', function() {
+    if (!isSeeking) {
+      seekSlider.value = audio.currentTime;
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+    }
+  });
+
+  audio.addEventListener('ended', function() {
+    iconPlay.style.display = '';
+    iconPause.style.display = 'none';
+    btnPlay.setAttribute('aria-label', 'Play');
+  });
+
+  seekSlider.addEventListener('input', function() {
+    isSeeking = true;
+    currentTimeEl.textContent = formatTime(Number(seekSlider.value));
+  });
+
+  seekSlider.addEventListener('change', function() {
+    audio.currentTime = Number(seekSlider.value);
+    isSeeking = false;
+  });
+
+  btnPlay.addEventListener('click', function() {
+    if (audio.paused) {
+      audio.play();
+      iconPlay.style.display = 'none';
+      iconPause.style.display = '';
+      btnPlay.setAttribute('aria-label', 'Pause');
+    } else {
+      audio.pause();
+      iconPlay.style.display = '';
+      iconPause.style.display = 'none';
+      btnPlay.setAttribute('aria-label', 'Play');
+    }
+  });
+});
+</script>
+}

@@ -1,0 +1,393 @@
+{
+  "Files": [
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\360\\A.jpg",
+      "PackagePath": "staticwebassets\\assets\\360\\A.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\360\\B.jpg",
+      "PackagePath": "staticwebassets\\assets\\360\\B.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\360\\C.jpg",
+      "PackagePath": "staticwebassets\\assets\\360\\C.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\360\\D.jpg",
+      "PackagePath": "staticwebassets\\assets\\360\\D.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Aminites\\1 Front Desk.jpg",
+      "PackagePath": "staticwebassets\\assets\\Aminites\\1 Front Desk.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Aminites\\Auditorium.jpg",
+      "PackagePath": "staticwebassets\\assets\\Aminites\\Auditorium.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Aminites\\Cafeteria.jpg",
+      "PackagePath": "staticwebassets\\assets\\Aminites\\Cafeteria.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Aminites\\Kidzone.jpg",
+      "PackagePath": "staticwebassets\\assets\\Aminites\\Kidzone.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Aminites\\Library.jpg",
+      "PackagePath": "staticwebassets\\assets\\Aminites\\Library.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Aminites\\Resturant Rooftop.jpg",
+      "PackagePath": "staticwebassets\\assets\\Aminites\\Resturant Rooftop.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Aminites\\Shop.jpg",
+      "PackagePath": "staticwebassets\\assets\\Aminites\\Shop.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Aminites\\kid zone 1.1.jpg",
+      "PackagePath": "staticwebassets\\assets\\Aminites\\kid zone 1.1.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 2\\Scene 1.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 2\\Scene 1.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 2\\Scene 11.2.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 2\\Scene 11.2.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 2\\Scene 11.3.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 2\\Scene 11.3.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 2\\Scene 13.2.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 2\\Scene 13.2.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 2\\Scene 14.2.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 2\\Scene 14.2.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 2\\Scene 2.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 2\\Scene 2.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 2\\Scene 3.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 2\\Scene 3.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 2\\Scene 4.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 2\\Scene 4.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 2\\Scene 5.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 2\\Scene 5.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 2\\Scene 6.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 2\\Scene 6.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 2\\Scene 7.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 2\\Scene 7.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 2\\Scene 8.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 2\\Scene 8.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 3\\Scene 1.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 3\\Scene 1.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 3\\Scene 18.2.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 3\\Scene 18.2.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 3\\Scene 18.3.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 3\\Scene 18.3.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 3\\Scene 19.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 3\\Scene 19.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 3\\Scene 2.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 3\\Scene 2.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 3\\Scene 3.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 3\\Scene 3.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 3\\Scene 4.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 3\\Scene 4.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 3\\Scene 5.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 3\\Scene 5.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 3\\Scene 6.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 3\\Scene 6.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 3\\Scene 7.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 3\\Scene 7.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 3\\Scene 8.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 3\\Scene 8.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 3\\Scene 9.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 3\\Scene 9.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 4\\Scene 1.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 4\\Scene 1.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 4\\Scene 2.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 4\\Scene 2.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 4\\Scene 3.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 4\\Scene 3.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 4\\Scene 4.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 4\\Scene 4.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 4\\Scene 5.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 4\\Scene 5.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 5\\Scene 1.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 5\\Scene 1.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 5\\Scene 2.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 5\\Scene 2.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 5\\Scene 3.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 5\\Scene 3.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 5\\Scene 4.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 5\\Scene 4.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 6\\Scene 1.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 6\\Scene 1.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 6\\Scene 2.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 6\\Scene 2.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 6\\Scene 3.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 6\\Scene 3.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 6\\Scene 4.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 6\\Scene 4.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block 7\\Scene 1.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block 7\\Scene 1.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block\\Scene 1.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block\\Scene 1.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block\\Scene 2.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block\\Scene 2.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block\\Scene 3.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block\\Scene 3.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block\\Scene 4 1.2.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block\\Scene 4 1.2.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block\\Scene 4 1.3.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block\\Scene 4 1.3.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block\\Scene 4.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block\\Scene 4.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block\\Scene 5.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block\\Scene 5.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block\\Scene 6.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block\\Scene 6.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block\\Scene 7.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block\\Scene 7.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block\\Scene 8.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block\\Scene 8.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\Block\\Scene 9.jpg",
+      "PackagePath": "staticwebassets\\assets\\Block\\Scene 9.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\bg-1.jpg",
+      "PackagePath": "staticwebassets\\assets\\bg-1.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\bg-2.jpeg",
+      "PackagePath": "staticwebassets\\assets\\bg-2.jpeg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\bg-3.jpg",
+      "PackagePath": "staticwebassets\\assets\\bg-3.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\bg-4.jpg",
+      "PackagePath": "staticwebassets\\assets\\bg-4.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\bg-og---.JPG",
+      "PackagePath": "staticwebassets\\assets\\bg-og---.JPG"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\bg-og.jpg",
+      "PackagePath": "staticwebassets\\assets\\bg-og.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\breif.jpg",
+      "PackagePath": "staticwebassets\\assets\\breif.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\gallary\\gallary_1.jpg",
+      "PackagePath": "staticwebassets\\assets\\gallary\\gallary_1.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\gallary\\gallary_2.jpg",
+      "PackagePath": "staticwebassets\\assets\\gallary\\gallary_2.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\gallary\\gallary_3.jpg",
+      "PackagePath": "staticwebassets\\assets\\gallary\\gallary_3.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\gallary\\gallary_4.jpg",
+      "PackagePath": "staticwebassets\\assets\\gallary\\gallary_4.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\gallary\\gallary_5.jpg",
+      "PackagePath": "staticwebassets\\assets\\gallary\\gallary_5.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\gallary\\gallary_6.jpg",
+      "PackagePath": "staticwebassets\\assets\\gallary\\gallary_6.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\gallary\\gallary_7.jpg",
+      "PackagePath": "staticwebassets\\assets\\gallary\\gallary_7.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\logo.png",
+      "PackagePath": "staticwebassets\\assets\\logo.png"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\mem.JPG",
+      "PackagePath": "staticwebassets\\assets\\mem.JPG"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\memorial 1.JPG",
+      "PackagePath": "staticwebassets\\assets\\memorial 1.JPG"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\memorial 2.JPG",
+      "PackagePath": "staticwebassets\\assets\\memorial 2.JPG"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\memorial 3.jpg",
+      "PackagePath": "staticwebassets\\assets\\memorial 3.jpg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\memorial 4.JPG",
+      "PackagePath": "staticwebassets\\assets\\memorial 4.JPG"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\memorial 5.JPG",
+      "PackagePath": "staticwebassets\\assets\\memorial 5.JPG"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\memorial 7.jpeg",
+      "PackagePath": "staticwebassets\\assets\\memorial 7.jpeg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\memorial.jpeg",
+      "PackagePath": "staticwebassets\\assets\\memorial.jpeg"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\pm.png",
+      "PackagePath": "staticwebassets\\assets\\pm.png"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\assets\\ticket.png",
+      "PackagePath": "staticwebassets\\assets\\ticket.png"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\audio\\audio.mp3",
+      "PackagePath": "staticwebassets\\audio\\audio.mp3"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\css\\components.css",
+      "PackagePath": "staticwebassets\\css\\components.css"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\css\\layout.css",
+      "PackagePath": "staticwebassets\\css\\layout.css"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\css\\pages.css",
+      "PackagePath": "staticwebassets\\css\\pages.css"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\css\\reset.css",
+      "PackagePath": "staticwebassets\\css\\reset.css"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\css\\variables.css",
+      "PackagePath": "staticwebassets\\css\\variables.css"
+    },
+    {
+      "Id": "G:\\Sandesh\\SmritivanWebsiteDotNet\\SmritivanWeb\\SmritivanWeb\\wwwroot\\js\\common.js",
+      "PackagePath": "staticwebassets\\js\\common.js"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.SmritivanWeb.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.SmritivanWeb.props",
+      "PackagePath": "build\\SmritivanWeb.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.SmritivanWeb.props",
+      "PackagePath": "buildMultiTargeting\\SmritivanWeb.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.SmritivanWeb.props",
+      "PackagePath": "buildTransitive\\SmritivanWeb.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
